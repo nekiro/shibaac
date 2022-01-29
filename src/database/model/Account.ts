@@ -3,9 +3,15 @@ import { DataTypes, Model } from 'sequelize';
 export class Account extends Model {
   public id!: number;
   public name!: string;
+  public password!: string;
+  public secret!: string;
+  public type!: number;
+  public premium_ends_at!: number;
+  public email!: string;
+  public creation!: number;
 }
 
-export const AccountModel = {
+export const AccountSchema = {
   id: {
     type: DataTypes.INTEGER,
     allowNull: false,

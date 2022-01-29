@@ -4,9 +4,24 @@ export class Player extends Model {
   public id!: number;
   public name!: string;
   public group_id!: number;
+  public account_id!: number;
+  public level!: number;
+  public vocation!: number;
+  public experience!: number;
+  public looktype!: number;
+  public lookbody!: number;
+  public lookhead!: number;
+  public lookfeet!: number;
+  public looklegs!: number;
+  public lookaddons!: number;
+  public maglevel!: number;
+  public sex!: number;
+  public lastlogin!: number;
+  public town_id!: number;
+  public onlinetime!: number;
 }
 
-export const PlayerModel = {
+export const PlayerSchema = {
   id: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -34,6 +49,7 @@ export const PlayerModel = {
   vocation: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    defaultValue: 0,
   },
   experience: {
     type: DataTypes.INTEGER,

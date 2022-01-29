@@ -1,6 +1,14 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 
-const Town = {
+export class Town extends Model {
+  public id!: number;
+  public name!: string;
+  public posx!: number;
+  public posy!: number;
+  public posz!: number;
+}
+
+export const TownSchema = {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -22,5 +30,3 @@ const Town = {
     allowNull: false,
   },
 };
-
-export default Town;

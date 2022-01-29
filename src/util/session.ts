@@ -5,7 +5,7 @@ import {
   GetServerSidePropsResult,
   NextApiHandler,
 } from 'next';
-import { sessionPassword, dev } from './config';
+import { dev } from './config';
 
 declare module 'iron-session' {
   interface IronSessionData {
@@ -17,7 +17,7 @@ declare module 'iron-session' {
 
 const sessionOptions: IronSessionOptions = {
   cookieName: 'acc_cookie',
-  password: sessionPassword,
+  password: process.env.SESSION_PASSWORD as string,
   // secure: true should be used in production (HTTPS) but can't be used in development (HTTP)
   cookieOptions: {
     maxAge: undefined,

@@ -1,7 +1,15 @@
 import { server } from './config';
 
-export const fetchApi = async (method, url, options) => {
-  const _options = {
+type FetchOptions = {
+  data: any;
+};
+
+export const fetchApi = async (
+  method: string,
+  url: string,
+  options: FetchOptions
+) => {
+  const _options: RequestInit = {
     method,
   };
 
@@ -10,7 +18,7 @@ export const fetchApi = async (method, url, options) => {
     _options.body = JSON.stringify(options.data);
   }
 
-  const response = await fetch(`${server}${url}`, _options);
+  const response: Response = await fetch(`${server}${url}`, _options);
   const data = await response.json();
 
   //TODO: handle yup validation exceptions

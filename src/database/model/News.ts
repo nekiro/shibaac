@@ -1,6 +1,12 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 
-const News = {
+export class News extends Model {
+  public id!: number;
+  public title!: string;
+  public content!: string;
+}
+
+export const NewsSchema = {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -15,5 +21,3 @@ const News = {
     allowNull: false,
   },
 };
-
-export default News;
