@@ -2,14 +2,8 @@ import React, { useEffect, useState, useCallback } from 'react';
 import Panel from '../../components/Panel';
 import { withSessionSsr } from '../../util/session';
 import { fetchApi } from '../../util/request';
-import * as Yup from 'yup';
 import FormWrapper from '../../components/FormWrapper';
-
-// TODO: fix this schema with all requirements
-const Schema = Yup.object().shape({
-  //name: Yup.string().required('Required'),
-  password: Yup.string().required('Required'),
-});
+import { deleteCharacterSchema } from 'src/schemas/DeleteCharacter';
 
 const buttons = [
   { type: 'submit', btnType: 'primary', value: 'Submit' },
@@ -23,8 +17,6 @@ export default function DeleteCharacter({ user }) {
   const fetchCharacters = useCallback(async () => {
     const response = await fetchApi('GET', `/api/accounts/${user.id}`);
     if (response.success) {
-      const { account } = response.args;
-
       setData({
         fields: [
           {
@@ -32,7 +24,7 @@ export default function DeleteCharacter({ user }) {
             name: 'name',
             label: { text: 'Name', size: 3 },
             size: 9,
-            options: account.players.map((char) => ({
+            options: response.account.players.map((char) => ({
               value: char.name,
               text: char.name,
             })),
@@ -44,7 +36,7 @@ export default function DeleteCharacter({ user }) {
             size: 9,
           },
         ],
-        initialValues: { name: account.players[0].name, password: '' },
+        initialValues: { name: response.account.players[0].name, password: '' },
       });
     }
   }, [user]);
@@ -76,7 +68,7 @@ export default function DeleteCharacter({ user }) {
       </p>
 
       <FormWrapper
-        validationSchema={Schema}
+        validationSchema={deleteCharacterSchema}
         onSubmit={onSubmit}
         fields={data.fields}
         buttons={buttons}

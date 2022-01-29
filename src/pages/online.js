@@ -1,31 +1,37 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Panel from '../components/Panel';
 import StrippedTable from '../components/StrippedTable';
 import Head from '../layout/Head';
-import fetchJson from '../util/fetchJson';
 import Link from 'next/link';
+import { fetchApi } from '../util/request';
 
 export default function Online() {
-  const [state, setState] = useState({ players: null, status: null });
+  const [state, setState] = useState(null);
+
+  const fetchData = useCallback(async () => {
+    const players = await fetchApi('GET', `/api/players/online`);
+    const status = await fetchApi('GET', `/api/status`);
+
+    if (players.success && status.success) {
+      setState({
+        players: players.players,
+        status: status.status,
+      });
+    }
+  }, []);
 
   useEffect(() => {
-    (async () => {
-      const players = await fetchJson(`/api/players/online`);
-      const status = await fetchJson(`/api/status`);
-      setState((state) => {
-        return {
-          ...state,
-          players,
-          status,
-        };
-      });
-    })();
-  }, []);
+    fetchData();
+  }, [fetchData]);
+
+  if (!state) {
+    return <Panel header="Online List" isLoading={true} />;
+  }
 
   return (
     <>
       <Head title="Online"></Head>
-      <Panel header="Online List" isLoading={!state.players}>
+      <Panel header="Online List">
         <div className="alert alert-info">
           Overall Maximum: {state.status ? state.status.maxOnlineCount : '0'}{' '}
           players.
@@ -46,7 +52,7 @@ export default function Online() {
             {state.players.map(({ player }) => (
               <tr key={player.name}>
                 <td>
-                  <Link href={`/character/${player.nam}`}>{player.name}</Link>
+                  <Link href={`/character/${player.name}`}>{player.name}</Link>
                 </td>
                 <td>{player.level}</td>
                 <td>{player.vocation}</td>

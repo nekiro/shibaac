@@ -2,19 +2,14 @@ import React, { useState } from 'react';
 import Panel from '../../components/Panel';
 import { withSessionSsr } from '../../util/session';
 import { fetchApi } from '../../util/request';
-import * as Yup from 'yup';
 import FormWrapper from '../../components/FormWrapper';
-
-// TODO: fix this schema with all requirements
-const Schema = Yup.object().shape({
-  name: Yup.string().required('Required'),
-});
+import { createCharacterSchema } from 'src/schemas/CreateCharacter';
 
 const fields = [
   {
     type: 'text',
     name: 'name',
-    placeholder: '4 to 30 characters',
+    placeholder: '3 to 29 characters',
     label: { text: 'Name', size: 3 },
     size: 9,
   },
@@ -78,7 +73,7 @@ export default function CreateCharacter() {
       </p>
 
       <FormWrapper
-        validationSchema={Schema}
+        validationSchema={createCharacterSchema}
         onSubmit={onSubmit}
         fields={fields}
         buttons={buttons}

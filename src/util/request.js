@@ -13,9 +13,11 @@ export const fetchApi = async (method, url, options) => {
   const response = await fetch(`${server}${url}`, _options);
   const data = await response.json();
 
+  //TODO: handle yup validation exceptions
+
   return {
     message: data.message ?? '',
     success: data.success,
-    args: data.args ?? null,
+    ...(data.args ? data.args : []),
   };
 };

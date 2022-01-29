@@ -1,20 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import Panel from '../../components/Panel';
-import Head from '../../layout/Head';
+import React, { useEffect, useState, useCallback } from 'react';
+import Panel from 'src/components/Panel';
+import Head from 'src/layout/Head';
 import Link from 'next/link';
-import { useUser } from '../../hooks/useUser';
-import { fetchApi } from '../../util/request';
-import { withSessionSsr } from '../../util/session';
+import { fetchApi } from 'src/util/request';
+import { withSessionSsr } from 'src/util/session';
 
 export default function Account({ user }) {
   const [info, setInfo] = useState(null);
 
-  useEffect(() => {
-    (async () => {
-      const response = await fetchApi('GET', `/api/accounts/${user.id}`);
-      setInfo(response.args.account);
-    })();
+  const fetchData = useCallback(async () => {
+    const response = await fetchApi('GET', `/api/accounts/${user.id}`);
+    console.log(response);
+    setInfo(response.account);
   }, [user]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   if (!info) {
     return (

@@ -1,24 +1,16 @@
 import React, { useState } from 'react';
-import Panel from '../../components/Panel';
-import Head from '../../layout/Head';
+import Panel from 'src/components/Panel';
+import Head from 'src/layout/Head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import Label from '../../components/Label';
-
-import { useUser } from '../../hooks/useUser';
-
-import * as Yup from 'yup';
-
-import { fetchApi } from '../../util/request';
-import FormWrapper from '../../components/FormWrapper';
-
-const LoginSchema = Yup.object().shape({
-  account: Yup.string().required('Required'),
-  password: Yup.string().required('Required'),
-});
+import { withSessionSsr } from 'src/util/session';
+import { useUser } from 'src/hooks/useUser';
+import { loginSchema } from 'src/schemas/Login';
+import { fetchApi } from 'src/util/request';
+import FormWrapper from 'src/components/FormWrapper';
 
 const fields = [
-  { type: 'password', name: 'account', label: { text: 'Account Name' } },
+  { type: 'password', name: 'name', label: { text: 'Account Name' } },
   { type: 'password', name: 'password', label: { text: 'Password' } },
 ];
 
@@ -28,14 +20,14 @@ const buttons = [
 ];
 
 export default function Login() {
-  const { user, setUser } = useUser();
+  const { setUser } = useUser();
   const router = useRouter();
   const [response, setResponse] = useState(null);
 
   const onSubmit = async (values, { resetForm }) => {
     const response = await fetchApi('POST', '/api/accounts/login', {
       data: {
-        name: values.account,
+        name: values.name,
         password: values.password,
       },
     });
@@ -44,15 +36,10 @@ export default function Login() {
     resetForm();
 
     if (response.success) {
-      setUser(response.args.account);
+      setUser(response.account);
       router.push('/account');
     }
   };
-
-  if (user) {
-    router.push('/account');
-    return null;
-  }
 
   return (
     <>
@@ -65,7 +52,7 @@ export default function Login() {
         </p>
 
         <FormWrapper
-          validationSchema={LoginSchema}
+          validationSchema={loginSchema}
           onSubmit={onSubmit}
           fields={fields}
           buttons={buttons}
@@ -75,3 +62,19 @@ export default function Login() {
     </>
   );
 }
+
+export const getServerSideProps = withSessionSsr(async function ({ req }) {
+  const { user } = req.session;
+  if (user) {
+    return {
+      redirect: {
+        destination: '/account',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+});

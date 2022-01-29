@@ -7,6 +7,14 @@ import {
 } from 'next';
 import { sessionPassword, dev } from './config';
 
+declare module 'iron-session' {
+  interface IronSessionData {
+    user?: {
+      id: number;
+    };
+  }
+}
+
 const sessionOptions: IronSessionOptions = {
   cookieName: 'acc_cookie',
   password: sessionPassword,

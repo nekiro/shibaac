@@ -1,6 +1,12 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 
-const Player = {
+export class Player extends Model {
+  public id!: number;
+  public name!: string;
+  public group_id!: number;
+}
+
+export const PlayerModel = {
   id: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -89,5 +95,3 @@ const Player = {
     defaultValue: 0,
   },
 };
-
-export default Player;

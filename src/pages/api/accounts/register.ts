@@ -1,7 +1,10 @@
 import { AccountEntity } from 'src/database';
-import { sha1Encrypt } from '../../../util/crypt';
+import { sha1Encrypt } from 'src/util/crypt';
+import { validate } from 'src/middleware/validation';
+import { registerSchema } from 'src/schemas/Register';
+import { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function handler(req, res) {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method == 'POST') {
     const { name, password, email } = req.body;
 
@@ -10,7 +13,10 @@ export default async function handler(req, res) {
     });
 
     if (count !== 0) {
-      return res.json({ success: false, message: 'Account already exists' });
+      return res.json({
+        success: false,
+        message: 'Account with that name already exists.',
+      });
     }
 
     const account = await AccountEntity.create({
@@ -28,4 +34,6 @@ export default async function handler(req, res) {
 
     res.json({ success: true, message: 'Account created successfuly' });
   }
-}
+};
+
+export default validate(registerSchema, handler);

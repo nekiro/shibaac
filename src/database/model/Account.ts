@@ -1,6 +1,11 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 
-const Account = {
+export class Account extends Model {
+  public id!: number;
+  public name!: string;
+}
+
+export const AccountModel = {
   id: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -39,5 +44,3 @@ const Account = {
     defaultValue: DataTypes.NOW,
   },
 };
-
-export default Account;

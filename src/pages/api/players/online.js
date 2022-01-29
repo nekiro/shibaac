@@ -10,6 +10,6 @@ export default async function handler(req, res) {
       },
     });
 
-    res.status(200).json(players);
+    res.status(200).json({ success: true, args: { players } });
   }
 }
