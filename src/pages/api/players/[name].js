@@ -18,14 +18,10 @@ export default async function handler(req, res) {
       // attributes: ['name'],
     });
 
-    //console.log(JSON.stringify(player, null, 2));
-
-    //await new Promise((resolve) => setTimeout(resolve, 2000));
-
     if (!player) {
-      return res.status(404).json({ message: 'Not found.' });
+      return res.status(200).json({ success: false, message: 'Not found.' });
     }
 
-    res.status(200).json(player);
+    res.status(200).json({ success: true, args: { player } });
   }
 }

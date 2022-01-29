@@ -1,17 +1,17 @@
-const crypto = require('crypto');
+import crypto from 'crypto';
 import { XMLParser } from 'fast-xml-parser';
 
-export function sha1Encrypt(input) {
+export const sha1Encrypt = (input: string): string => {
   const hash = crypto.createHash('sha1');
   const data = hash.update(input, 'utf-8');
   return data.digest('hex');
-}
+};
 
-export function parseXml(document) {
+export const parseXml = (document: string) => {
   const parser = new XMLParser({
     ignoreAttributes: false,
     attributeNamePrefix: '',
   });
 
   return parser.parse(document);
-}
+};

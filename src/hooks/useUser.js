@@ -1,25 +1,33 @@
-import { useEffect, useState, createContext, useContext } from 'react';
-import fetchJson from '../util/fetchJson';
+import {
+  useEffect,
+  useState,
+  createContext,
+  useContext,
+  useCallback,
+} from 'react';
+import { fetchApi } from '../util/request';
 
-const context = createContext();
+const context = createContext(null);
 
-export function UserContextWrapper({ children }) {
+export const UserContextWrapper = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    (async () => {
-      const user = await fetchJson('/api/user');
-      if (user.isLoggedIn) {
-        setUser(user);
-      }
-    })();
+  const fetchUser = useCallback(async () => {
+    const response = await fetchApi('GET', '/api/user');
+    if (response.isLoggedIn) {
+      setUser(response.user);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
 
   return (
     <context.Provider value={{ user, setUser }}>{children}</context.Provider>
   );
-}
+};
 
-export function useUser() {
+export const useUser = () => {
   return useContext(context);
-}
+};

@@ -4,12 +4,18 @@ export default withSessionRoute(async (req, res) => {
   const user = req.session.user;
   if (!user) {
     return res.json({
-      isLoggedIn: false,
+      success: true,
+      args: {
+        isLoggedIn: false,
+      },
     });
   }
 
   return res.json({
-    isLoggedIn: true,
-    ...user,
+    success: true,
+    args: {
+      isLoggedIn: true,
+      user,
+    },
   });
 });

@@ -1,4 +1,4 @@
-export function timestampToDate(timestamp) {
+export const timestampToDate = (timestamp: number): string => {
   return new Date(timestamp * 1000).toLocaleTimeString('en-GB', {
     year: 'numeric',
     month: 'long',
@@ -6,9 +6,9 @@ export function timestampToDate(timestamp) {
     hour: 'numeric',
     minute: 'numeric',
   });
-}
+};
 
-export function secondsToTime(seconds) {
+export const secondsToTime = (seconds: number): string => {
   const days = Math.floor(seconds / (24 * 60 * 60));
   seconds -= days * (24 * 60 * 60);
   const hours = Math.floor(seconds / (60 * 60));
@@ -24,10 +24,10 @@ export function secondsToTime(seconds) {
     seconds +
     's'
   );
-}
+};
 
 export const vocationIdToName = [
-  'None',
+  'None', // 0
   'Sorcerer',
   'Druid',
   'Paladin',
@@ -39,8 +39,8 @@ export const vocationIdToName = [
 ];
 
 export const groupToName = [
-  'None',
-  'Player',
+  'None', // 0
+  'Player', // 1
   'Tutor',
   'Senior Tutor',
   'Gamemaster',

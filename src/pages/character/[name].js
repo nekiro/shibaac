@@ -1,57 +1,54 @@
-import React, { useState, useEffect } from 'react';
-import Panel from '../../components/Panel';
-import fetchJson from '../../util/fetchJson';
+import React, { useState, useEffect, useCallback } from 'react';
+import Panel from 'src/components/Panel';
+import { fetchApi } from 'src/util/request';
 import {
   timestampToDate,
   vocationIdToName,
   groupToName,
   secondsToTime,
-} from '../../util';
+} from 'src/util';
 import { useRouter } from 'next/router';
-import StrippedTable from '../../components/StrippedTable';
+import StrippedTable from 'src/components/StrippedTable';
 import Link from 'next/link';
-import Label from '../../components/Label';
+import Label from 'src/components/Label';
 
 export default function Character() {
   const router = useRouter();
   const { name } = router.query;
 
-  const [state, setState] = useState({
-    character: null,
-    town: null,
-    loading: true,
-  });
+  const [state, setState] = useState(null);
 
-  useEffect(() => {
+  const fetchData = useCallback(async () => {
     if (!name) return;
 
-    (async () => {
-      let character = null;
-      let town = null;
+    const state = {};
 
-      try {
-        character = await fetchJson(`/api/players/${name}`);
-      } catch (error) {}
+    const response = await fetchApi('GET', `/api/players/${name}`);
+    if (response.success) {
+      state.player = response.player;
 
-      try {
-        // town is not really mandatory to show character page, so lets leave it here
-        town = await fetchJson(`/api/towns/${character.town_id}`);
-      } catch {}
+      const townResponse = await fetchApi(
+        'GET',
+        `/api/towns/${state.player.town_id}`
+      );
 
-      setState((currentState) => ({
-        ...currentState,
-        character,
-        town,
-        loading: false,
-      }));
-    })();
+      if (townResponse.success) {
+        state.town = townResponse.town;
+      }
+    }
+
+    setState(state);
   }, [name]);
 
-  if (state.loading) {
-    return <Panel header="Character Information" isLoading={state.loading} />;
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  if (!state) {
+    return <Panel header="Character Information" isLoading={true} />;
   }
 
-  if (!state.character) {
+  if (!state.player) {
     return (
       <Panel header="Character Info">
         <div className="alert alert-danger">Character not found.</div>
@@ -60,10 +57,13 @@ export default function Character() {
   }
 
   const lastLoginDate =
-    state.character.lastlogin > 0
-      ? timestampToDate(state.character.lastlogin)
+    state.player.lastlogin > 0
+      ? timestampToDate(state.player.lastlogin)
       : 'Never logged in';
-  const isPremium = state.character.premium_ends_at >= Date.now();
+
+  const isPremium = state.player.premium_ends_at >= Date.now();
+
+  // TODO: fix this page to show all informations
 
   return (
     <>
@@ -71,19 +71,19 @@ export default function Character() {
         <StrippedTable>
           <tr>
             <td width="20%">Name</td>
-            <td>{state.character.name}</td>
+            <td>{state.player.name}</td>
           </tr>
           <tr>
             <td>Sex</td>
-            <td>{state.character.sex == 1 ? 'male' : 'female'}</td>
+            <td>{state.player.sex == 1 ? 'male' : 'female'}</td>
           </tr>
           <tr>
             <td>Profession</td>
-            <td>{state.character.vocation}</td>
+            <td>{state.player.vocation}</td>
           </tr>
           <tr>
             <td>Level</td>
-            <td>{state.character.level}</td>
+            <td>{state.player.level}</td>
           </tr>
           <tr>
             <td>Residence</td>
@@ -99,7 +99,7 @@ export default function Character() {
           </tr>
           <tr>
             <td>Online Time</td>
-            <td>{secondsToTime(state.character.onlinetime)}</td>
+            <td>{secondsToTime(state.player.onlinetime)}</td>
           </tr>
           {/* <tr>
             <td>Comment</td>
@@ -112,7 +112,7 @@ export default function Character() {
         <StrippedTable>
           <tr>
             <td>Position</td>
-            <td>{groupToName[state.character.group_id]}</td>
+            <td>{groupToName[state.player.group_id]}</td>
           </tr>
           <tr>
             <td>Last Login</td>
@@ -120,7 +120,7 @@ export default function Character() {
           </tr>
           <tr>
             <td>Created</td>
-            <td>{timestampToDate(state.character.creation)}</td>
+            <td>{timestampToDate(state.player.creation)}</td>
           </tr>
           <tr>
             <td>Account Status</td>
@@ -150,10 +150,10 @@ export default function Character() {
         <StrippedTable
           head={[{ text: 'Name' }, { text: 'Level' }, { text: 'Status' }]}
         >
-          {state.character.account.players.map((player) => (
+          {state.player.account.players.map((player) => (
             <tr key={player.name}>
               <td width="52%">
-                {player.name == state.character.name ? (
+                {player.name == state.player.name ? (
                   player.name
                 ) : (
                   <Link href={`/character/${player.name}`}>{player.name}</Link>

@@ -1,5 +1,3 @@
-import { server } from './config';
-
 type FetchOptions = {
   data: any;
 };
@@ -7,7 +5,7 @@ type FetchOptions = {
 export const fetchApi = async (
   method: string,
   url: string,
-  options: FetchOptions
+  options: FetchOptions | null | undefined
 ) => {
   const _options: RequestInit = {
     method,
@@ -18,7 +16,11 @@ export const fetchApi = async (
     _options.body = JSON.stringify(options.data);
   }
 
-  const response: Response = await fetch(`${server}${url}`, _options);
+  const response: Response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}${url}`,
+    _options
+  );
+
   const data = await response.json();
 
   //TODO: handle yup validation exceptions

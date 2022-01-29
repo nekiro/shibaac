@@ -6,9 +6,9 @@ export default async function handler(req, res) {
 
     const town = await TownEntity.findByPk(id);
     if (!town) {
-      return res.status(404).json({ message: 'Not found' });
+      return res.status(200).json({ success: false, message: 'Not found' });
     }
 
-    res.status(200).json(town);
+    res.status(200).json({ success: true, args: { town } });
   }
 }

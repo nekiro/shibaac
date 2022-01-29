@@ -1,25 +1,28 @@
 import sanitize from 'sanitize-html';
 import Panel from '../components/Panel';
-import fetchJson from '../util/fetchJson';
-import { useState, useEffect } from 'react';
-import Loader from '../components/Loader';
+import { useState, useEffect, useCallback } from 'react';
+import { fetchApi } from '../util/request';
 
 export default function Index() {
   const [news, setNews] = useState(null);
 
-  useEffect(() => {
-    (async () => {
-      setNews(await fetchJson(`/api/news`));
-    })();
+  const fetchNews = useCallback(async () => {
+    const response = await fetchApi('GET', '/api/news');
+    console.log(response);
+    if (response.success) {
+      setNews(response.news);
+    }
   }, []);
 
+  useEffect(() => {
+    fetchNews();
+  }, [fetchNews]);
+
   if (!news) {
-    return (
-      <Panel>
-        <Loader />
-      </Panel>
-    );
+    return <Panel isLoading={true}></Panel>;
   }
+
+  // TODO: paginate?
 
   return (
     <>
