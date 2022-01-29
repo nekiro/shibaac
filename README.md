@@ -4,11 +4,11 @@
 
 <h1 align="center">WORK IN PROGRESS</h1>
 
-## Stack
+## Technologies
 
+- Node.js
 - Next.js
-- metro-bootstrap
-- Mysql
+- Sequelize ORM (mysql)
 
 ## Features
 

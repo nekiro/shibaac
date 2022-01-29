@@ -54,7 +54,7 @@ export default function ChangeEmail() {
           fields={fields}
           buttons={buttons}
           response={response}
-        ></FormWrapper>
+        />
       </Panel>
     </>
   );

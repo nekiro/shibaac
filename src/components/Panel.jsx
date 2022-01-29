@@ -1,8 +1,7 @@
 import React from 'react';
-import Loader from '../Loader';
-import style from './panel.module.css';
+import Loader from './Loader';
 
-const FloatingWindow = ({ header, date, identifier, children, isLoading }) => {
+const Panel = ({ header, date, identifier, children, isLoading }) => {
   return (
     <div key={identifier} className="panel panel-default">
       <div key={identifier} className="panel-heading">
@@ -18,11 +17,11 @@ const FloatingWindow = ({ header, date, identifier, children, isLoading }) => {
   );
 };
 
-FloatingWindow.defaultProps = {
+Panel.defaultProps = {
   header: 'Loading...',
   date: null,
   identifier: null,
   isLoading: false,
 };
 
-export default FloatingWindow;
+export default Panel;

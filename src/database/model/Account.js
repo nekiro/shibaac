@@ -12,6 +12,7 @@ const Account = {
     allowNull: false,
   },
   password: {
+    // TODO, this is included, because server is in development, get rid of it, or dont include by default
     type: DataTypes.STRING,
     allowNull: false,
   },

@@ -32,25 +32,34 @@ const FormWrapper = ({
             </p>
           )}
 
-          {fields.map((field) => (
-            <div className="form-group" key={field.name}>
-              <label
-                htmlFor={field.name}
-                className={`col-lg-${field.label.size ?? 2} control-label`}
-              >
-                {field.label.text}
-              </label>
-              <div className={`col-lg-${field.size ?? 10}`}>
-                <Field
-                  type={field.type}
-                  className="form-control"
-                  name={field.name}
-                  placeholder={field.placeholder}
-                />
-                <Label success={false} text={errors[field.name]} />
+          {fields &&
+            fields.map((field) => (
+              <div className="form-group" key={field.name}>
+                <label
+                  htmlFor={field.name}
+                  className={`col-lg-${field.label.size ?? 2} control-label`}
+                >
+                  {field.label.text}
+                </label>
+                <div className={`col-lg-${field.size ?? 10}`}>
+                  <Field
+                    as={field.as ?? 'input'}
+                    type={field.type}
+                    className="form-control"
+                    name={field.name}
+                    placeholder={field.placeholder}
+                  >
+                    {field.options &&
+                      field.options.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.text}
+                        </option>
+                      ))}
+                  </Field>
+                  <Label success={false} text={errors[field.name]} />
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
           <div className="text-center">
             {buttons.map((button) => (
               <Button

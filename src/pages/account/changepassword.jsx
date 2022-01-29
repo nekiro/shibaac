@@ -83,7 +83,7 @@ export default function ChangePassword() {
           fields={fields}
           buttons={buttons}
           response={response}
-        ></FormWrapper>
+        />
       </Panel>
     </>
   );

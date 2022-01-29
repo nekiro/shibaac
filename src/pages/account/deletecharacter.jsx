@@ -1,86 +1,89 @@
-import Link from 'next/link';
-import React from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Panel from '../../components/Panel';
 import { withSessionSsr } from '../../util/session';
+import { fetchApi } from '../../util/request';
+import * as Yup from 'yup';
+import FormWrapper from '../../components/FormWrapper';
 
-export default function deletecharacter() {
-  // if logged in redirect to account page
+// TODO: fix this schema with all requirements
+const Schema = Yup.object().shape({
+  //name: Yup.string().required('Required'),
+  password: Yup.string().required('Required'),
+});
 
-  //const router = useRouter();
+const buttons = [
+  { type: 'submit', btnType: 'primary', value: 'Submit' },
+  { href: '/account', value: 'Back' },
+];
 
-  async function handleSubmit(event) {
-    event.preventDefault();
+export default function DeleteCharacter({ user }) {
+  const [response, setResponse] = useState(null);
+  const [data, setData] = useState(null);
 
-    // const response = await fetch('/api/accounts/login', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({
-    //     name: event.target.account.value,
-    //     password: event.target.password.value,
-    //   }),
-    // });
+  const fetchCharacters = useCallback(async () => {
+    const response = await fetchApi('GET', `/api/accounts/${user.id}`);
+    if (response.success) {
+      const { account } = response.args;
 
-    // if (response.ok) {
-    //   // setUser({
-    //   //   username: event.target.account.value,
-    //   // });
-    //   router.push('/account');
-    // } else {
-    //   // show error
-    // }
+      setData({
+        fields: [
+          {
+            as: 'select',
+            name: 'name',
+            label: { text: 'Name', size: 3 },
+            size: 9,
+            options: account.players.map((char) => ({
+              value: char.name,
+              text: char.name,
+            })),
+          },
+          {
+            type: 'password',
+            name: 'password',
+            label: { text: 'Password', size: 3 },
+            size: 9,
+          },
+        ],
+        initialValues: { name: account.players[0].name, password: '' },
+      });
+    }
+  }, [user]);
+
+  useEffect(() => {
+    fetchCharacters();
+  }, [fetchCharacters]);
+
+  if (!data) {
+    return <Panel isLoading={true} />;
   }
 
+  const onSubmit = async (values, { resetForm }) => {
+    const response = await fetchApi('POST', '/api/accounts/deletecharacter', {
+      data: {
+        name: values.name,
+        password: values.password,
+      },
+    });
+
+    setResponse(response);
+    resetForm();
+  };
+
   return (
-    <>
-      <Panel header="Delete Character">
-        <p>
-          To delete a character enter the name of the character and your
-          password.
-        </p>
-        <form className="form-horizontal" role="form">
-          <input type="hidden" name="deletecharactersave" value="1" />
-          <fieldset>
-            <div className="form-group">
-              <label htmlFor="delete_name" className="col-lg-2 control-label">
-                Name
-              </label>
-              <div className="col-lg-10">
-                <input
-                  type="text"
-                  className="form-control"
-                  name="delete_name"
-                  placeholder="4 to 30 characters"
-                />
-              </div>
-            </div>
-            <div className="form-group">
-              <label
-                htmlFor="delete_password"
-                className="col-lg-2 control-label"
-              >
-                Password
-              </label>
-              <div className="col-lg-10">
-                <input
-                  type="password"
-                  className="form-control"
-                  name="delete_password"
-                  placeholder="4 to 30 characters"
-                />
-              </div>
-            </div>
-            <div className="text-center">
-              <button type="submit" className="btn btn-primary">
-                Submit
-              </button>
-              <Link href="/account" passHref>
-                <button className="btn btn-default">Back</button>
-              </Link>
-            </div>
-          </fieldset>
-        </form>
-      </Panel>
-    </>
+    <Panel header="Delete Character">
+      <p align="center">
+        To delete a character choose the character and enter your password.
+      </p>
+
+      <FormWrapper
+        validationSchema={Schema}
+        onSubmit={onSubmit}
+        fields={data.fields}
+        buttons={buttons}
+        response={response}
+        initialValues={data.initialValues}
+      />
+    </Panel>
   );
 }
 
@@ -96,6 +99,6 @@ export const getServerSideProps = withSessionSsr(async function ({ req }) {
   }
 
   return {
-    props: {},
+    props: { user },
   };
 });

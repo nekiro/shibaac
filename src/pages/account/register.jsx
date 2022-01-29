@@ -57,7 +57,7 @@ const buttons = [
 
 export default function Register() {
   const [response, setResponse] = useState(null);
-  const { user, setUser } = useUser();
+  const { user } = useUser();
 
   const onSubmit = async (values, { resetForm }) => {
     const response = await fetchApi('POST', '/api/accounts/register', {
@@ -87,7 +87,7 @@ export default function Register() {
           fields={fields}
           buttons={buttons}
           response={response}
-        ></FormWrapper>
+        />
       </Panel>
     </>
   );
