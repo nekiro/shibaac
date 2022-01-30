@@ -1,4 +1,4 @@
-import { withSessionRoute } from '../../util/session';
+import { withSessionRoute } from 'src/util/session';
 
 export default withSessionRoute(async (req, res) => {
   const user = req.session.user;

@@ -1,7 +1,6 @@
 import PromiseSocket from 'promise-socket';
 import net from 'net';
 import { parseXml } from '../util/crypt';
-import { protocolStatus } from '../util/config';
 
 let lastUpdated = 0;
 
@@ -13,20 +12,24 @@ const cache = {
   name: '',
 };
 
-export async function getCache() {
+export const getCache = async () => {
   if (lastUpdated == 0 || Date.now() >= lastUpdated + 30000) {
     await updateCache();
   }
 
   return cache;
-}
+};
 
-export async function updateCache() {
+export const updateCache = async () => {
   //console.log(`[${Date.now()}] update cache called`);
 
   try {
     const socket = new PromiseSocket(new net.Socket());
-    await socket.connect(protocolStatus.port, protocolStatus.host);
+    await socket.connect(
+      parseInt(process.env.STATUS_PORT as string),
+      process.env.STATUS_HOST as string
+    );
+
     await socket.write(
       // ASCII characters
       // 0x06 -> ACK
@@ -34,12 +37,13 @@ export async function updateCache() {
       // 0xFF -> protocol identifier (protocol status)
       // 0xFF -> status byte
       // 0x69 0x6E 0x66 0x6F (info) -> string
-      new Uint8Array([0x06, 0x00, 0xff, 0xff, 0x69, 0x6e, 0x66, 0x6f])
+      Buffer.from([0x06, 0x00, 0xff, 0xff, 0x69, 0x6e, 0x66, 0x6f])
     );
 
     // wait 1s for response
     socket.setTimeout(1000);
-    const doc = parseXml((await socket.readAll()).toString());
+    const data = (await socket.readAll()) as Buffer;
+    const doc = parseXml(data.toString());
 
     // update cache
     cache.onlineCount = doc.tsqp.players.online;
@@ -55,4 +59,4 @@ export async function updateCache() {
 
   // set last updated
   lastUpdated = Date.now();
-}
+};
