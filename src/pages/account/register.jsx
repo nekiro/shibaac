@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Panel from 'src/components/Panel';
 import Head from 'src/layout/Head';
-import { withSessionSsr } from '../../util/session';
+import { withSessionSsr } from 'src/util/session';
 import { fetchApi } from 'src/util/request';
 import FormWrapper from 'src/components/FormWrapper';
 import { registerSchema } from 'src/schemas/Register';

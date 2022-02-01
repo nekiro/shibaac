@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import Panel from '../../components/Panel';
-import { withSessionSsr } from '../../util/session';
-import { fetchApi } from '../../util/request';
-import FormWrapper from '../../components/FormWrapper';
+import Panel from 'src/components/Panel';
+import { withSessionSsr } from 'src/util/session';
+import { fetchApi } from 'src/util/request';
+import FormWrapper from 'src/components/FormWrapper';
 import { createCharacterSchema } from 'src/schemas/CreateCharacter';
 
 const fields = [

@@ -17,7 +17,7 @@ const bannedWords = [
 // - first letter is upper case alphabet character
 // - last letter is lower case alphabet character
 // - doesn't have more than 3 words
-// - contains only alphabet letters + space
+// - contains only alphabet letters and spaces
 
 export const createCharacterSchema = Yup.object().shape({
   name: Yup.string()
@@ -29,14 +29,12 @@ export const createCharacterSchema = Yup.object().shape({
       'Invalid letters, words or format. Use a-Z and spaces.'
     )
     .test('banned-words', 'Contains illegal words', async (value: any) => {
-      if (!value) return true;
-
-      const split = value.split(' ');
-      for (const str of split) {
-        if (bannedWords.includes(str.toLowerCase())) {
-          return false;
-        }
+      if (value) {
+        return !!value
+          .split(' ')
+          .find((str: string) => bannedWords.includes(str.toLowerCase()));
       }
+
       return true;
     })
     .test(

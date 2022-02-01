@@ -1,14 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import Panel from '../../components/Panel';
-import * as Yup from 'yup';
-import FormWrapper from '../../components/FormWrapper';
-import { fetchApi } from '../../util/request';
-import { withSessionSsr } from '../../util/session';
-
-const Schema = Yup.object().shape({
-  newEmail: Yup.string().email('Must be a valid email.').required('Required'),
-  password: Yup.string().required('Required'),
-});
+import React, { useState } from 'react';
+import Panel from 'src/components/Panel';
+import FormWrapper from 'src/components/FormWrapper';
+import { fetchApi } from 'src/util/request';
+import { withSessionSsr } from 'src/util/session';
+import { changeEmailSchema } from 'src/schemas/ChangeEmail';
 
 const fields = [
   {
@@ -49,7 +44,7 @@ export default function ChangeEmail() {
     <>
       <Panel header="Change Email">
         <FormWrapper
-          validationSchema={Schema}
+          validationSchema={changeEmailSchema}
           onSubmit={onSubmit}
           fields={fields}
           buttons={buttons}

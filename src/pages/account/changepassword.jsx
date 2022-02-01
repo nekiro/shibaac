@@ -1,37 +1,15 @@
 import React, { useState } from 'react';
-import Panel from '../../components/Panel';
-import * as Yup from 'yup';
-import FormWrapper from '../../components/FormWrapper';
-import { fetchApi } from '../../util/request';
-import { withSessionSsr } from '../../util/session';
-
-const Schema = Yup.object().shape({
-  newPassword: Yup.string().required('Required'),
-  repeatNewPassword: Yup.string()
-    .required('Required')
-    .when('newPassword', {
-      is: (val) => (val?.length > 0 ? true : false),
-      then: Yup.string().oneOf(
-        [Yup.ref('newPassword')],
-        'Both password need to be the same'
-      ),
-    }),
-  password: Yup.string()
-    .required('Required')
-    .when('newPassword', {
-      is: (val) => (val?.length > 0 ? true : false),
-      then: Yup.string().notOneOf(
-        [Yup.ref('newPassword')],
-        'New password must be different than current one'
-      ),
-    }),
-});
+import Panel from 'src/components/Panel';
+import FormWrapper from 'src/components/FormWrapper';
+import { fetchApi } from 'src/util/request';
+import { withSessionSsr } from 'src/util/session';
+import { changePasswordSchema } from 'src/schemas/ChangePassword';
 
 const fields = [
   {
     type: 'password',
     name: 'newPassword',
-    placeholder: '4 to 30 characters',
+    placeholder: '6 to 30 characters',
     label: { text: 'New Password', size: 3 },
     size: 9,
   },
@@ -78,7 +56,7 @@ export default function ChangePassword() {
         </p>
 
         <FormWrapper
-          validationSchema={Schema}
+          validationSchema={changePasswordSchema}
           onSubmit={onSubmit}
           fields={fields}
           buttons={buttons}

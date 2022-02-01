@@ -1,88 +1,86 @@
-import React from 'react';
-import Panel from '../../components/Panel';
-import { useRouter } from 'next/router';
+import React, { useState } from 'react';
+import Panel from 'src/components/Panel';
+import { withSessionSsr } from 'src/util/session';
+import FormWrapper from 'src/components/FormWrapper';
+
+const fields = [
+  {
+    type: 'text',
+    name: 'nick',
+    label: { text: 'Character Name', size: 3 },
+    size: 9,
+  },
+  {
+    as: 'select',
+    name: 'vocation',
+    label: { text: 'Option', size: 3 },
+    size: 9,
+    options: [
+      {
+        value: 'email',
+        text: 'Use email address to receive account name and a new password',
+      },
+      {
+        value: 'reckey',
+        text: 'Use recovery key to change your email and password',
+      },
+    ],
+  },
+];
+
+const buttons = [
+  { type: 'submit', btnType: 'primary', value: 'Submit' },
+  { value: 'Reset' },
+];
 
 export default function Lost() {
-  // if logged in redirect to account page
+  const [response, setResponse] = useState(null);
 
-  const router = useRouter();
-
-  async function handleSubmit(event) {
-    event.preventDefault();
-
-    // const response = await fetch('/api/accounts/login', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({
-    //     name: event.target.account.value,
-    //     password: event.target.password.value,
-    //   }),
+  const onSubmit = async (values, { resetForm }) => {
+    // const response = await fetchApi('POST', '/api/accounts/register', {
+    //   data: {
+    //     name: values.account,
+    //     password: values.password,
+    //     email: values.email,
+    //   },
     // });
-
-    // if (response.ok) {
-    //   // setUser({
-    //   //   username: event.target.account.value,
-    //   // });
-    //   router.push('/account');
-    // } else {
-    //   // show error
-    // }
-  }
+    // setResponse(response);
+    // resetForm();
+  };
 
   return (
     <Panel header="Lost Account">
-      <div className="panel-body">
-        <p>
-          The Lost Account Interface can help you to get back your account name
-          and password. Please enter your character name and select what you
-          want to do.
-        </p>
-        <br />
+      TODO
+      {/* <p>
+        The Lost Account Interface can help you to get back your account name
+        and password. Please enter your character name and select what you want
+        to do.
+      </p>
+      <br />
 
-        <form className="form-horizontal" onSubmit={handleSubmit}>
-          <input type="hidden" name="character" value="" />
-          <fieldset>
-            <div className="form-group">
-              <label htmlFor="nick" className="col-lg-3 control-label">
-                Character Name
-              </label>
-              <div className="col-lg-9">
-                <input
-                  type="text"
-                  className="form-control"
-                  id="nick"
-                  name="nick"
-                  placeholder="2 to 30 characters"
-                  maxLength={30}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="select" className="col-lg-3 control-label">
-                Option
-              </label>
-              <div className="col-lg-9">
-                <select className="form-control" name="action_type">
-                  <option value="email">
-                    Use email address to receive account name and a new password
-                  </option>
-                  <option value="reckey">
-                    Use recovery key to change your email and password
-                  </option>
-                </select>
-              </div>
-            </div>
-
-            <div className="text-center">
-              <button type="submit" className="btn btn-primary">
-                Submit
-              </button>
-            </div>
-          </fieldset>
-        </form>
-      </div>
+      <FormWrapper
+        validationSchema={null}
+        onSubmit={onSubmit}
+        fields={fields}
+        buttons={buttons}
+        response={response}
+      /> */}
     </Panel>
   );
 }
+
+export const getServerSideProps = withSessionSsr(async function ({ req }) {
+  const { user } = req.session;
+  if (user) {
+    return {
+      redirect: {
+        destination: '/account',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+});

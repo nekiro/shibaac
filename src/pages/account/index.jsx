@@ -115,14 +115,19 @@ export default function Account({ user }) {
                       <a>{player.name}</a>
                     </Link>
 
-                    <div className="pull-right">
-                      <a
-                        className="btn btn-sm btn-primary"
-                        href="?view=account&action=editcharacter"
+                    {/* <div className="pull-right">
+                      <Link
+                        href={`/account/editcharacter/${player.name}`}
+                        passHref
                       >
-                        <i className="fa fa-pencil"></i> Edit
-                      </a>
-                    </div>
+                        <button
+                          className="btn btn-sm btn-primary"
+                          style={{ margin: { right: '5px' } }}
+                        >
+                          <i className="fa fa-pencil"></i> Edit
+                        </button>
+                      </Link>
+                    </div> */}
                   </td>
                 </tr>
               ))}
