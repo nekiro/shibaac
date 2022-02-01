@@ -1,5 +1,11 @@
-import Panel from '../components/Panel';
-
-export default function _404() {
-  return <Panel header="Not Found">Page not found</Panel>;
+export default function Custom404() {
+  return null;
 }
+
+export const getStaticProps = () => {
+  return {
+    redirect: {
+      destination: '/',
+    },
+  };
+};
