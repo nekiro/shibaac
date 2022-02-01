@@ -95,7 +95,6 @@ export default function Character() {
               <td>none</td>
             </tr>
           )}
-
           <tr>
             <td>Last Login</td>
             <td>{lastLoginDate}</td>

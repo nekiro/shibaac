@@ -1,35 +1,34 @@
-import FloatingWindow from '../../components/FloatingWindow';
+import Panel from 'src/components/Panel';
 import { useRouter } from 'next/router';
+import FormWrapper from 'src/components/FormWrapper';
+import { searchCharacterSchema } from 'src/schemas/SearchCharacter';
+
+const fields = [
+  {
+    type: 'text',
+    name: 'name',
+    label: { text: 'Character Name', size: 3 },
+    size: 7,
+  },
+];
+
+const buttons = [{ type: 'submit', btnType: 'primary', value: 'Submit' }];
 
 export default function Character() {
   const router = useRouter();
 
-  async function handleSubmit(event) {
-    event.preventDefault();
-    router.push(`/character/${event.target.name.value}`);
-  }
+  const onSubmit = async (values) => {
+    router.push(`/character/${values.name}`);
+  };
 
   return (
-    <FloatingWindow header="Search Character">
-      <form role="form" className="form-horizontal" onSubmit={handleSubmit}>
-        <div className="form-inline">
-          <label className="col-lg-2 control-label">Name</label>
-          <input
-            type="text"
-            maxLength={35}
-            className="form-control"
-            name="name"
-            placeholder=""
-            required
-          />
-          <button type="submit" className="btn btn-primary">
-            Submit
-          </button>
-          <button type="reset" className="btn btn-default">
-            Cancel
-          </button>
-        </div>
-      </form>
-    </FloatingWindow>
+    <Panel header="Search Character">
+      <FormWrapper
+        validationSchema={searchCharacterSchema}
+        onSubmit={onSubmit}
+        fields={fields}
+        buttons={buttons}
+      />
+    </Panel>
   );
 }
