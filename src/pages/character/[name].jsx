@@ -63,8 +63,6 @@ export default function Character() {
 
   const isPremium = state.player.premium_ends_at >= Date.now();
 
-  // TODO: fix this page to show all informations
-
   return (
     <>
       <Panel header="Character Information">
@@ -79,28 +77,36 @@ export default function Character() {
           </tr>
           <tr>
             <td>Profession</td>
-            <td>{state.player.vocation}</td>
+            <td>{vocationIdToName[state.player.vocation]}</td>
           </tr>
           <tr>
             <td>Level</td>
             <td>{state.player.level}</td>
           </tr>
-          <tr>
-            <td>Residence</td>
-            <td>{state.town?.name}</td>
-          </tr>
-          <tr>
-            <td>Guild</td>
-            <td>none</td>
-          </tr>
+          {state.town && (
+            <tr>
+              <td>Residence</td>
+              <td>{state.town.name}</td>
+            </tr>
+          )}
+          {state.player.guild && (
+            <tr>
+              <td>Guild</td>
+              <td>none</td>
+            </tr>
+          )}
+
           <tr>
             <td>Last Login</td>
             <td>{lastLoginDate}</td>
           </tr>
-          <tr>
-            <td>Online Time</td>
-            <td>{secondsToTime(state.player.onlinetime)}</td>
-          </tr>
+          {state.player.lastlogin > 0 && (
+            <tr>
+              <td>Online Time</td>
+              <td>{secondsToTime(state.player.onlinetime)}</td>
+            </tr>
+          )}
+
           {/* <tr>
             <td>Comment</td>
             <td>lol</td>
@@ -118,10 +124,12 @@ export default function Character() {
             <td>Last Login</td>
             <td>{lastLoginDate}</td>
           </tr>
-          <tr>
-            <td>Created</td>
-            <td>{timestampToDate(state.player.creation)}</td>
-          </tr>
+          {state.player.creation && (
+            <tr>
+              <td>Created</td>
+              <td>{timestampToDate(state.player.creation)}</td>
+            </tr>
+          )}
           <tr>
             <td>Account Status</td>
             <td>
@@ -135,16 +143,22 @@ export default function Character() {
         </StrippedTable>
       </Panel>
 
-      <Panel header="Deaths">
-        <StrippedTable>
-          <tr>
-            <td width="10%" align="center">
-              date
-            </td>
-            <td>Died at level 22 by Nekiro and xD</td>
-          </tr>
-        </StrippedTable>
-      </Panel>
+      {state.player.playerDeaths.length > 0 && (
+        <Panel header="Deaths">
+          <StrippedTable head={[{ text: 'Date' }, { text: 'Message' }]}>
+            {state.player.playerDeaths.map((death, index) => (
+              <tr key={index}>
+                <td width="30%" align="center">
+                  {timestampToDate(death.time)}
+                </td>
+                <td>
+                  Died at level {death.level} by {death.killed_by}
+                </td>
+              </tr>
+            ))}
+          </StrippedTable>
+        </Panel>
+      )}
 
       <Panel header="Characters">
         <StrippedTable

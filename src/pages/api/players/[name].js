@@ -1,4 +1,9 @@
-import { PlayerEntity, AccountEntity, PlayersOnlineEntity } from 'src/database';
+import {
+  PlayerEntity,
+  AccountEntity,
+  PlayersOnlineEntity,
+  PlayerDeathsEntity,
+} from 'src/database';
 
 export default async function handler(req, res) {
   if (req.method == 'GET') {
@@ -8,14 +13,11 @@ export default async function handler(req, res) {
       where: {
         name: name,
       },
-      include: {
-        model: AccountEntity,
-        include: {
-          model: PlayerEntity,
-          include: PlayersOnlineEntity,
-        },
-      },
-      // attributes: ['name'],
+      include: [
+        { model: AccountEntity, include: PlayerEntity },
+        PlayersOnlineEntity,
+        PlayerDeathsEntity,
+      ],
     });
 
     if (!player) {

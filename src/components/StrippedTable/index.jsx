@@ -1,6 +1,8 @@
 import React from 'react';
 import style from './strippedtable.module.css';
 
+// TODO: REWORK THIS
+
 const StripedTable = ({ head, children }) => {
   return (
     <table className={style['stripped-table']}>
