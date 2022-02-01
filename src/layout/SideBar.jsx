@@ -57,25 +57,22 @@ const SideBar = () => {
       <Panel header="Top 5 Level" isLoading={!state.topPlayers}>
         <table className="table table-condensed table-content table-striped">
           <tbody>
-            {state.topPlayers
-              ? state.topPlayers.map((player) => (
-                  <tr key={player.name}>
-                    <td style={{ width: '80%' }}>
-                      <strong>1.</strong>{' '}
-                      <Link href={`/character/${player.name}`} passHref>
-                        <a>
-                          <b>{player.name}</b>
-                        </a>
-                      </Link>
-                    </td>
-                    <td>
-                      <span className="label label-primary">
-                        {player.level}
-                      </span>
-                    </td>
-                  </tr>
-                ))
-              : null}
+            {state.topPlayers &&
+              state.topPlayers.map((player, index) => (
+                <tr key={player.name}>
+                  <td style={{ width: '80%' }}>
+                    <strong>{index + 1}. </strong>
+                    <Link href={`/character/${player.name}`} passHref>
+                      <a>
+                        <b>{player.name}</b>
+                      </a>
+                    </Link>
+                  </td>
+                  <td>
+                    <span className="label label-primary">{player.level}</span>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </Panel>
