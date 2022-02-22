@@ -1,15 +1,8 @@
 import * as Yup from 'yup';
 
-const bannedWords = [
-  'gm',
-  'cm',
-  'god',
-  'tutor',
-  'cancer',
-  'suck',
-  'sux',
-  'fuck',
-];
+const bannedSequences = ['tutor', 'cancer', 'suck', 'sux', 'fuck'];
+
+const bannedWords = ['gm', 'cm', 'god'];
 
 // Names is valid when:
 // - doesn't contains banned words
@@ -28,15 +21,31 @@ export const createCharacterSchema = Yup.object().shape({
       /^[aA-zZ\s]+$/,
       'Invalid letters, words or format. Use a-Z and spaces.'
     )
-    .test('banned-words', 'Contains illegal words', async (value: any) => {
-      if (value) {
-        return !!value
-          .split(' ')
-          .find((str: string) => bannedWords.includes(str.toLowerCase()));
-      }
+    .test(
+      'banned-words',
+      'Contains illegal words',
+      async (value: string | undefined) => {
+        console.log(value);
+        if (value) {
+          const sequences = bannedSequences.filter(
+            (str: string) =>
+              value.split(' ').join('').indexOf(str.toLowerCase()) != -1
+          );
 
-      return true;
-    })
+          if (sequences.length > 0) {
+            return false;
+          }
+
+          const words = value
+            .split(' ')
+            .filter((str: string) => bannedWords.includes(str.toLowerCase()));
+
+          return words.length == 0;
+        } else {
+          return false;
+        }
+      }
+    )
     .test(
       'first-char-alphabet',
       'First letter must be an A-Z capital letter.',
