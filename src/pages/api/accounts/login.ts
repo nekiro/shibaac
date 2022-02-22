@@ -1,17 +1,17 @@
-import { AccountEntity } from 'src/database';
 import { sha1Encrypt } from 'src/util/crypt';
 import { withSessionRoute } from 'src/util/session';
 import { validate } from 'src/middleware/validation';
 import { loginSchema } from 'src/schemas/Login';
 import { NextApiRequest, NextApiResponse } from 'next';
+import prisma from 'src/database/instance';
 
 const handler = withSessionRoute(
   async (req: NextApiRequest, res: NextApiResponse) => {
     const { name, password } = req.body;
 
-    const account = await AccountEntity.findOne({
+    const account = await prisma.accounts.findFirst({
       where: { name, password: sha1Encrypt(password) },
-      attributes: ['id', `name`],
+      select: { id: true, name: true },
     });
 
     if (!account) {

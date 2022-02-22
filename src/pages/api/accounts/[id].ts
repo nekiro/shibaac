@@ -1,12 +1,15 @@
-import { AccountEntity, PlayerEntity } from 'src/database';
 import { NextApiRequest, NextApiResponse } from 'next';
+import prisma from 'src/database/instance';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method == 'GET') {
     //TODO: accept query parameters to pull only required data
 
-    const account = await AccountEntity.findByPk(req.query.id as string, {
-      include: { model: PlayerEntity, attributes: ['name', 'level'] },
+    const account = await prisma.accounts.findFirst({
+      where: {
+        id: Number(req.query.id),
+      },
+      include: { players: { select: { name: true, level: true } } },
     });
 
     if (!account) {

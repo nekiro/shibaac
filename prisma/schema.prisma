@@ -1,0 +1,135 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model account_bans {
+  account_id Int      @id
+  reason     String   @db.VarChar(255)
+  banned_at  BigInt
+  expires_at BigInt
+  banned_by  Int
+  accounts   accounts @relation(fields: [account_id], references: [id], onDelete: Cascade, map: "account_bans_ibfk_1")
+  players    players  @relation(fields: [banned_by], references: [id], onDelete: Cascade, map: "account_bans_ibfk_2")
+
+  @@index([banned_by], map: "banned_by")
+}
+
+model accounts {
+  id                  Int                   @id @default(autoincrement())
+  name                String                @unique(map: "name") @db.VarChar(32)
+  password            String                @db.Char(40)
+  secret              String?               @db.Char(16)
+  type                Int                   @default(1)
+  premium_ends_at     Int                   @default(0) @db.UnsignedInt
+  email               String                @default("") @db.VarChar(255)
+  creation            Int                   @default(0)
+  account_bans        account_bans?
+  players             players[]
+}
+
+model players {
+  id                                                       Int                      @id @default(autoincrement())
+  name                                                     String                   @unique(map: "name") @db.VarChar(255)
+  group_id                                                 Int                      @default(1)
+  account_id                                               Int                      @default(0)
+  level                                                    Int                      @default(1)
+  vocation                                                 Int                      @default(0)
+  health                                                   Int                      @default(150)
+  healthmax                                                Int                      @default(150)
+  experience                                               BigInt                   @default(0) @db.UnsignedBigInt
+  lookbody                                                 Int                      @default(0)
+  lookfeet                                                 Int                      @default(0)
+  lookhead                                                 Int                      @default(0)
+  looklegs                                                 Int                      @default(0)
+  looktype                                                 Int                      @default(136)
+  lookaddons                                               Int                      @default(0)
+  lookmount                                                Int                      @default(0)
+  lookmounthead                                            Int                      @default(0)
+  lookmountbody                                            Int                      @default(0)
+  lookmountlegs                                            Int                      @default(0)
+  lookmountfeet                                            Int                      @default(0)
+  direction                                                Int                      @default(2) @db.UnsignedTinyInt
+  maglevel                                                 Int                      @default(0)
+  mana                                                     Int                      @default(0)
+  manamax                                                  Int                      @default(0)
+  manaspent                                                BigInt                   @default(0) @db.UnsignedBigInt
+  soul                                                     Int                      @default(0) @db.UnsignedInt
+  town_id                                                  Int                      @default(1)
+  posx                                                     Int                      @default(0)
+  posy                                                     Int                      @default(0)
+  posz                                                     Int                      @default(0)
+  conditions                                               Bytes?                   @db.Blob
+  cap                                                      Int                      @default(400)
+  sex                                                      Int                      @default(0)
+  lastlogin                                                BigInt                   @default(0) @db.UnsignedBigInt
+  lastip                                                   Int                      @default(0) @db.UnsignedInt
+  save                                                     Int                      @default(1) @db.TinyInt
+  skull                                                    Int                      @default(0) @db.TinyInt
+  skulltime                                                BigInt                   @default(0)
+  lastlogout                                               BigInt                   @default(0) @db.UnsignedBigInt
+  blessings                                                Int                      @default(0) @db.TinyInt
+  onlinetime                                               BigInt                   @default(0)
+  deletion                                                 BigInt                   @default(0)
+  balance                                                  BigInt                   @default(0) @db.UnsignedBigInt
+  offlinetraining_time                                     Int                      @default(43200) @db.UnsignedSmallInt
+  offlinetraining_skill                                    Int                      @default(-1)
+  stamina                                                  Int                      @default(2520) @db.UnsignedSmallInt
+  skill_fist                                               Int                      @default(10) @db.UnsignedInt
+  skill_fist_tries                                         BigInt                   @default(0) @db.UnsignedBigInt
+  skill_club                                               Int                      @default(10) @db.UnsignedInt
+  skill_club_tries                                         BigInt                   @default(0) @db.UnsignedBigInt
+  skill_sword                                              Int                      @default(10) @db.UnsignedInt
+  skill_sword_tries                                        BigInt                   @default(0) @db.UnsignedBigInt
+  skill_axe                                                Int                      @default(10) @db.UnsignedInt
+  skill_axe_tries                                          BigInt                   @default(0) @db.UnsignedBigInt
+  skill_dist                                               Int                      @default(10) @db.UnsignedInt
+  skill_dist_tries                                         BigInt                   @default(0) @db.UnsignedBigInt
+  skill_shielding                                          Int                      @default(10) @db.UnsignedInt
+  skill_shielding_tries                                    BigInt                   @default(0) @db.UnsignedBigInt
+  skill_fishing                                            Int                      @default(10) @db.UnsignedInt
+  skill_fishing_tries                                      BigInt                   @default(0) @db.UnsignedBigInt
+  accounts                                                 accounts                 @relation(fields: [account_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "players_ibfk_1")
+  account_bans                                             account_bans[]
+  player_deaths                                            player_deaths[]
+  players_online                                           players_online[]
+
+  @@index([account_id], map: "account_id")
+  @@index([vocation], map: "vocation")
+}
+
+model players_online {
+  player_id Int @id
+  players   players @relation(fields: [player_id], references: [id])
+}
+
+model player_deaths {
+  player_id               Int @id
+  time                    BigInt @default(0) 
+  level                   Int @default(1)
+  killed_by               String @db.VarChar(255)
+  is_player               Boolean @default(true)
+  mostdamage_by           String @db.VarChar(100)
+  mostdamage_is_player    Boolean @default(false)
+  unjustified             Boolean @default(false)
+  mostdamage_unjustified  Boolean @default(false)
+  players                 players @relation(fields: [player_id], references: [id])
+}
+
+model towns {
+  id   Int    @id @default(autoincrement())
+  name String @unique(map: "name") @db.VarChar(255)
+  posx Int    @default(0)
+  posy Int    @default(0)
+  posz Int    @default(0)
+}
+
+model aac_news {
+  id      Int     @id @default(autoincrement())
+  title   String  @db.VarChar(255)
+  content String  @db.VarChar(255)
+}

@@ -1,8 +1,8 @@
 import { withSessionRoute } from 'src/util/session';
-import { PlayerEntity } from 'src/database';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { validate } from 'src/middleware/validation';
 import { createCharacterSchema } from 'src/schemas/CreateCharacter';
+import prisma from 'src/database/instance';
 
 const handler = withSessionRoute(
   async (req: NextApiRequest, res: NextApiResponse) => {
@@ -13,7 +13,7 @@ const handler = withSessionRoute(
 
     const { name, vocation, sex } = req.body;
 
-    const count = await PlayerEntity.count({
+    const count = await prisma.players.count({
       where: { name },
     });
 
@@ -24,11 +24,13 @@ const handler = withSessionRoute(
       });
     }
 
-    const character = await PlayerEntity.create({
-      name,
-      account_id: user.id,
-      vocation,
-      sex,
+    const character = await prisma.players.create({
+      data: {
+        name,
+        account_id: user.id,
+        vocation,
+        sex,
+      },
     });
 
     if (character) {

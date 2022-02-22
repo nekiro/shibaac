@@ -8,7 +8,6 @@ export default function Index() {
 
   const fetchNews = useCallback(async () => {
     const response = await fetchApi('GET', '/api/news');
-    console.log(response);
     if (response.success) {
       setNews(response.news);
     }

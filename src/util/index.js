@@ -1,4 +1,4 @@
-export const timestampToDate = (timestamp: number): string => {
+export const timestampToDate = (timestamp) => {
   return new Date(timestamp * 1000).toLocaleTimeString('en-GB', {
     year: 'numeric',
     month: 'long',
@@ -8,7 +8,7 @@ export const timestampToDate = (timestamp: number): string => {
   });
 };
 
-export const secondsToTime = (seconds: number): string => {
+export const secondsToTime = (seconds) => {
   const days = Math.floor(seconds / (24 * 60 * 60));
   seconds -= days * (24 * 60 * 60);
   const hours = Math.floor(seconds / (60 * 60));
@@ -47,3 +47,9 @@ export const groupToName = [
   'Community Manager',
   'God',
 ];
+
+// fixes error - TypeError: Do not know how to serialize a BigInt
+BigInt.prototype.toJSON = function () {
+  const int = Number.parseInt(this.toString());
+  return int ?? this.toString();
+};

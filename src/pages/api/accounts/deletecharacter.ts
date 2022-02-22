@@ -1,9 +1,9 @@
 import { withSessionRoute } from 'src/util/session';
-import { PlayerEntity, AccountEntity } from 'src/database';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { sha1Encrypt } from 'src/util/crypt';
 import { validate } from 'src/middleware/validation';
 import { deleteCharacterSchema } from 'src/schemas/DeleteCharacter';
+import prisma from 'src/database/instance';
 
 const handler = withSessionRoute(
   async (req: NextApiRequest, res: NextApiResponse) => {
@@ -14,36 +14,29 @@ const handler = withSessionRoute(
 
     const { name, password } = req.body;
 
-    const account: any = await AccountEntity.findByPk(user.id, {
-      attributes: ['password'],
-      include: { model: PlayerEntity, attributes: ['name'] },
+    const account: any = await prisma.accounts.findFirst({
+      where: { id: user.id, password: sha1Encrypt(password) },
+      select: { players: { select: { name: true, id: true } } },
     });
 
     if (!account) {
       return res.json({
         success: false,
-        message: "Couldn't delete character.",
+        message: "Password doesn't match.",
       });
     }
 
-    if (account.dataValues.password !== sha1Encrypt(password)) {
-      return res.json({ success: false, message: 'Password do not match.' });
-    }
-
-    const char = account.players.find(
-      (player: any) => player.dataValues.name === name
-    );
-
-    if (!char) {
+    const character = account.players.find((p: any) => p.name === name);
+    if (!character) {
       return res.json({
         success: false,
-        message: "Couldn't delete character.",
+        message: "Couldn't find character.",
       });
     }
 
-    const result = await PlayerEntity.destroy({
+    const result = await prisma.players.delete({
       where: {
-        name,
+        id: character.id,
       },
     });
 

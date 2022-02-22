@@ -1,5 +1,4 @@
 import Layout from '../layout/layout';
-
 import { UserContextWrapper } from '../hooks/useUser';
 
 import '../../public/css/metro-bootstrap.css';

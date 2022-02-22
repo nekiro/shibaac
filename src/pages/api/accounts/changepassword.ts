@@ -1,7 +1,7 @@
 import { withSessionRoute } from 'src/util/session';
-import { AccountEntity } from 'src/database';
 import { sha1Encrypt } from 'src/util/crypt';
 import { NextApiRequest, NextApiResponse } from 'next';
+import prisma from 'src/database/instance';
 
 export default withSessionRoute(
   async (req: NextApiRequest, res: NextApiResponse) => {
@@ -19,17 +19,15 @@ export default withSessionRoute(
       });
     }
 
-    const result = await AccountEntity.update(
-      { password: sha1Encrypt(newPassword) },
-      {
-        where: {
-          id: user.id,
-          password: sha1Encrypt(password),
-        },
-      }
-    );
+    const result = await prisma.accounts.updateMany({
+      where: {
+        id: user.id,
+        password: sha1Encrypt(password),
+      },
+      data: { password: sha1Encrypt(newPassword) },
+    });
 
-    if (result[0] == 0) {
+    if (result.count === 0) {
       return res.json({
         success: false,
         message: "Current password doesn't match.",

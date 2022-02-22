@@ -115,10 +115,12 @@ export default function Character() {
 
       <Panel header="Account Information">
         <StrippedTable>
-          <tr>
-            <td>Position</td>
-            <td>{groupToName[state.player.group_id]}</td>
-          </tr>
+          {state.player.group_id > 1 && (
+            <tr>
+              <td>Position</td>
+              <td>{groupToName[state.player.group_id]}</td>
+            </tr>
+          )}
           <tr>
             <td>Last Login</td>
             <td>{lastLoginDate}</td>
@@ -142,7 +144,7 @@ export default function Character() {
         </StrippedTable>
       </Panel>
 
-      {state.player.playerDeaths.length > 0 && (
+      {state.player.player_deaths.length > 0 && (
         <Panel header="Deaths">
           <StrippedTable head={[{ text: 'Date' }, { text: 'Message' }]}>
             {state.player.playerDeaths.map((death, index) => (
@@ -163,7 +165,7 @@ export default function Character() {
         <StrippedTable
           head={[{ text: 'Name' }, { text: 'Level' }, { text: 'Status' }]}
         >
-          {state.player.account.players.map((player) => (
+          {state.player.accounts.players.map((player) => (
             <tr key={player.name}>
               <td width="52%">
                 {player.name == state.player.name ? (

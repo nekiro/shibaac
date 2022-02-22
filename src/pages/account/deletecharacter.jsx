@@ -36,7 +36,10 @@ export default function DeleteCharacter({ user }) {
             size: 9,
           },
         ],
-        initialValues: { name: response.account.players[0].name, password: '' },
+        initialValues: {
+          name: response.account.players[0]?.name,
+          password: '',
+        },
       });
     }
   }, [user]);

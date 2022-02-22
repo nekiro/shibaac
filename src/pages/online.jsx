@@ -4,6 +4,7 @@ import StrippedTable from '../components/StrippedTable';
 import Head from '../layout/Head';
 import Link from 'next/link';
 import { fetchApi } from '../util/request';
+import { vocationIdToName } from '../util';
 
 export default function Online() {
   const [state, setState] = useState(null);
@@ -49,13 +50,13 @@ export default function Online() {
               { text: 'Vocation', style: { width: '15%' } },
             ]}
           >
-            {state.players.map(({ player }) => (
+            {state.players.map((player) => (
               <tr key={player.name}>
                 <td>
                   <Link href={`/character/${player.name}`}>{player.name}</Link>
                 </td>
                 <td>{player.level}</td>
-                <td>{player.vocation}</td>
+                <td>{vocationIdToName[player.vocation]}</td>
               </tr>
             ))}
           </StrippedTable>
