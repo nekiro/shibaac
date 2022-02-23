@@ -5,7 +5,7 @@ type FetchOptions = {
 export const fetchApi = async (
   method: string,
   url: string,
-  options: FetchOptions | null | undefined
+  options?: FetchOptions
 ) => {
   const _options: RequestInit = {
     method,

@@ -7,6 +7,6 @@ export default async function handler(req, res) {
       select: { name: true, level: true },
     });
 
-    res.status(200).json({ success: true, args: { players } });
+    res.json({ success: true, args: { players } });
   }
 }

@@ -7,7 +7,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       select: { name: true, level: true, vocation: true },
     });
 
-    res.status(200).json({ success: true, args: { players } });
+    res.json({ success: true, args: { players } });
   }
 };
 
