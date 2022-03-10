@@ -14,13 +14,9 @@ describe('/api/accounts/register', () => {
 
     await register(req, res);
 
-    // const result = JSON.parse(res._getData());
+    const result = JSON.parse(res._getData());
 
-    // expect(result).toEqual(
-    //   expect.objectContaining({
-    //     success: true,
-    //   })
-    // );
+    expect(typeof result.message).toBe('string');
     expect(res._getStatusCode()).toBe(200);
   });
 });
