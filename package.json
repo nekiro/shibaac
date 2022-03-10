@@ -5,7 +5,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest --watch"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
@@ -28,13 +29,17 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.2",
+    "@testing-library/react": "^12.1.4",
     "@types/react": "^17.0.37",
     "autoprefixer": "^10.4.0",
     "eslint": "8.4.1",
     "eslint-config-next": "12.0.7",
+    "jest": "^27.5.1",
     "prettier": "2.5.1",
     "prisma": "^3.9.2",
     "ts-node": "^10.7.0",
-    "typescript": "^4.5.4"
+    "typescript": "^4.5.4",
+    "node-mocks-http": "^1.11.0"
   }
 }

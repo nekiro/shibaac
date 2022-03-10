@@ -9,7 +9,7 @@ import { registerSchema } from 'src/schemas/Register';
 const fields = [
   {
     type: 'text',
-    name: 'account',
+    name: 'name',
     label: { text: 'Account Name', size: 3 },
     size: 9,
   },
@@ -44,7 +44,7 @@ export default function Register() {
   const onSubmit = async (values, { resetForm }) => {
     const response = await fetchApi('POST', '/api/accounts/register', {
       data: {
-        name: values.account,
+        name: values.name,
         password: values.password,
         email: values.email,
       },

@@ -11,8 +11,8 @@ export function validate(
         req.body = await schema
           .camelCase()
           .validate(req.body, { abortEarly: false, stripUnknown: true });
-      } catch (error) {
-        return res.status(400).json(error);
+      } catch (yupError) {
+        return res.status(400).json({ success: false, yupError });
       }
     }
     await handler(req, res);

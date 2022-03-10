@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
 
 export const registerSchema = Yup.object().shape({
-  account: Yup.string()
+  name: Yup.string()
     .required('Required')
     .min(5)
     .max(20)

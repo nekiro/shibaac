@@ -9,7 +9,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { name, password, email } = req.body;
 
     const count = await prisma.accounts.count({
-      where: { name: req.body.name },
+      where: { name },
     });
 
     if (count !== 0) {

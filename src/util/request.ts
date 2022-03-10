@@ -23,7 +23,12 @@ export const fetchApi = async (
 
   const data = await response.json();
 
-  //TODO: handle yup validation exceptions
+  if (data.yupError) {
+    return {
+      message: data.yupError.toString(),
+      success: false,
+    };
+  }
 
   return {
     message: data.message ?? '',
