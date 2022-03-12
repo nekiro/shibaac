@@ -4,8 +4,9 @@ import { sha1Encrypt } from 'src/util/crypt';
 import { validate } from 'src/middleware/validation';
 import { deleteCharacterSchema } from 'src/schemas/DeleteCharacter';
 import prisma from 'src/database/instance';
+import apiHandler from 'src/middleware/apiHandler';
 
-const handler = withSessionRoute(
+const post = withSessionRoute(
   async (req: NextApiRequest, res: NextApiResponse) => {
     const user = req.session.user;
     if (!user) {
@@ -48,4 +49,6 @@ const handler = withSessionRoute(
   }
 );
 
-export default validate(deleteCharacterSchema, handler);
+export default apiHandler({
+  post: validate(deleteCharacterSchema, post),
+});

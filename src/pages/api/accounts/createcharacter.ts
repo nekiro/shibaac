@@ -3,8 +3,9 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { validate } from 'src/middleware/validation';
 import { createCharacterSchema } from 'src/schemas/CreateCharacter';
 import prisma from 'src/database/instance';
+import apiHandler from 'src/middleware/apiHandler';
 
-const handler = withSessionRoute(
+const post = withSessionRoute(
   async (req: NextApiRequest, res: NextApiResponse) => {
     const user = req.session.user;
     if (!user) {
@@ -41,4 +42,6 @@ const handler = withSessionRoute(
   }
 );
 
-export default validate(createCharacterSchema, handler);
+export default apiHandler({
+  post: validate(createCharacterSchema, post),
+});

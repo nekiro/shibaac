@@ -4,8 +4,9 @@ import { validate } from 'src/middleware/validation';
 import { loginSchema } from 'src/schemas/Login';
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from 'src/database/instance';
+import apiHandler from 'src/middleware/apiHandler';
 
-const handler = withSessionRoute(
+const post = withSessionRoute(
   async (req: NextApiRequest, res: NextApiResponse) => {
     const { name, password } = req.body;
 
@@ -24,4 +25,6 @@ const handler = withSessionRoute(
   }
 );
 
-export default validate(loginSchema, handler);
+export default apiHandler({
+  post: validate(loginSchema, post),
+});

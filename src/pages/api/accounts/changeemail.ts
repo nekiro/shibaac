@@ -2,8 +2,9 @@ import { withSessionRoute } from 'src/util/session';
 import { sha1Encrypt } from 'src/util/crypt';
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from 'src/database/instance';
+import apiHandler from 'src/middleware/apiHandler';
 
-export default withSessionRoute(
+const post = withSessionRoute(
   async (req: NextApiRequest, res: NextApiResponse) => {
     const { user } = req.session;
     if (!user) {
@@ -29,3 +30,7 @@ export default withSessionRoute(
     res.json({ success: true, message: 'Succesfully changed email.' });
   }
 );
+
+export default apiHandler({
+  post,
+});

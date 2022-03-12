@@ -1,4 +1,5 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
+import { ValidationError } from 'yup';
 import { ObjectShape, OptionalObjectSchema } from 'yup/lib/object';
 
 export function validate(
@@ -6,13 +7,15 @@ export function validate(
   handler: NextApiHandler
 ) {
   return async (req: NextApiRequest, res: NextApiResponse) => {
-    if (['POST', 'PUT'].includes(req.method as string)) {
+    if (req.body) {
       try {
         req.body = await schema
           .camelCase()
           .validate(req.body, { abortEarly: false, stripUnknown: true });
-      } catch (yupError) {
-        return res.status(400).json({ success: false, yupError });
+      } catch (yupError: any) {
+        return res
+          .status(400)
+          .json({ success: false, message: yupError.errors.join(', ') });
       }
     }
     await handler(req, res);
