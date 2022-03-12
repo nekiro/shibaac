@@ -13,6 +13,7 @@ This project aims to provide a fully featured, secure and fast AAC (Automatic Ac
 - Node.js
 - Next.js
 - Prisma (mysql)
+- Jest
 
 ## Features
 
