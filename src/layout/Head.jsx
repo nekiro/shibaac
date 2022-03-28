@@ -16,15 +16,6 @@ const Head = ({ title, keyword, description }) => {
         />
         <link rel="icon" href={`/favicon.ico`} key="favicon" />
       </NextHead>
-      <Script
-        strategy="beforeInteractive"
-        src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"
-      ></Script>
-      <Script
-        strategy="beforeInteractive"
-        src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.js"
-      ></Script>
-      <Script strategy="beforeInteractive" src="/js/bootstrap.min.js"></Script>
       <NextSeo
         title={title}
         description={description}

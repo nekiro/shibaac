@@ -9,8 +9,6 @@ import {
 } from 'src/util';
 import { useRouter } from 'next/router';
 import StrippedTable from 'src/components/StrippedTable';
-import Link from 'next/link';
-import Label from 'src/components/Label';
 
 export default function Character() {
   const router = useRouter();
@@ -66,127 +64,109 @@ export default function Character() {
   return (
     <>
       <Panel header="Character Information">
-        <StrippedTable>
-          <tr>
-            <td width="20%">Name</td>
-            <td>{state.player.name}</td>
-          </tr>
-          <tr>
-            <td>Sex</td>
-            <td>{state.player.sex == 1 ? 'male' : 'female'}</td>
-          </tr>
-          <tr>
-            <td>Profession</td>
-            <td>{vocationIdToName[state.player.vocation]}</td>
-          </tr>
-          <tr>
-            <td>Level</td>
-            <td>{state.player.level}</td>
-          </tr>
-          {state.town && (
-            <tr>
-              <td>Residence</td>
-              <td>{state.town.name}</td>
-            </tr>
-          )}
-          {state.player.guild && (
-            <tr>
-              <td>Guild</td>
-              <td>none</td>
-            </tr>
-          )}
-          <tr>
-            <td>Last Login</td>
-            <td>{lastLoginDate}</td>
-          </tr>
-          {state.player.lastlogin > 0 && (
-            <tr>
-              <td>Online Time</td>
-              <td>{secondsToTime(state.player.onlinetime)}</td>
-            </tr>
-          )}
-
-          {/* <tr>
-            <td>Comment</td>
-            <td>lol</td>
-          </tr> */}
-        </StrippedTable>
+        <StrippedTable
+          body={[
+            [{ text: 'Name' }, { text: state.player.name }],
+            [{ text: 'Level' }, { text: state.player.level }],
+            [
+              { text: 'Sex' },
+              { text: state.player.sex == 1 ? 'Male' : 'Female' },
+            ],
+            [
+              { text: 'Profession' },
+              { text: vocationIdToName[state.player.vocation] },
+            ],
+            ...(state.player.town
+              ? [
+                  {
+                    text: 'Town',
+                  },
+                  { text: state.player.town },
+                ]
+              : []),
+            ...(state.player.guild
+              ? [
+                  {
+                    text: 'Guild',
+                  },
+                  {
+                    text: state.player.guild.name,
+                  },
+                ]
+              : []),
+            [{ text: 'Last Login' }, { text: lastLoginDate }],
+            [
+              { text: 'Online Time' },
+              {
+                text:
+                  state.player.onlinetime > 0
+                    ? secondsToTime(state.player.onlinetime)
+                    : 'Never logged in',
+              },
+            ],
+          ]}
+        />
       </Panel>
 
       <Panel header="Account Information">
-        <StrippedTable>
-          {state.player.group_id > 1 && (
-            <tr>
-              <td>Position</td>
-              <td>{groupToName[state.player.group_id]}</td>
-            </tr>
-          )}
-          <tr>
-            <td>Last Login</td>
-            <td>{lastLoginDate}</td>
-          </tr>
-          {state.player.creation && (
-            <tr>
-              <td>Created</td>
-              <td>{timestampToDate(state.player.creation)}</td>
-            </tr>
-          )}
-          <tr>
-            <td>Account Status</td>
-            <td>
-              <Label
-                success={isPremium}
-                text={`${isPremium ? 'Premium' : 'Free'} Account`}
-              />
-              {/* <font color="red"> [Banished FOREVER]</font> */}
-            </td>
-          </tr>
-        </StrippedTable>
+        <StrippedTable
+          body={[
+            ...(state.player.group_id > 1
+              ? [
+                  [
+                    { text: 'Position' },
+                    { text: groupToName[state.player.group_id] },
+                  ],
+                ]
+              : []),
+            [
+              { text: 'Created' },
+              {
+                text:
+                  state.player.creation > 0
+                    ? timestampToDate(state.player.creation)
+                    : 'Unknown',
+              },
+            ],
+            [
+              { text: 'Account Status' },
+              {
+                text: `${isPremium ? 'Premium' : 'Free'} Account`,
+              },
+            ],
+          ]}
+        />
       </Panel>
 
       {state.player.player_deaths.length > 0 && (
         <Panel header="Deaths">
-          <StrippedTable head={[{ text: 'Date' }, { text: 'Message' }]}>
-            {state.player.playerDeaths.map((death, index) => (
-              <tr key={index}>
-                <td width="30%" align="center">
-                  {timestampToDate(death.time)}
-                </td>
-                <td>
-                  Died at level {death.level} by {death.killed_by}
-                </td>
-              </tr>
-            ))}
-          </StrippedTable>
+          <StrippedTable
+            head={[{ text: 'Date' }, { text: 'Message' }]}
+            body={state.player.playerDeaths.map((death) => [
+              { text: timestampToDate(death.time) },
+              { text: `Died at level ${death.level} by ${death.killed_by}` },
+            ])}
+          />
         </Panel>
       )}
 
+      {/* <span className="label label-danger">Deleted</span>  */}
+
       <Panel header="Characters">
         <StrippedTable
-          head={[{ text: 'Name' }, { text: 'Level' }, { text: 'Status' }]}
-        >
-          {state.player.accounts.players.map((player) => (
-            <tr key={player.name}>
-              <td width="52%">
-                {player.name == state.player.name ? (
-                  player.name
-                ) : (
-                  <Link href={`/character/${player.name}`}>{player.name}</Link>
-                )}
-                {/* <span className="label label-danger">Deleted</span> */}
-              </td>
-              <td width="35%">
-                {player.level} {vocationIdToName[player.vocation]}
-              </td>
-              <td>
-                <Label
-                  success={player.players_online ?? false}
-                  text={player.players_online ? 'Online' : 'Offline'}
-                />
-              </td>
-            </tr>
-          ))}
-        </StrippedTable>
+          head={[
+            { text: 'Name' },
+            { text: 'Level' },
+            { text: 'Profession' },
+            { text: 'Status' },
+          ]}
+          body={state.player.accounts.players.map((player) => [
+            { href: `/character/${player.name}`, text: player.name },
+            { text: player.level },
+            { text: vocationIdToName[player.vocation] },
+            { text: player.players_online ? 'Online' : 'Offline' },
+          ])}
+        />
       </Panel>
     </>
   );

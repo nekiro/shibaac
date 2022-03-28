@@ -14,6 +14,7 @@ This project aims to provide a fully featured, secure and fast AAC (Automatic Ac
 - Next.js
 - Prisma (mysql)
 - Jest
+- Chakra UI
 
 ## Features
 

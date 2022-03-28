@@ -4,18 +4,30 @@ import Navigation from './NavBar';
 import SideBar from './SideBar';
 import Footer from './Footer';
 
+import { Box, Image, Flex, Grid } from '@chakra-ui/react';
+
 const Layout = ({ children }) => {
   return (
-    <div id="container">
+    <Box w="40%" margin="auto">
       <Head />
-      <div className="header" />
+      <Image
+        width="15%"
+        marginLeft="auto"
+        marginRight="auto"
+        marginBottom="15px"
+        marginTop="15px"
+        src="/images/header.png"
+        alt="shibaac"
+      />
       <Navigation />
-      <SideBar />
-      <div className="content">
-        {children}
-        <Footer />
-      </div>
-    </div>
+      <Flex>
+        <Box flexGrow="1" marginRight="3em">
+          {children}
+          <Footer />
+        </Box>
+        <SideBar />
+      </Flex>
+    </Box>
   );
 };
 

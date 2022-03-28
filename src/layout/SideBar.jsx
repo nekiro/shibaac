@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import Link from 'next/link';
 import Panel from '../components/Panel';
 import Label from '../components/Label';
 import { fetchApi } from '../util/request';
+import Link from '../components/Link';
+
+import { Box, Center } from '@chakra-ui/react';
+import StripedTable from '../components/StrippedTable';
 
 const SideBar = () => {
   const [state, setState] = useState({
@@ -27,7 +30,7 @@ const SideBar = () => {
   }, [fetchData]);
 
   return (
-    <div className="sidebar">
+    <Box minWidth="15em">
       <Panel
         header="Server Status"
         isLoading={!state.topPlayers || !state.serverStatus}
@@ -37,17 +40,20 @@ const SideBar = () => {
             <tr>
               <td>
                 {state.serverStatus && state.serverStatus.online ? (
-                  <Label text="ONLINE" success={true} />
+                  <Label colorScheme="green">ONLINE</Label>
                 ) : (
-                  <Label text="OFFLINE" success={false} />
+                  <Label colorScheme="red">OFFLINE</Label>
                 )}
               </td>
             </tr>
             <tr>
               <td>
-                {state.serverStatus ? (
-                  <Link href="/online">{`${state.serverStatus.onlineCount} players online`}</Link>
-                ) : null}
+                {state.serverStatus && (
+                  <Link
+                    href="/online"
+                    text={`${state.serverStatus.onlineCount} players online`}
+                  />
+                )}
               </td>
             </tr>
           </tbody>
@@ -55,28 +61,23 @@ const SideBar = () => {
       </Panel>
 
       <Panel header="Top 5 Level" isLoading={!state.topPlayers}>
-        <table className="table table-condensed table-content table-striped">
-          <tbody>
-            {state.topPlayers &&
-              state.topPlayers.map((player, index) => (
-                <tr key={player.name}>
-                  <td style={{ width: '80%' }}>
-                    <strong>{index + 1}. </strong>
-                    <Link href={`/character/${player.name}`} passHref>
-                      <a>
-                        <b>{player.name}</b>
-                      </a>
-                    </Link>
-                  </td>
-                  <td>
-                    <span className="label label-primary">{player.level}</span>
-                  </td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
+        <StripedTable
+          body={
+            state.topPlayers
+              ? state.topPlayers.map((player, index) => [
+                  {
+                    text: `${index + 1}. ${player.name}`,
+                    href: `/character/${player.name}`,
+                  },
+                  {
+                    text: player.level,
+                  },
+                ])
+              : []
+          }
+        />
       </Panel>
-    </div>
+    </Box>
   );
 };
 

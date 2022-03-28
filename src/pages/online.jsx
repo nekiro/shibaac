@@ -5,6 +5,7 @@ import Head from '../layout/Head';
 import Link from 'next/link';
 import { fetchApi } from '../util/request';
 import { vocationIdToName } from '../util';
+import Label from '../components/Label';
 
 export default function Online() {
   const [state, setState] = useState(null);
@@ -33,33 +34,26 @@ export default function Online() {
     <>
       <Head title="Online"></Head>
       <Panel header="Online List">
-        <div className="alert alert-info">
+        <Label colorScheme="violet" fontSize="sm">
           Overall Maximum: {state.status ? state.status.maxOnlineCount : '0'}{' '}
-          players.
-        </div>
+          players. There are currently{' '}
+          {state.players ? state.players.length : 0} players online on{' '}
+          {state.status ? state.status.name : '...'}
+        </Label>
 
-        <div className="alert alert-info">
+        {/* <Label colorScheme="violet" fontSize="sm">
           There are currently {state.players ? state.players.length : 0} players
           online on {state.status ? state.status.name : '...'}
-        </div>
+        </Label> */}
         {state.players?.length > 0 && (
           <StrippedTable
-            head={[
-              { text: 'Name', style: { width: '70%' } },
-              { text: 'Level', style: { width: '15%' } },
-              { text: 'Vocation', style: { width: '15%' } },
-            ]}
-          >
-            {state.players.map((player) => (
-              <tr key={player.name}>
-                <td>
-                  <Link href={`/character/${player.name}`}>{player.name}</Link>
-                </td>
-                <td>{player.level}</td>
-                <td>{vocationIdToName[player.vocation]}</td>
-              </tr>
-            ))}
-          </StrippedTable>
+            head={[{ text: 'Name' }, { text: 'Level' }, { text: 'Vocation' }]}
+            body={state.players.map((player) => [
+              { href: `/character/${player.name}`, text: player.name },
+              { text: player.level },
+              { text: vocationIdToName[player.vocation] },
+            ])}
+          />
         )}
       </Panel>
     </>

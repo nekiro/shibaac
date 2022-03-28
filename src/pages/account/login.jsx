@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import Panel from 'src/components/Panel';
 import Head from 'src/layout/Head';
-import Link from 'next/link';
+import Link from 'src/components/Link';
 import { useRouter } from 'next/router';
 import { withSessionSsr } from 'src/util/session';
 import { useUser } from 'src/hooks/useUser';
 import { loginSchema } from 'src/schemas/Login';
 import { fetchApi } from 'src/util/request';
 import FormWrapper from 'src/components/FormWrapper';
+import { Text } from '@chakra-ui/react';
 
 const fields = [
   { type: 'password', name: 'name', label: { text: 'Account Name' } },
@@ -45,11 +46,13 @@ export default function Login() {
     <>
       <Head title="Login"></Head>
       <Panel header="Login">
-        <p align="center">Please enter your account name and your password.</p>
-        <p align="center">
-          <Link href="/account/register">Create an account </Link>
+        <Text align="center" margin="10px">
+          Please enter your account name and your password.
+        </Text>
+        <Text align="center" margin="10px">
+          <Link href="/account/register" text="Create an account " />
           if you do not have one yet.
-        </p>
+        </Text>
 
         <FormWrapper
           validationSchema={loginSchema}
@@ -57,7 +60,7 @@ export default function Login() {
           fields={fields}
           buttons={buttons}
           response={response}
-        ></FormWrapper>
+        />
       </Panel>
     </>
   );

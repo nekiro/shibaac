@@ -4,6 +4,7 @@ import { withSessionSsr } from 'src/util/session';
 import { fetchApi } from 'src/util/request';
 import FormWrapper from 'src/components/FormWrapper';
 import { createCharacterSchema } from 'src/schemas/CreateCharacter';
+import { Select, Text } from '@chakra-ui/react';
 
 const fields = [
   {
@@ -14,7 +15,7 @@ const fields = [
     size: 9,
   },
   {
-    as: 'select',
+    as: Select,
     name: 'vocation',
     label: { text: 'Vocation', size: 3 },
     size: 9,
@@ -26,7 +27,7 @@ const fields = [
     ],
   },
   {
-    as: 'select',
+    as: Select,
     name: 'sex',
     label: { text: 'Sex', size: 3 },
     size: 9,
@@ -66,11 +67,11 @@ export default function CreateCharacter() {
 
   return (
     <Panel header="Create Character">
-      <p align="center">
+      <Text align="center" margin="10px">
         Please choose a name, vocation and sex for your character. <br />
         In any case the name must not violate the naming conventions stated in
         the Rules or your character might get deleted or name locked.
-      </p>
+      </Text>
 
       <FormWrapper
         validationSchema={createCharacterSchema}

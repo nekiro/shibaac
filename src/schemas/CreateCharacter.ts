@@ -25,7 +25,6 @@ export const createCharacterSchema = Yup.object().shape({
       'banned-words',
       'Contains illegal words',
       async (value: string | undefined) => {
-        console.log(value);
         if (value) {
           const sequences = bannedSequences.filter(
             (str: string) =>

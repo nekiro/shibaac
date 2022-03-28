@@ -1,9 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Panel from 'src/components/Panel';
 import Head from 'src/layout/Head';
-import Link from 'next/link';
 import { fetchApi } from 'src/util/request';
 import { withSessionSsr } from 'src/util/session';
+import Button from '../../components/Button';
+import StripedTable from '../../components/StrippedTable';
+import { Wrap } from '@chakra-ui/react';
+import { vocationIdToName } from '../../util';
 
 export default function Account({ user }) {
   const [info, setInfo] = useState(null);
@@ -30,43 +33,25 @@ export default function Account({ user }) {
     <>
       <Head title="Account Management"></Head>
       <Panel header="Account Management">
-        <table className="table table-striped table-condensed table-bordered">
-          <tbody>
-            <tr>
-              <td width="20%">Account Name</td>
-              <td>{info.name}</td>
-            </tr>
-            <tr>
-              <td>E-mail Address</td>
-              <td>{info.email}</td>
-            </tr>
-            <tr>
-              <td>Creation Date</td>
-              <td>{info.creation}</td>
-            </tr>
-            {/* <tr>
-              <td>Last Login</td>
-              <td>11/02/2021</td>
-            </tr> */}
-            <tr>
-              <td>Shop Coins</td>
-              <td>0</td>
-            </tr>
-            <tr>
-              <td colSpan={2}>
-                <Link href="/account/changepassword" passHref>
-                  <button className="btn btn-primary btn-sm">
-                    <i className="fa fa-lock"></i> Change Password
-                  </button>
-                </Link>
-
-                <Link href="/account/changeemail" passHref>
-                  <button className="btn btn-primary btn-sm">
-                    <i className="fa fa-pencil-square-o"></i> Change Email
-                  </button>
-                </Link>
-
-                {/* '.(!$rec_key ? '
+        <Panel header="Informations">
+          <StripedTable
+            body={[
+              [{ text: 'Account Name' }, { text: info.name }],
+              [{ text: 'E-mail Address' }, { text: info.email }],
+              [
+                { text: 'Creation Date' },
+                {
+                  text:
+                    info.creation > 0
+                      ? timestampToDate(info.creation)
+                      : 'Unknown',
+                },
+              ],
+              //{ name: 'Last Login', value: '11/02/2021' },
+              [{ text: 'Shop Coins' }, { text: 0 }],
+            ]}
+          >
+            {/* '.(!$rec_key ? '
                 <a
                   href="?view=account&action=generatekey"
                   className="btn btn-primary btn-sm"
@@ -74,47 +59,42 @@ export default function Account({ user }) {
                   <i className="fa fa-key"></i> Generate Recovery Key
                 </a>
                 ' : '').' */}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+            {/* </td> */}
+          </StripedTable>
+        </Panel>
 
-        <div className="panel panel-default">
-          <div className="panel-heading">
-            <div
-              className="btn-group pull-right"
-              style={{ top: '-5px', position: 'relative' }}
-            >
-              <Link href="/account/createcharacter" passHref>
-                <button
-                  className="btn btn-sm btn-success"
-                  style={{ margin: { right: '5px' } }}
-                >
-                  <i className="fa fa-plus"></i> Create a new character
-                </button>
-              </Link>
+        <Panel header="Actions">
+          <Wrap>
+            <Button
+              value="Change Password"
+              btnType="primary"
+              href="/account/changepassword"
+            />
+            <Button
+              value="Change Email"
+              btnType="primary"
+              href="/account/changeemail"
+            />
+            <Button
+              value="Create Character"
+              btnType="primary"
+              href="/account/createcharacter"
+            />
+            <Button
+              value="Delete Character"
+              btnType="primary"
+              href="/account/deletecharacter"
+            />
+            {/* <Button
+              value="Generate recovery key"
+              btnType="primary"
+              href="/account/deletecharacter"
+            /> */}
+          </Wrap>
+        </Panel>
 
-              <Link href="/account/deletecharacter" passHref>
-                <button
-                  className="btn btn-sm btn-danger"
-                  style={{ margin: { right: '5px' } }}
-                >
-                  <i className="fa fa-trash"></i> Delete a character
-                </button>
-              </Link>
-            </div>
-            Characters
-          </div>
-          <table className="table table-striped table-condensed table-bordered">
-            <tbody>
-              {info.players.map((player) => (
-                <tr key={player.name}>
-                  <td>
-                    <Link href={`/character/${player.name}`}>
-                      <a>{player.name}</a>
-                    </Link>
-
-                    {/* <div className="pull-right">
+        <Panel header="Characters">
+          {/* <div className="pull-right">
                       <Link
                         href={`/account/editcharacter/${player.name}`}
                         passHref
@@ -127,12 +107,27 @@ export default function Account({ user }) {
                         </button>
                       </Link>
                     </div> */}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+
+          <StripedTable
+            head={[
+              { text: 'Name' },
+              { text: 'Level' },
+              { text: 'Profession' },
+              // { text: 'Edit' }
+            ]}
+            body={info.players.map((player) => [
+              { href: `/character/${player.name}`, text: player.name },
+              { text: player.level },
+              { text: vocationIdToName[player.vocation] },
+
+              // {
+              //   type: 'button',
+              //   text: 'Edit',
+              //   href: `/account/editcharacter/${player.name}`,
+              // },
+            ])}
+          ></StripedTable>
+        </Panel>
       </Panel>
     </>
   );

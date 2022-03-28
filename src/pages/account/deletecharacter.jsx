@@ -4,6 +4,7 @@ import { withSessionSsr } from '../../util/session';
 import { fetchApi } from '../../util/request';
 import FormWrapper from '../../components/FormWrapper';
 import { deleteCharacterSchema } from 'src/schemas/DeleteCharacter';
+import { Select, Text } from '@chakra-ui/react';
 
 const buttons = [
   { type: 'submit', btnType: 'primary', value: 'Submit' },
@@ -20,7 +21,7 @@ export default function DeleteCharacter({ user }) {
       setData({
         fields: [
           {
-            as: 'select',
+            as: Select,
             name: 'name',
             label: { text: 'Name', size: 3 },
             size: 9,
@@ -66,9 +67,9 @@ export default function DeleteCharacter({ user }) {
 
   return (
     <Panel header="Delete Character">
-      <p align="center">
+      <Text align="center" margin="10px">
         To delete a character choose the character and enter your password.
-      </p>
+      </Text>
 
       <FormWrapper
         validationSchema={deleteCharacterSchema}

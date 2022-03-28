@@ -41,17 +41,15 @@ export default function ChangeEmail() {
   };
 
   return (
-    <>
-      <Panel header="Change Email">
-        <FormWrapper
-          validationSchema={changeEmailSchema}
-          onSubmit={onSubmit}
-          fields={fields}
-          buttons={buttons}
-          response={response}
-        />
-      </Panel>
-    </>
+    <Panel header="Change Email">
+      <FormWrapper
+        validationSchema={changeEmailSchema}
+        onSubmit={onSubmit}
+        fields={fields}
+        buttons={buttons}
+        response={response}
+      />
+    </Panel>
   );
 }
 

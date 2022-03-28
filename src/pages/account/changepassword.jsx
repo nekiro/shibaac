@@ -4,6 +4,7 @@ import FormWrapper from 'src/components/FormWrapper';
 import { fetchApi } from 'src/util/request';
 import { withSessionSsr } from 'src/util/session';
 import { changePasswordSchema } from 'src/schemas/ChangePassword';
+import { Text } from '@chakra-ui/react';
 
 const fields = [
   {
@@ -29,7 +30,7 @@ const fields = [
 
 const buttons = [
   { type: 'submit', btnType: 'primary', value: 'Submit' },
-  { href: '/account', value: 'Back' },
+  { href: '/account', btnType: 'danger', value: 'Back' },
 ];
 
 export default function ChangePassword() {
@@ -50,10 +51,10 @@ export default function ChangePassword() {
   return (
     <>
       <Panel header="Change Password">
-        <p align="center">
+        <Text align="center" margin="10px">
           Please enter your current password and a new password. For your
           security, please enter the new password twice.
-        </p>
+        </Text>
 
         <FormWrapper
           validationSchema={changePasswordSchema}

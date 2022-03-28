@@ -1,12 +1,18 @@
 import React from 'react';
 
+import { Input } from '@chakra-ui/react';
+
 const TextInput = ({ placeholder, type, name }) => {
   return (
-    <input
-      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-      type={type}
-      name={name}
+    <Input
       placeholder={placeholder}
+      variant="filled"
+      _focus={{ borderColor: 'violet.400' }}
+      _hover={{ borderColor: 'violet.400' }}
+      borderColor="violet.200"
+      bg="white"
+      name={name}
+      type={type}
     />
   );
 };

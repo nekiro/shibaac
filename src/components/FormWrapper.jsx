@@ -1,6 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Formik, Form, Field } from 'formik';
-import Label from './Label';
+import {
+  VStack,
+  FormControl,
+  FormLabel,
+  Container,
+  FormErrorMessage,
+  Wrap,
+  useToast,
+} from '@chakra-ui/react';
+
+import TextInput from './TextInput';
+
 import Button from './Button';
 
 const FormWrapper = ({
@@ -18,62 +29,80 @@ const FormWrapper = ({
     });
   }
 
-  return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={onSubmit}
-    >
-      {({ errors }) => (
-        <Form className="form-horizontal">
-          {response && (
-            <p align="center">
-              <Label success={response.success} text={response.message} />
-            </p>
-          )}
+  const toast = useToast();
 
-          {fields &&
-            fields.map((field) => (
-              <div className="form-group" key={field.name}>
-                <label
-                  htmlFor={field.name}
-                  className={`col-lg-${field.label.size ?? 2} control-label`}
-                >
-                  {field.label.text}
-                </label>
-                <div className={`col-lg-${field.size ?? 10}`}>
-                  <Field
-                    as={field.as ?? 'input'}
-                    type={field.type}
-                    className="form-control"
-                    name={field.name}
-                    placeholder={field.placeholder}
-                  >
-                    {field.options &&
-                      field.options.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.text}
-                        </option>
-                      ))}
-                  </Field>
-                  <Label success={false} text={errors[field.name]} />
-                </div>
-              </div>
-            ))}
-          <div className="text-center">
-            {buttons.map((button) => (
-              <Button
-                key={button.value}
-                type={button.type}
-                value={button.value}
-                btnType={button.btnType}
-                href={button.href}
-              />
-            ))}
-          </div>
-        </Form>
-      )}
-    </Formik>
+  useEffect(() => {
+    if (
+      response &&
+      response.message.length > 0 &&
+      !toast.isActive('forms-response-toast')
+    ) {
+      toast({
+        title: response.message,
+        id: 'forms-response-toast',
+        position: 'top',
+        status: response.success ? 'success' : 'error',
+        isClosable: true,
+        duration: 10000,
+      });
+    }
+  }, [response, toast]);
+
+  return (
+    <>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={onSubmit}
+      >
+        {({ errors, isValid, isSubmitting }) => (
+          <Form>
+            <Container alignContent padding={2}>
+              <VStack spacing={5}>
+                {fields &&
+                  fields.map((field) => (
+                    <FormControl key={field.name} isInvalid={!isValid}>
+                      <FormLabel fontSize="sm" htmlFor={field.name}>
+                        {field.label.text}
+                      </FormLabel>
+                      <Field
+                        as={field.as ?? TextInput}
+                        type={field.type}
+                        name={field.name}
+                        placeholder={field.placeholder}
+                      >
+                        {field.options &&
+                          field.options.map((option) => (
+                            <option key={option.value} value={option.value}>
+                              {option.text}
+                            </option>
+                          ))}
+                      </Field>
+                      <FormErrorMessage fontSize="sm">
+                        {errors[field.name]}
+                      </FormErrorMessage>
+                    </FormControl>
+                  ))}
+
+                <Wrap spacing={2} padding="10px">
+                  {buttons.map((button) => (
+                    <Button
+                      isLoading={button.type == 'submit' && isSubmitting}
+                      loadingText="Submitting"
+                      key={button.value}
+                      type={button.type}
+                      value={button.value}
+                      btnType={button.btnType}
+                      href={button.href}
+                    />
+                  ))}
+                </Wrap>
+              </VStack>
+            </Container>
+          </Form>
+        )}
+      </Formik>
+    </>
   );
 };
 

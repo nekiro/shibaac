@@ -1,25 +1,47 @@
 import React from 'react';
 import Link from 'next/link';
+import { Button as ChakraButton } from '@chakra-ui/react';
 
-const Button = ({ value, type, btnType, href }) => {
+const btnTypeToColor = { danger: 'red', primary: 'violet' };
+
+const Button = ({
+  value,
+  type,
+  btnType,
+  size,
+  href,
+  isLoading,
+  loadingText,
+}) => {
+  const btn = (
+    <ChakraButton
+      type={type}
+      colorScheme={btnTypeToColor[btnType]}
+      size={size}
+      fontWeight="normal"
+      isLoading={isLoading}
+      loadingText={loadingText}
+    >
+      {value}
+    </ChakraButton>
+  );
+
   return href ? (
     <Link href={href} passHref>
-      <button type={type} className={`btn btn-${btnType}`}>
-        {value}
-      </button>
+      {btn}
     </Link>
   ) : (
-    <button type={type} className={`btn btn-${btnType}`}>
-      {value}
-    </button>
+    btn
   );
 };
 
 Button.defaultProps = {
   value: '',
+  size: 'md',
   type: 'button',
-  btnType: 'default',
+  color: null,
   href: null,
+  btnType: 'primary',
 };
 
 export default Button;
