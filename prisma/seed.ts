@@ -1,18 +1,20 @@
 import { PrismaClient } from '@prisma/client';
-import news from './seeds/news';
-import accounts from './seeds/accounts';
+import { readdir } from 'fs/promises';
+import path from 'path';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  // TODO: automatically parse and execute files inside of seeds directory
-  await prisma.aac_news.createMany({
-    data: news,
-  });
+  const seedsPath = path.join(__dirname, '/seeds');
 
-  await prisma.accounts.createMany({
-    data: accounts,
-  });
+  const files = await readdir(seedsPath);
+  for (const file of files) {
+    const seed = require(path.join(seedsPath, file)).default;
+    // @ts-ignore
+    await prisma[seed.table].createMany({
+      data: seed.data,
+    });
+  }
 }
 
 main()
