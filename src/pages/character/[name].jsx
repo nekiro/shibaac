@@ -9,6 +9,7 @@ import {
 } from 'src/util';
 import { useRouter } from 'next/router';
 import StrippedTable from 'src/components/StrippedTable';
+import Label from 'src/components/Label';
 
 export default function Character() {
   const router = useRouter();
@@ -49,7 +50,7 @@ export default function Character() {
   if (!state.player) {
     return (
       <Panel header="Character Info">
-        <div className="alert alert-danger">Character not found.</div>
+        <Label colorScheme="red">Character not found.</Label>
       </Panel>
     );
   }
