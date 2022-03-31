@@ -49,60 +49,58 @@ const FormWrapper = ({
   }, [response, toast]);
 
   return (
-    <>
-      <Formik
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-        onSubmit={onSubmit}
-      >
-        {({ errors, isValid, isSubmitting }) => (
-          <Form>
-            <Container alignContent padding={2}>
-              <VStack spacing={5}>
-                {fields &&
-                  fields.map((field) => (
-                    <FormControl key={field.name} isInvalid={!isValid}>
-                      <FormLabel fontSize="sm" htmlFor={field.name}>
-                        {field.label.text}
-                      </FormLabel>
-                      <Field
-                        as={field.as ?? TextInput}
-                        type={field.type}
-                        name={field.name}
-                        placeholder={field.placeholder}
-                      >
-                        {field.options &&
-                          field.options.map((option) => (
-                            <option key={option.value} value={option.value}>
-                              {option.text}
-                            </option>
-                          ))}
-                      </Field>
-                      <FormErrorMessage fontSize="sm">
-                        {errors[field.name]}
-                      </FormErrorMessage>
-                    </FormControl>
-                  ))}
+    <Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={onSubmit}
+    >
+      {({ errors, values, isValid, isSubmitting }) => (
+        <Form>
+          <Container alignContent padding={2}>
+            <VStack spacing={5}>
+              {fields &&
+                fields.map((field) => (
+                  <FormControl key={field.name} isInvalid={!isValid}>
+                    <FormLabel fontSize="sm" htmlFor={field.name}>
+                      {field.label.text}
+                    </FormLabel>
+                    <Field
+                      as={field.as ?? TextInput}
+                      type={field.type}
+                      name={field.name}
+                      placeholder={field.placeholder}
+                    >
+                      {field.options &&
+                        field.options.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.text}
+                          </option>
+                        ))}
+                    </Field>
+                    <FormErrorMessage fontSize="sm">
+                      {errors[field.name]}
+                    </FormErrorMessage>
+                  </FormControl>
+                ))}
 
-                <Wrap spacing={2} padding="10px">
-                  {buttons.map((button) => (
-                    <Button
-                      isLoading={button.type == 'submit' && isSubmitting}
-                      loadingText="Submitting"
-                      key={button.value}
-                      type={button.type}
-                      value={button.value}
-                      btnType={button.btnType}
-                      href={button.href}
-                    />
-                  ))}
-                </Wrap>
-              </VStack>
-            </Container>
-          </Form>
-        )}
-      </Formik>
-    </>
+              <Wrap spacing={2} padding="10px">
+                {buttons.map((button) => (
+                  <Button
+                    isLoading={button.type == 'submit' && isSubmitting}
+                    loadingText="Submitting"
+                    key={button.value}
+                    type={button.type}
+                    value={button.value}
+                    btnType={button.btnType}
+                    href={button.href}
+                  />
+                ))}
+              </Wrap>
+            </VStack>
+          </Container>
+        </Form>
+      )}
+    </Formik>
   );
 };
 
