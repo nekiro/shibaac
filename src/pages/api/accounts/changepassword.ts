@@ -1,7 +1,7 @@
 import { withSessionRoute } from 'src/util/session';
 import { sha1Encrypt } from 'src/util/crypt';
 import { NextApiRequest, NextApiResponse } from 'next';
-import prisma from 'src/database/instance';
+import prisma from 'src/prisma';
 import apiHandler from 'src/middleware/apiHandler';
 import { changePasswordSchema } from 'src/schemas/ChangePassword';
 import { validate } from 'src/middleware/validation';

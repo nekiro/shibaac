@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { sha1Encrypt } from 'src/util/crypt';
 import { validate } from 'src/middleware/validation';
 import { deleteCharacterSchema } from 'src/schemas/DeleteCharacter';
-import prisma from 'src/database/instance';
+import prisma from 'src/prisma';
 import apiHandler from 'src/middleware/apiHandler';
 
 const post = withSessionRoute(

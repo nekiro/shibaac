@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import prisma from 'src/database/instance';
+import prisma from 'src/prisma';
 import apiHandler from 'src/middleware/apiHandler';
 
 // TODO: this route should include info only on request, not always

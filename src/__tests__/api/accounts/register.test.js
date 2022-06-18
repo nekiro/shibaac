@@ -1,5 +1,5 @@
 import { createMocks } from 'node-mocks-http';
-import register from '../../../src/pages/api/accounts/register';
+import register from '../../../pages/api/accounts/register';
 
 describe('/api/accounts/register', () => {
   test('registers new account endpoint', async () => {

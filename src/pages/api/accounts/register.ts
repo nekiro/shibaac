@@ -2,7 +2,7 @@ import { sha1Encrypt } from 'src/util/crypt';
 import { validate } from 'src/middleware/validation';
 import { registerSchema } from 'src/schemas/Register';
 import { NextApiRequest, NextApiResponse } from 'next';
-import prisma from 'src/database/instance';
+import prisma from 'src/prisma';
 import apiHandler from 'src/middleware/apiHandler';
 
 const post = async (req: NextApiRequest, res: NextApiResponse) => {

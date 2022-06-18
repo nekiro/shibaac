@@ -6,10 +6,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest --watch"
+    "test": "jest --verbose",
+    "coverage": "jest --coverage"
   },
   "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+    "seed": "ts-node prisma/seed.ts",
+    "schema": "src/prisma/schema.prisma"
   },
   "dependencies": {
     "@chakra-ui/icons": "^1.1.7",

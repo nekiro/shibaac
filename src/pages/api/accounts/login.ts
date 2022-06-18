@@ -3,7 +3,7 @@ import { withSessionRoute } from 'src/util/session';
 import { validate } from 'src/middleware/validation';
 import { loginSchema } from 'src/schemas/Login';
 import { NextApiRequest, NextApiResponse } from 'next';
-import prisma from 'src/database/instance';
+import prisma from 'src/prisma';
 import apiHandler from 'src/middleware/apiHandler';
 
 const post = withSessionRoute(
