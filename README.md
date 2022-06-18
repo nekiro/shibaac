@@ -4,6 +4,10 @@
 
 <h1 align="center">SHIBAAC</h1>
 
+<a href="https://codecov.io/gh/nekiro/shibaac">
+  <img src="https://codecov.io/gh/nekiro/shibaac/branch/master/graph/badge.svg?token=LDXR6UDS55"/>
+</a>
+
 This project aims to provide a fully featured, secure and fast AAC (Automatic Account Creator) for Open Tibia Servers.
 
 <b>Currently project is in early stage of development.</b>
