@@ -8,7 +8,7 @@ import { Box, Image, Flex, Grid } from '@chakra-ui/react';
 
 const Layout = ({ children }) => {
   return (
-    <Box w="40%" margin="auto">
+    <Box w="70%" margin="auto">
       <Head />
       <Image
         width="15%"
