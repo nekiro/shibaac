@@ -1,5 +1,5 @@
 const accounts = {
-  table: 'accounts',
+  table: 'account',
   data: [
     {
       name: 'nekiro',

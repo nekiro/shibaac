@@ -5,8 +5,7 @@ import path from 'path';
 async function main() {
   const seedsPath = path.join(__dirname, '/seeds');
 
-  const files = await fs.readdir(seedsPath);
-  for (const file of files) {
+  for (const file of await fs.readdir(seedsPath)) {
     const seed = require(path.join(seedsPath, file)).default;
     // @ts-ignore
     await prisma[seed.table].createMany({
