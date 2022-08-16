@@ -37,7 +37,7 @@ const DropdownButton = ({ hasMenu, text, href, list }) => {
         </MenuList>
       </Menu>
     );
-  } else {
+  } else if (href) {
     return (
       <Link href={href} passHref>
         <Button

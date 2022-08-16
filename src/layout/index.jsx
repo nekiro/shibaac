@@ -1,14 +1,18 @@
 import React from 'react';
 import Head from './Head';
-import Navigation from './NavBar';
+import NavBar from './NavBar';
 import SideBar from './SideBar';
 import Footer from './Footer';
 
-import { Box, Image, Flex, Grid } from '@chakra-ui/react';
+import { Box, Image, Flex } from '@chakra-ui/react';
 
 const Layout = ({ children }) => {
   return (
-    <Box w="70%" margin="auto">
+    <Box
+      w={{ base: '95%', md: '70%' }}
+      marginX={'auto'}
+      marginY={{ base: '1em', md: 0 }}
+    >
       <Head />
       <Image
         width="15%"
@@ -19,13 +23,17 @@ const Layout = ({ children }) => {
         src="/images/header.png"
         alt="shibaac"
       />
-      <Navigation />
-      <Flex>
-        <Box flexGrow="1" marginRight="3em">
+      <NavBar />
+      <Flex flexDirection={{ base: 'column', md: 'row' }}>
+        <Box
+          flexGrow="1"
+          marginRight={{ base: 0, md: '3em' }}
+          order={{ base: 2, md: 1 }}
+        >
           {children}
           <Footer />
         </Box>
-        <SideBar />
+        <SideBar order={{ base: 1, md: 2 }} />
       </Flex>
     </Box>
   );

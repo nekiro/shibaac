@@ -53,6 +53,7 @@ const FormWrapper = ({
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={onSubmit}
+      validate={true}
     >
       {({ errors, values, isValid, isSubmitting }) => (
         <Form>

@@ -7,7 +7,7 @@ import Link from '../components/Link';
 import { Box } from '@chakra-ui/react';
 import StripedTable from '../components/StrippedTable';
 
-const SideBar = () => {
+const SideBar = (props) => {
   const [state, setState] = useState({
     topPlayers: null,
     serverStatus: null,
@@ -32,7 +32,7 @@ const SideBar = () => {
   }, []);
 
   return (
-    <Box minWidth="15em">
+    <Box minWidth="15em" {...props}>
       <Panel
         header="Server Status"
         isLoading={!state.topPlayers || !state.serverStatus}
