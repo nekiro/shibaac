@@ -7,10 +7,12 @@ export const UserContextWrapper = ({ children }) => {
   const [user, setUser] = useState(null);
 
   const fetchUser = async () => {
-    const response = await fetchApi('GET', '/api/user');
-    if (response.isLoggedIn) {
-      setUser(response.user);
-    }
+    try {
+      const response = await fetchApi('GET', '/api/user');
+      if (response.isLoggedIn) {
+        setUser(response.user);
+      }
+    } catch {}
   };
 
   useEffect(() => {
