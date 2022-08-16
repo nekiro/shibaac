@@ -19,6 +19,8 @@ This project aims to provide a fully featured, secure and fast AAC (Automatic Ac
 - Prisma (mysql)
 - Jest
 - Chakra UI
+- Yup
+- Typescript
 
 ## Features
 
@@ -29,6 +31,7 @@ This project aims to provide a fully featured, secure and fast AAC (Automatic Ac
 - User system
 - Secure API
 - Mix of dynamic and static pages, most pages use dynamic loading
+- RWD
 
 ## Tutorials
 
@@ -37,7 +40,6 @@ This project aims to provide a fully featured, secure and fast AAC (Automatic Ac
 ## To Do
 
 - lost account interface
-- proper front-end layout (actually responsive)
 - guilds
 - houses
 - use typescript where possible
