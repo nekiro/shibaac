@@ -8,7 +8,7 @@ export default function Logout() {
   const { setUser } = useUser();
 
   const postLogout = useCallback(async () => {
-    await fetchApi('POST', '/api/accounts/logout');
+    await fetchApi('POST', '/api/account/logout');
     setUser(null);
     router.push('/');
   }, [router, setUser]);

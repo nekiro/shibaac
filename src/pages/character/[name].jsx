@@ -22,13 +22,13 @@ export default function Character() {
 
     const state = {};
 
-    const response = await fetchApi('GET', `/api/players/${name}`);
+    const response = await fetchApi('GET', `/api/player/${name}`);
     if (response.success) {
       state.player = response.player;
 
       const townResponse = await fetchApi(
         'GET',
-        `/api/towns/${state.player.town_id}`
+        `/api/town/${state.player.town_id}`
       );
 
       if (townResponse.success) {

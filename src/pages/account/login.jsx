@@ -26,7 +26,7 @@ export default function Login() {
   const [response, setResponse] = useState(null);
 
   const onSubmit = async (values, { resetForm }) => {
-    const response = await fetchApi('POST', '/api/accounts/login', {
+    const response = await fetchApi('POST', '/api/account/login', {
       data: {
         name: values.name,
         password: values.password,

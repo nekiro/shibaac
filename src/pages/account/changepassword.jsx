@@ -37,7 +37,7 @@ export default function ChangePassword() {
   const [response, setResponse] = useState(null);
 
   const onSubmit = async (values, { resetForm }) => {
-    const response = await fetchApi('POST', '/api/accounts/changepassword', {
+    const response = await fetchApi('POST', '/api/account/changepassword', {
       data: {
         newPassword: values.newPassword,
         password: values.password,

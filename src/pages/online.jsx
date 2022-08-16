@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from 'react';
 import Panel from '../components/Panel';
 import StrippedTable from '../components/StrippedTable';
 import Head from '../layout/Head';
-import Link from 'next/link';
 import { fetchApi } from '../util/request';
 import { vocationIdToName } from '../util';
 import Label from '../components/Label';
@@ -11,7 +10,7 @@ export default function Online() {
   const [state, setState] = useState(null);
 
   const fetchData = useCallback(async () => {
-    const players = await fetchApi('GET', `/api/players/online`);
+    const players = await fetchApi('GET', `/api/player/online`);
     const status = await fetchApi('GET', `/api/status`);
 
     if (players.success && status.success) {

@@ -1,8 +1,9 @@
-import { withSessionRoute } from 'src/util/session';
-import { sha1Encrypt } from 'src/util/crypt';
+import { withSessionRoute } from '../../../util/session';
+import { sha1Encrypt } from '../../../util/crypt';
 import { NextApiRequest, NextApiResponse } from 'next';
-import prisma from 'src/prisma';
-import apiHandler from 'src/middleware/apiHandler';
+import prisma from '../../../prisma';
+import apiHandler from '../../../middleware/apiHandler';
+import { Prisma } from '@prisma/client';
 
 const post = withSessionRoute(
   async (req: NextApiRequest, res: NextApiResponse) => {
@@ -13,14 +14,18 @@ const post = withSessionRoute(
 
     const { email, password } = req.body;
 
-    const result = await prisma.accounts.updateMany({
-      where: { id: user.id, password: sha1Encrypt(password) },
-      data: {
-        email,
-      },
-    });
+    let result: Prisma.BatchPayload | undefined;
 
-    if (result.count == 0) {
+    try {
+      result = await prisma.account.updateMany({
+        where: { id: user.id, password: sha1Encrypt(password) },
+        data: {
+          email,
+        },
+      });
+    } catch (err) {}
+
+    if (result && result.count == 0) {
       return res.json({
         success: false,
         message: "Current password doesn't match.",

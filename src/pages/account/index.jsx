@@ -12,7 +12,7 @@ export default function Account({ user }) {
   const [info, setInfo] = useState(null);
 
   const fetchData = useCallback(async () => {
-    const response = await fetchApi('GET', `/api/accounts/${user.id}`);
+    const response = await fetchApi('GET', `/api/account/${user.id}`);
     setInfo(response.account);
   }, [user]);
 

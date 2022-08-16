@@ -15,7 +15,7 @@ const SideBar = (props) => {
 
   const fetchData = async () => {
     const [top5, status] = await Promise.all([
-      fetchApi('GET', `/api/players/top5`),
+      fetchApi('GET', `/api/player/top5`),
       fetchApi('GET', `/api/status`),
     ]);
 

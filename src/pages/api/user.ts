@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { withSessionRoute } from 'src/util/session';
-import apiHandler from 'src/middleware/apiHandler';
+import { withSessionRoute } from '../../util/session';
+import apiHandler from '../../middleware/apiHandler';
 
 const get = withSessionRoute(
   async (req: NextApiRequest, res: NextApiResponse) => {

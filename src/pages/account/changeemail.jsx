@@ -29,7 +29,7 @@ export default function ChangeEmail() {
   const [response, setResponse] = useState(null);
 
   const onSubmit = async (values, { resetForm }) => {
-    const response = await fetchApi('POST', '/api/accounts/changeemail', {
+    const response = await fetchApi('POST', '/api/account/changeemail', {
       data: {
         email: values.newEmail,
         password: values.password,

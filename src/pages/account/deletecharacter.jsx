@@ -16,7 +16,7 @@ export default function DeleteCharacter({ user }) {
   const [data, setData] = useState(null);
 
   const fetchCharacters = useCallback(async () => {
-    const response = await fetchApi('GET', `/api/accounts/${user.id}`);
+    const response = await fetchApi('GET', `/api/account/${user.id}`);
     if (response.success) {
       setData({
         fields: [
@@ -54,7 +54,7 @@ export default function DeleteCharacter({ user }) {
   }
 
   const onSubmit = async (values, { resetForm }) => {
-    const response = await fetchApi('POST', '/api/accounts/deletecharacter', {
+    const response = await fetchApi('POST', '/api/account/deletecharacter', {
       data: {
         name: values.name,
         password: values.password,

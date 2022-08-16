@@ -11,7 +11,7 @@ export function validate(
       try {
         req.body = await schema
           .camelCase()
-          .validate(req.body, { abortEarly: false, stripUnknown: true });
+          .validate(req.body, { abortEarly: false });
       } catch (yupError) {
         if (yupError instanceof ValidationError) {
           return res

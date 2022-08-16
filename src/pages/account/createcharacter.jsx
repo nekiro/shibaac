@@ -53,7 +53,7 @@ export default function CreateCharacter() {
   const [response, setResponse] = useState(null);
 
   const onSubmit = async (values, { resetForm }) => {
-    const response = await fetchApi('POST', '/api/accounts/createcharacter', {
+    const response = await fetchApi('POST', '/api/account/createcharacter', {
       data: {
         name: values.name,
         vocation: values.vocation,

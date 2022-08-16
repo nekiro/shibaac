@@ -53,7 +53,7 @@ const FormWrapper = ({
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={onSubmit}
-      validate={true}
+      validateOnMount={true}
     >
       {({ errors, values, isValid, isSubmitting }) => (
         <Form>
@@ -88,6 +88,7 @@ const FormWrapper = ({
                 {buttons.map((button) => (
                   <Button
                     isLoading={button.type == 'submit' && isSubmitting}
+                    isActive={button.type == 'submit' && !isValid}
                     loadingText="Submitting"
                     key={button.value}
                     type={button.type}

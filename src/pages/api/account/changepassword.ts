@@ -1,28 +1,28 @@
-import { withSessionRoute } from 'src/util/session';
-import { sha1Encrypt } from 'src/util/crypt';
+import { withSessionRoute } from '../../../util/session';
+import { sha1Encrypt } from '../../../util/crypt';
 import { NextApiRequest, NextApiResponse } from 'next';
-import prisma from 'src/prisma';
-import apiHandler from 'src/middleware/apiHandler';
-import { changePasswordSchema } from 'src/schemas/ChangePassword';
-import { validate } from 'src/middleware/validation';
+import prisma from '../../../prisma';
+import apiHandler from '../../../middleware/apiHandler';
+import { changePasswordSchema } from '../../../schemas/ChangePassword';
+import { validate } from '../../../middleware/validation';
 
 const post = withSessionRoute(
   async (req: NextApiRequest, res: NextApiResponse) => {
     const { user } = req.session;
     if (!user) {
-      return res.status(403).json({ message: 'user not found' });
+      return res.status(403).json({ message: 'User not found' });
     }
 
     const { newPassword, password } = req.body;
 
     if (newPassword === password) {
-      return res.json({
+      return res.status(400).json({
         success: false,
         message: "Current password can't be the same as new password.",
       });
     }
 
-    const result = await prisma.accounts.updateMany({
+    const result = await prisma.account.updateMany({
       where: {
         id: user.id,
         password: sha1Encrypt(password),

@@ -42,7 +42,7 @@ export default function Register() {
   const [response, setResponse] = useState(null);
 
   const onSubmit = async (values, { resetForm }) => {
-    const response = await fetchApi('POST', '/api/accounts/register', {
+    const response = await fetchApi('POST', '/api/account/register', {
       data: {
         name: values.name,
         password: values.password,

@@ -1,11 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import prisma from 'src/prisma';
-import apiHandler from 'src/middleware/apiHandler';
+import prisma from '../../../prisma';
+import apiHandler from '../../../middleware/apiHandler';
 
 const get = async (req: NextApiRequest, res: NextApiResponse) => {
   const { id } = req.query;
 
-  const town = await prisma.towns.findFirst({ where: { id: Number(id) } });
+  const town = await prisma.town.findFirst({ where: { id: Number(id) } });
   if (!town) {
     return res.json({ success: false, message: 'Not found' });
   }
