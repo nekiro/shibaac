@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { dev } from 'src/util/config';
+import { dev } from '../util/config';
 
 declare global {
   // allow global `var` declarations

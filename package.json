@@ -10,7 +10,7 @@
     "coverage": "jest --coverage"
   },
   "prisma": {
-    "seed": "ts-node prisma/seed.ts",
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} src/prisma/seed.ts",
     "schema": "src/prisma/schema.prisma"
   },
   "dependencies": {

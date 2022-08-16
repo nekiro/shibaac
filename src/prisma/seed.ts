@@ -1,13 +1,11 @@
-import { PrismaClient } from '@prisma/client';
-import { readdir } from 'fs/promises';
+import prisma from '.';
+import fs from 'fs/promises';
 import path from 'path';
-
-const prisma = new PrismaClient();
 
 async function main() {
   const seedsPath = path.join(__dirname, '/seeds');
 
-  const files = await readdir(seedsPath);
+  const files = await fs.readdir(seedsPath);
   for (const file of files) {
     const seed = require(path.join(seedsPath, file)).default;
     // @ts-ignore
