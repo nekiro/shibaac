@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Panel from 'src/components/Panel';
-import { withSessionSsr } from 'src/util/session';
+import { withSessionSsr } from 'src/lib/session';
 import FormWrapper from 'src/components/FormWrapper';
 
 const fields = [

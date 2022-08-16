@@ -1,6 +1,6 @@
-import { withSessionRoute } from '../../../util/session';
+import { withSessionRoute } from '../../../lib/session';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { sha1Encrypt } from '../../../util/crypt';
+import { sha1Encrypt } from '../../../lib/crypt';
 import { validate } from '../../../middleware/validation';
 import { deleteCharacterSchema } from '../../../schemas/DeleteCharacter';
 import apiHandler from '../../../middleware/apiHandler';

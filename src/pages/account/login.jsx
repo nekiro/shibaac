@@ -3,10 +3,10 @@ import Panel from 'src/components/Panel';
 import Head from 'src/layout/Head';
 import Link from 'src/components/Link';
 import { useRouter } from 'next/router';
-import { withSessionSsr } from 'src/util/session';
+import { withSessionSsr } from 'src/lib/session';
 import { useUser } from 'src/hooks/useUser';
 import { loginSchema } from 'src/schemas/Login';
-import { fetchApi } from 'src/util/request';
+import { fetchApi } from 'src/lib/request';
 import FormWrapper from 'src/components/FormWrapper';
 import { Text } from '@chakra-ui/react';
 

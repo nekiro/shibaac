@@ -1,7 +1,7 @@
 import sanitize from 'sanitize-html';
 import Panel from '../components/Panel';
 import { useState, useEffect, useCallback } from 'react';
-import { fetchApi } from '../util/request';
+import { fetchApi } from '../lib/request';
 
 export default function Index() {
   const [news, setNews] = useState(null);

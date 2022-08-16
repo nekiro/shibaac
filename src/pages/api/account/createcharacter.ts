@@ -1,4 +1,4 @@
-import { withSessionRoute } from '../../../util/session';
+import { withSessionRoute } from '../../../lib/session';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { validate } from '../../../middleware/validation';
 import { createCharacterSchema } from '../../../schemas/CreateCharacter';

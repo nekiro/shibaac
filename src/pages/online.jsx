@@ -2,8 +2,8 @@ import React, { useEffect, useState, useCallback } from 'react';
 import Panel from '../components/Panel';
 import StrippedTable from '../components/StrippedTable';
 import Head from '../layout/Head';
-import { fetchApi } from '../util/request';
-import { vocationIdToName } from '../util';
+import { fetchApi } from '../lib/request';
+import { vocationIdToName } from '../lib';
 import Label from '../components/Label';
 
 export default function Online() {

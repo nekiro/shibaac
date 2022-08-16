@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { withSessionRoute } from '../../util/session';
+import { withSessionRoute } from '../../lib/session';
 import apiHandler from '../../middleware/apiHandler';
 
 const get = withSessionRoute(

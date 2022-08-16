@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Panel from 'src/components/Panel';
-import { fetchApi } from 'src/util/request';
+import { fetchApi } from 'src/lib/request';
 import {
   timestampToDate,
   vocationIdToName,
   groupToName,
   secondsToTime,
-} from 'src/util';
+} from 'src/lib';
 import { useRouter } from 'next/router';
 import StrippedTable from 'src/components/StrippedTable';
 import Label from 'src/components/Label';

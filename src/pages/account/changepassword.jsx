@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import Panel from 'src/components/Panel';
 import FormWrapper from 'src/components/FormWrapper';
-import { fetchApi } from 'src/util/request';
-import { withSessionSsr } from 'src/util/session';
+import { fetchApi } from 'src/lib/request';
+import { withSessionSsr } from 'src/lib/session';
 import { changePasswordSchema } from 'src/schemas/ChangePassword';
 import { Text } from '@chakra-ui/react';
 

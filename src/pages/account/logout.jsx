@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useEffect, useCallback } from 'react';
 import { useUser } from 'src/hooks/useUser';
-import { fetchApi } from 'src/util/request';
+import { fetchApi } from 'src/lib/request';
 
 export default function Logout() {
   const router = useRouter();

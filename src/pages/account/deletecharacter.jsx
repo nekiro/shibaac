@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Panel from '../../components/Panel';
-import { withSessionSsr } from '../../util/session';
-import { fetchApi } from '../../util/request';
+import { withSessionSsr } from '../../lib/session';
+import { fetchApi } from '../../lib/request';
 import FormWrapper from '../../components/FormWrapper';
 import { deleteCharacterSchema } from 'src/schemas/DeleteCharacter';
 import { Select, Text } from '@chakra-ui/react';

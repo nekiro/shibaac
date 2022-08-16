@@ -1,6 +1,6 @@
 import { account, Prisma } from '@prisma/client';
 import prisma from '../prisma';
-import { sha1Encrypt } from '../util/crypt';
+import { sha1Encrypt } from '../lib/crypt';
 
 type Account = Promise<account | null>;
 

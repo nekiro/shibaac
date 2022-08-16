@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Panel from 'src/components/Panel';
 import Head from 'src/layout/Head';
-import { fetchApi } from 'src/util/request';
-import { withSessionSsr } from 'src/util/session';
+import { fetchApi } from 'src/lib/request';
+import { withSessionSsr } from 'src/lib/session';
 import Button from '../../components/Button';
 import StripedTable from '../../components/StrippedTable';
 import { Wrap } from '@chakra-ui/react';
-import { vocationIdToName } from '../../util';
+import { vocationIdToName } from '../../lib';
 
 export default function Account({ user }) {
   const [info, setInfo] = useState(null);

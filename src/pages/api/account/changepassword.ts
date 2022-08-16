@@ -1,5 +1,5 @@
-import { withSessionRoute } from '../../../util/session';
-import { sha1Encrypt } from '../../../util/crypt';
+import { withSessionRoute } from '../../../lib/session';
+import { sha1Encrypt } from '../../../lib/crypt';
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../../prisma';
 import apiHandler from '../../../middleware/apiHandler';

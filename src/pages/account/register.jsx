@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import Panel from 'src/components/Panel';
 import Head from 'src/layout/Head';
-import { withSessionSsr } from 'src/util/session';
-import { fetchApi } from 'src/util/request';
+import { withSessionSsr } from 'src/lib/session';
+import { fetchApi } from 'src/lib/request';
 import FormWrapper from 'src/components/FormWrapper';
 import { registerSchema } from 'src/schemas/Register';
 

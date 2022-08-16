@@ -1,5 +1,5 @@
-import { sha1Encrypt } from '../../../util/crypt';
-import { withSessionRoute } from '../../../util/session';
+import { sha1Encrypt } from '../../../lib/crypt';
+import { withSessionRoute } from '../../../lib/session';
 import { validate } from '../../../middleware/validation';
 import { loginSchema } from '../../../schemas/Login';
 import { NextApiRequest, NextApiResponse } from 'next';

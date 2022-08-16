@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import Panel from 'src/components/Panel';
 import FormWrapper from 'src/components/FormWrapper';
-import { fetchApi } from 'src/util/request';
-import { withSessionSsr } from 'src/util/session';
+import { fetchApi } from '../../lib/request';
+import { withSessionSsr } from 'src/lib/session';
 import { changeEmailSchema } from 'src/schemas/ChangeEmail';
 
 const fields = [

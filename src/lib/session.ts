@@ -16,7 +16,7 @@ declare module 'iron-session' {
 }
 
 const sessionOptions: IronSessionOptions = {
-  cookieName: 'acc_cookie',
+  cookieName: 'shibaac',
   password: process.env.SESSION_PASSWORD as string,
   // secure: true should be used in production (HTTPS) but can't be used in development (HTTP)
   cookieOptions: {

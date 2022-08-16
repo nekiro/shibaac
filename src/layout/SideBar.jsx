@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Panel from '../components/Panel';
 import Label from '../components/Label';
-import { fetchApi } from '../util/request';
+import { fetchApi } from '../lib/request';
 import Link from '../components/Link';
 
 import { Box } from '@chakra-ui/react';
