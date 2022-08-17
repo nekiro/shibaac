@@ -12,7 +12,7 @@ const post = withSessionRoute(
   async (req: NextApiRequest, res: NextApiResponse) => {
     const user = req.session.user;
     if (!user) {
-      return res.json({ success: false, message: 'Not authorised.' });
+      return res.status(403).json({ success: false, message: 'Unauthorized.' });
     }
 
     const { name, password } = req.body;
@@ -26,7 +26,7 @@ const post = withSessionRoute(
     );
 
     if (!account) {
-      return res.json({
+      return res.status(400).json({
         success: false,
         message: "Password doesn't match.",
       });
@@ -34,7 +34,7 @@ const post = withSessionRoute(
 
     const character = account.players.find((p: player) => p.name === name);
     if (!character) {
-      return res.json({
+      return res.status(404).json({
         success: false,
         message: "Couldn't find character.",
       });
@@ -48,7 +48,9 @@ const post = withSessionRoute(
         message: 'Succesfully deleted character.',
       });
     } else {
-      res.json({ success: false, message: "Couldn't delete character" });
+      res
+        .status(500)
+        .json({ success: false, message: "Couldn't delete character" });
     }
   }
 );

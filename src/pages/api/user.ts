@@ -4,12 +4,12 @@ import apiHandler from '../../middleware/apiHandler';
 
 const get = withSessionRoute(
   async (req: NextApiRequest, res: NextApiResponse) => {
-    const user = req.session?.user;
+    const user = req.session.user;
 
     return res.json({
       success: true,
       args: {
-        isLoggedIn: user !== undefined,
+        isLoggedIn: !!user,
         user,
       },
     });

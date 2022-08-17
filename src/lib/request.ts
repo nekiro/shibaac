@@ -2,11 +2,16 @@ type FetchOptions = {
   data: any;
 };
 
+type FetchResult = {
+  message: string;
+  success: boolean;
+};
+
 export const fetchApi = async (
   method: string,
   url: string,
   options?: FetchOptions
-) => {
+): Promise<FetchResult> => {
   const _options: RequestInit = {
     method,
   };
@@ -16,7 +21,7 @@ export const fetchApi = async (
     _options.body = JSON.stringify(options.data);
   }
 
-  const response: Response = await fetch(
+  const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}${url}`,
     _options
   );

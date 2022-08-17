@@ -9,7 +9,7 @@ const post = withSessionRoute(
   async (req: NextApiRequest, res: NextApiResponse) => {
     const user = req.session.user;
     if (!user) {
-      return res.status(403).json({ message: 'Not authorized.' });
+      return res.status(403).json({ message: 'Unauthorized.' });
     }
 
     const {
@@ -34,7 +34,9 @@ const post = withSessionRoute(
         message: 'Succesfully created character.',
       });
     } else {
-      res.json({ success: false, message: "Couldn't create character." });
+      res
+        .status(500)
+        .json({ success: false, message: "Couldn't create character." });
     }
   }
 );

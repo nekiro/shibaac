@@ -7,7 +7,7 @@ const get = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const town = await prisma.town.findFirst({ where: { id: Number(id) } });
   if (!town) {
-    return res.json({ success: false, message: 'Not found' });
+    return res.status(404).json({ success: false, message: 'Town not found.' });
   }
 
   res.json({ success: true, args: { town } });

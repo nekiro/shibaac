@@ -15,7 +15,6 @@ const get = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   const account = await accountService.getAccountById(+id);
-
   if (!account) {
     return res.json({ success: false, message: 'Account not found' });
   }

@@ -16,7 +16,9 @@ const post = withSessionRoute(
     );
 
     if (!account) {
-      return res.json({ success: false, message: 'Wrong credentials.' });
+      return res
+        .status(401)
+        .json({ success: false, message: 'Wrong credentials.' });
     }
 
     req.session.user = account;

@@ -10,7 +10,7 @@ const post = withSessionRoute(
   async (req: NextApiRequest, res: NextApiResponse) => {
     const { user } = req.session;
     if (!user) {
-      return res.status(403).json({ message: 'User not found' });
+      return res.status(403).json({ message: 'Unauthorised.' });
     }
 
     const { newPassword, password } = req.body;
@@ -31,7 +31,7 @@ const post = withSessionRoute(
     });
 
     if (result.count === 0) {
-      return res.json({
+      return res.status(400).json({
         success: false,
         message: "Current password doesn't match.",
       });

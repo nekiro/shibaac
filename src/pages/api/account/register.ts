@@ -9,16 +9,15 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
 
   let account = await accountService.getAccountByName(name);
   if (account) {
-    return res.json({
+    return res.status(400).json({
       success: false,
       message: 'Account with that name already exists.',
     });
   }
 
   account = await accountService.createAccount(name, password, email);
-
   if (!account) {
-    return res.json({
+    return res.status(500).json({
       success: false,
       message: 'Error occured while creating account',
     });
