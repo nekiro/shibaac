@@ -1,9 +1,9 @@
 import { player } from '@prisma/client';
 import prisma from '../prisma';
 
-type Player = Promise<player | null>;
+export type Player = player | null;
 
-export const findPlayerByName = async (name: string): Player => {
+export const findPlayerByName = async (name: string): Promise<Player> => {
   try {
     const player = await prisma.player.findFirst({
       where: { name },
@@ -20,7 +20,7 @@ export const createPlayer = async (
   account_id: number,
   vocation: number,
   sex: number
-): Player => {
+): Promise<Player> => {
   try {
     const player = await prisma.player.create({
       data: {
@@ -37,7 +37,7 @@ export const createPlayer = async (
   }
 };
 
-export const deletePlayer = async (characterId: number): Player => {
+export const deletePlayer = async (characterId: number): Promise<Player> => {
   try {
     const player = await prisma.player.delete({
       where: {

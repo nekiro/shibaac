@@ -4,11 +4,16 @@ import { sha1Encrypt } from '../lib/crypt';
 
 type Account = Promise<account | null>;
 
+export const getAccountByIdIncludeDefault: Prisma.accountInclude = {
+  players: { select: { name: true, level: true, vocation: true } },
+};
+
 export const getAccountById = async (
   accountId: number,
-  include: Prisma.accountInclude = {
-    players: { select: { name: true, level: true, vocation: true } },
-  }
+  include:
+    | Prisma.accountInclude
+    | null
+    | undefined = getAccountByIdIncludeDefault
 ): Account => {
   try {
     const account = await prisma.account.findFirst({
