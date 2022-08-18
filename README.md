@@ -44,3 +44,4 @@ This project aims to provide a fully featured, secure and fast AAC (Automatic Ac
 - houses
 - use typescript where possible
 - db migrations
+- tests
