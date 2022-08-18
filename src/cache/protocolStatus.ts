@@ -4,7 +4,15 @@ import { parseXml } from '../lib/crypt';
 
 let lastUpdated = 0;
 
-const cache = {
+type ProtocolStatusCache = {
+  onlineCount: number;
+  maxOnlineCount: number;
+  uptime: number;
+  online: boolean;
+  name: string;
+};
+
+const cache: ProtocolStatusCache = {
   onlineCount: 0,
   maxOnlineCount: 0,
   uptime: 0,
@@ -12,7 +20,7 @@ const cache = {
   name: '',
 };
 
-export const getCache = async () => {
+export const getCache = async (): Promise<ProtocolStatusCache> => {
   if (lastUpdated == 0 || Date.now() >= lastUpdated + 30000) {
     await updateCache();
   }
