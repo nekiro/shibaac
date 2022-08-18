@@ -6,12 +6,12 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import apiHandler from '../../../middleware/apiHandler';
 import * as accountService from '../../../services/accountService';
 
-const post = withSessionRoute(
+export const post = withSessionRoute(
   async (req: NextApiRequest, res: NextApiResponse) => {
     const { name, password } = req.body;
 
     const account = await accountService.getAccountBy(
-      { name, password: sha1Encrypt(password) },
+      { name, password: await sha1Encrypt(password) },
       { id: true, name: true }
     );
 

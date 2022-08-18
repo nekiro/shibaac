@@ -72,7 +72,7 @@ export const createAccount = async (
     const account = await prisma.account.create({
       data: {
         name,
-        password: sha1Encrypt(password),
+        password: await sha1Encrypt(password),
         email,
       },
     });

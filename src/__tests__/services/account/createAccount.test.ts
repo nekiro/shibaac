@@ -21,7 +21,7 @@ describe('createAccount', () => {
     expect(prismaMock.account.create).toBeCalledWith({
       data: {
         name: mockedAccount.name,
-        password: sha1Encrypt(mockedAccount.password),
+        password: await sha1Encrypt(mockedAccount.password),
         email: mockedAccount.email,
       },
     });

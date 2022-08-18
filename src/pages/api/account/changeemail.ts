@@ -18,7 +18,7 @@ const post = withSessionRoute(
 
     try {
       result = await prisma.account.updateMany({
-        where: { id: user.id, password: sha1Encrypt(password) },
+        where: { id: user.id, password: await sha1Encrypt(password) },
         data: {
           email,
         },

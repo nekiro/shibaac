@@ -1,6 +1,6 @@
 import PromiseSocket from 'promise-socket';
 import net from 'net';
-import { parseXml } from '../lib/crypt';
+import { parseXml } from '../lib';
 
 let lastUpdated = 0;
 

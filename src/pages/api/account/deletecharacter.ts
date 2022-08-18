@@ -20,7 +20,7 @@ const post = withSessionRoute(
     const account: any = await accountService.getAccountBy(
       {
         id: user.id,
-        password: sha1Encrypt(password),
+        password: await sha1Encrypt(password),
       },
       { players: { select: { name: true, id: true } } }
     );

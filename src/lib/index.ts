@@ -1,3 +1,5 @@
+import { XMLParser } from 'fast-xml-parser';
+
 export const timestampToDate = (timestamp: number): string => {
   return new Date(timestamp * 1000).toLocaleTimeString('en-GB', {
     year: 'numeric',
@@ -19,6 +21,15 @@ export const secondsToTime = (seconds: number): string => {
   return `${
     0 < days ? days + ' day, ' : ''
   }${hours}h, ${minutes}m and ${seconds}s`;
+};
+
+export const parseXml = (document: string) => {
+  const parser = new XMLParser({
+    ignoreAttributes: false,
+    attributeNamePrefix: '',
+  });
+
+  return parser.parse(document);
 };
 
 export const vocationIdToName = [
