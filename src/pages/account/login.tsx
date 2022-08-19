@@ -1,31 +1,38 @@
 import React, { useState } from 'react';
-import Panel from 'src/components/Panel';
-import Head from 'src/layout/Head';
-import Link from 'src/components/Link';
+import Panel from '../../components/Panel';
+import Head from '../../layout/Head';
+import Link from '../../components/Link';
 import { useRouter } from 'next/router';
-import { withSessionSsr } from 'src/lib/session';
-import { useUser } from 'src/hooks/useUser';
-import { loginSchema } from 'src/schemas/Login';
-import { fetchApi } from 'src/lib/request';
-import FormWrapper from 'src/components/FormWrapper';
+import { withSessionSsr } from '../../lib/session';
+import { useUser } from '../../hooks/useUser';
+import { loginSchema } from '../../schemas/Login';
+import { fetchApi } from '../../lib/request';
+import FormWrapper, {
+  FormField,
+  FormButton,
+} from '../../components/FormWrapper';
 import { Text } from '@chakra-ui/react';
+import { FormikHelpers } from 'formik';
 
-const fields = [
+const fields: FormField[] = [
   { type: 'password', name: 'name', label: { text: 'Account Name' } },
   { type: 'password', name: 'password', label: { text: 'Password' } },
 ];
 
-const buttons = [
-  { type: 'submit', btnType: 'primary', value: 'Submit' },
-  { btnType: 'danger', href: '/account/lost', value: 'Lost Account?' },
+const buttons: FormButton[] = [
+  { type: 'submit', btnColorType: 'primary', value: 'Submit' },
+  { btnColorType: 'danger', href: '/account/lost', value: 'Lost Account?' },
 ];
 
 export default function Login() {
   const { setUser } = useUser();
   const router = useRouter();
-  const [response, setResponse] = useState(null);
+  const [response, setResponse] = useState<any>(null);
 
-  const onSubmit = async (values, { resetForm }) => {
+  const onSubmit = async (
+    values: any,
+    { resetForm }: FormikHelpers<object>
+  ) => {
     const response = await fetchApi('POST', '/api/account/login', {
       data: {
         name: values.name,
@@ -44,7 +51,7 @@ export default function Login() {
 
   return (
     <>
-      <Head title="Login"></Head>
+      <Head title="Login" />
       <Panel header="Login">
         <Text align="center" margin="10px">
           Please enter your account name and your password.

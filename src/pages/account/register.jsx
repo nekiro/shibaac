@@ -56,7 +56,7 @@ export default function Register() {
 
   return (
     <>
-      <Head title="Register"></Head>
+      <Head title="Register" />
       <Panel header="Register">
         <FormWrapper
           validationSchema={registerSchema}

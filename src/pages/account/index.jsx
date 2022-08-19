@@ -31,7 +31,7 @@ export default function Account({ user }) {
 
   return (
     <>
-      <Head title="Account Management"></Head>
+      <Head title="Account Management" />
       <Panel header="Account Management">
         <Panel header="Informations">
           <StripedTable

@@ -1,11 +1,12 @@
 type FetchOptions = {
-  data: any;
+  data: object;
 };
 
-type FetchResult = {
+export interface FetchResult<T = any> {
+  [key: string]: string | boolean | T;
   message: string;
   success: boolean;
-};
+}
 
 export const fetchApi = async (
   method: string,
@@ -36,7 +37,7 @@ export const fetchApi = async (
   }
 
   return {
-    message: data.message ?? '',
+    message: data.message,
     success: data.success,
     ...(data.args ? data.args : []),
   };

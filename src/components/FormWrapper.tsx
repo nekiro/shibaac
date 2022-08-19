@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, Field, FormikHelpers } from 'formik';
 import {
   VStack,
   FormControl,
@@ -9,26 +9,45 @@ import {
   Wrap,
   useToast,
 } from '@chakra-ui/react';
-
 import TextInput from './TextInput';
+import Button, { ButtonType, ButtonColorType } from './Button';
 
-import Button from './Button';
+export type FormField = {
+  type: string;
+  name: string;
+  label: { text: string };
+  placeholder?: string;
+  as?: any;
+  options?: { value: string; text: string }[];
+};
+
+export type FormButton = {
+  type?: ButtonType;
+  btnColorType: ButtonColorType;
+  value: string;
+  href?: string;
+};
+
+type FormWrapperProps = {
+  initialValues?: object;
+  validationSchema: {};
+  onSubmit: (
+    values: object,
+    formikHelpers: FormikHelpers<object>
+  ) => void | Promise<void>;
+  fields: FormField[];
+  buttons: FormButton[];
+  response: any;
+};
 
 const FormWrapper = ({
-  initialValues,
+  initialValues = {},
   validationSchema,
   onSubmit,
   fields,
   buttons,
   response,
-}) => {
-  if (!initialValues) {
-    initialValues = {};
-    fields.forEach((field) => {
-      initialValues[field.name] = '';
-    });
-  }
-
+}: FormWrapperProps) => {
   const toast = useToast();
 
   useEffect(() => {
@@ -48,6 +67,12 @@ const FormWrapper = ({
     }
   }, [response, toast]);
 
+  if (Object.keys(initialValues).length === 0) {
+    fields.forEach((field) => {
+      initialValues[field.name] = '';
+    });
+  }
+
   return (
     <Formik
       initialValues={initialValues}
@@ -55,9 +80,9 @@ const FormWrapper = ({
       onSubmit={onSubmit}
       validateOnMount={true}
     >
-      {({ errors, values, isValid, isSubmitting }) => (
+      {({ errors, isValid, isSubmitting }) => (
         <Form>
-          <Container alignContent padding={2}>
+          <Container alignContent={'center'} padding={2}>
             <VStack spacing={5}>
               {fields &&
                 fields.map((field) => (
@@ -79,7 +104,7 @@ const FormWrapper = ({
                         ))}
                     </Field>
                     <FormErrorMessage fontSize="sm">
-                      {errors[field.name]}
+                      {errors[field.name] as string}
                     </FormErrorMessage>
                   </FormControl>
                 ))}
@@ -93,7 +118,7 @@ const FormWrapper = ({
                     key={button.value}
                     type={button.type}
                     value={button.value}
-                    btnType={button.btnType}
+                    btnColorType={button.btnColorType}
                     href={button.href}
                   />
                 ))}

@@ -1,10 +1,17 @@
 import React from 'react';
 
 import NextHead from 'next/head';
-import Script from 'next/script';
 import { NextSeo } from 'next-seo';
 
-const Head = ({ title, keyword, description }) => {
+type HeadProps = {
+  title: string;
+  description?: string;
+};
+
+const Head = ({
+  title = 'shibaac',
+  description = 'Automatic Account Creator',
+}: HeadProps) => {
   return (
     <>
       <NextHead>
@@ -19,7 +26,6 @@ const Head = ({ title, keyword, description }) => {
       <NextSeo
         title={title}
         description={description}
-        keyword={keyword}
         //anonical={properties.canonical}
         openGraph={{
           title: title,
@@ -31,12 +37,6 @@ const Head = ({ title, keyword, description }) => {
       />
     </>
   );
-};
-
-Head.defaultProps = {
-  title: 'SHIBAac',
-  keywords: 'tibia, aac, ots, account creator',
-  description: 'Automatic Account Creator',
 };
 
 export default Head;

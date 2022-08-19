@@ -31,7 +31,7 @@ export default function Online() {
 
   return (
     <>
-      <Head title="Online"></Head>
+      <Head title="Online" />
       <Panel header="Online List">
         <Label colorScheme="violet" fontSize="sm">
           Overall Maximum: {state.status ? state.status.maxOnlineCount : '0'}{' '}

@@ -7,11 +7,13 @@ import {
 } from 'next';
 import { dev } from './config';
 
+export type User = {
+  id: number;
+};
+
 declare module 'iron-session' {
   interface IronSessionData {
-    user?: {
-      id: number;
-    };
+    user?: User;
   }
 }
 

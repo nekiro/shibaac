@@ -1,14 +1,26 @@
 import { useEffect, useState, createContext, useContext } from 'react';
 import { fetchApi } from '../lib/request';
+import React from 'react';
+import { User } from '../lib/session';
 
-const context = createContext(null);
+export type UserContext = {
+  user: User | null;
+  setUser: (user: User) => void;
+};
+
+const context = createContext<UserContext>({
+  user: null,
+  setUser: (user: User) => {},
+});
 
 export const UserContextWrapper = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUserState] = useState<User | null>(null);
+
+  const setUser = (user: User) => setUserState(user);
 
   const fetchUser = async () => {
     try {
-      const response = await fetchApi('GET', '/api/user');
+      const response = (await fetchApi('GET', '/api/user')) as any;
       if (response.isLoggedIn) {
         setUser(response.user);
       }
@@ -24,6 +36,6 @@ export const UserContextWrapper = ({ children }) => {
   );
 };
 
-export const useUser = () => {
+export const useUser = (): UserContext => {
   return useContext(context);
 };

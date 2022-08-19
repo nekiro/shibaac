@@ -4,12 +4,15 @@ import { Button as ChakraButton } from '@chakra-ui/react';
 
 const btnTypeToColor = { danger: 'red', primary: 'violet' };
 
+export type ButtonType = 'button' | 'submit' | 'reset';
+export type ButtonColorType = 'danger' | 'primary';
+
 type ButtonProps = {
   value: string;
   size?: string;
-  type: 'button' | 'submit' | 'reset';
+  type?: ButtonType;
   href?: string;
-  btnType: string;
+  btnColorType: ButtonColorType;
   isLoading: boolean;
   isActive: boolean;
   loadingText: string;
@@ -18,7 +21,7 @@ type ButtonProps = {
 const Button = ({
   value,
   type = 'button',
-  btnType = 'primary',
+  btnColorType = 'primary',
   size = 'md',
   href,
   isLoading,
@@ -28,7 +31,7 @@ const Button = ({
   const btn = (
     <ChakraButton
       type={type}
-      colorScheme={btnTypeToColor[btnType]}
+      colorScheme={btnTypeToColor[btnColorType]}
       size={size}
       fontWeight="normal"
       isLoading={isLoading}
