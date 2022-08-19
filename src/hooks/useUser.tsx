@@ -5,18 +5,18 @@ import { User } from '../lib/session';
 
 export type UserContext = {
   user: User | null;
-  setUser: (user: User) => void;
+  setUser: (user: User | null) => void;
 };
 
 const context = createContext<UserContext>({
   user: null,
-  setUser: (user: User) => user,
+  setUser: (user: User | null) => user,
 });
 
 export const UserContextWrapper = ({ children }) => {
   const [user, setUserState] = useState<User | null>(null);
 
-  const setUser = (user: User) => setUserState(user);
+  const setUser = (user: User | null) => setUserState(user);
 
   const fetchUser = async () => {
     try {

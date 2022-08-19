@@ -7,7 +7,7 @@ export type FetchResult = {
   success: boolean;
 };
 
-export const fetchApi = async <T>(
+export const fetchApi = async <T = void>(
   method: string,
   url: string,
   options?: FetchOptions

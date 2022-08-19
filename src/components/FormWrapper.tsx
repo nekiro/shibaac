@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react';
 import TextInput from './TextInput';
 import Button, { ButtonType, ButtonColorType } from './Button';
+import { FetchResult } from '../lib/request';
 
 export type FormField = {
   type: string;
@@ -37,7 +38,7 @@ type FormWrapperProps = {
   ) => void | Promise<void>;
   fields: FormField[];
   buttons: FormButton[];
-  response: any;
+  response: FetchResult | null;
 };
 
 const FormWrapper = ({
@@ -53,7 +54,7 @@ const FormWrapper = ({
   useEffect(() => {
     if (
       response &&
-      response.message.length > 0 &&
+      response.message?.length > 0 &&
       !toast.isActive('forms-response-toast')
     ) {
       toast({
