@@ -33,12 +33,16 @@ export default function Login() {
     values: any,
     { resetForm }: FormikHelpers<object>
   ) => {
-    const response = (await fetchApi('POST', '/api/account/login', {
-      data: {
-        name: values.name,
-        password: values.password,
-      },
-    })) as FetchResult & { account: User };
+    const response = await fetchApi<{ account: User }>(
+      'POST',
+      '/api/account/login',
+      {
+        data: {
+          name: values.name,
+          password: values.password,
+        },
+      }
+    );
 
     setResponse(response);
     resetForm();

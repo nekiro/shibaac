@@ -2,17 +2,16 @@ type FetchOptions = {
   data: object;
 };
 
-export interface FetchResult<T = any> {
-  [key: string]: string | boolean | T;
+export type FetchResult = {
   message: string;
   success: boolean;
-}
+};
 
-export const fetchApi = async (
+export const fetchApi = async <T>(
   method: string,
   url: string,
   options?: FetchOptions
-): Promise<FetchResult> => {
+): Promise<FetchResult & T> => {
   const _options: RequestInit = {
     method,
   };
@@ -33,7 +32,7 @@ export const fetchApi = async (
     return {
       message: data.yupError.toString(),
       success: false,
-    };
+    } as FetchResult & T;
   }
 
   return {
