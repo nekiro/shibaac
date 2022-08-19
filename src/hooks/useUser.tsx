@@ -10,7 +10,7 @@ export type UserContext = {
 
 const context = createContext<UserContext>({
   user: null,
-  setUser: (user: User) => {},
+  setUser: (user: User) => user,
 });
 
 export const UserContextWrapper = ({ children }) => {
@@ -29,7 +29,7 @@ export const UserContextWrapper = ({ children }) => {
 
   useEffect(() => {
     fetchUser();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <context.Provider value={{ user, setUser }}>{children}</context.Provider>

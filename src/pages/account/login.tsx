@@ -3,10 +3,10 @@ import Panel from '../../components/Panel';
 import Head from '../../layout/Head';
 import Link from '../../components/Link';
 import { useRouter } from 'next/router';
-import { withSessionSsr } from '../../lib/session';
+import { User, withSessionSsr } from '../../lib/session';
 import { useUser } from '../../hooks/useUser';
 import { loginSchema } from '../../schemas/Login';
-import { fetchApi } from '../../lib/request';
+import { fetchApi, FetchResult } from '../../lib/request';
 import FormWrapper, {
   FormField,
   FormButton,
@@ -27,18 +27,18 @@ const buttons: FormButton[] = [
 export default function Login() {
   const { setUser } = useUser();
   const router = useRouter();
-  const [response, setResponse] = useState<any>(null);
+  const [response, setResponse] = useState<FetchResult | null>(null);
 
   const onSubmit = async (
     values: any,
     { resetForm }: FormikHelpers<object>
   ) => {
-    const response = await fetchApi('POST', '/api/account/login', {
+    const response = (await fetchApi('POST', '/api/account/login', {
       data: {
         name: values.name,
         password: values.password,
       },
-    });
+    })) as FetchResult & { account: User };
 
     setResponse(response);
     resetForm();
