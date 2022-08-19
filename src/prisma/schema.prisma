@@ -37,7 +37,7 @@ model account {
 
 model player {
   id                    Int             @id @default(autoincrement())
-  name                  String          @unique(map: "name") @db.VarChar(255)
+  name                  String          @unique(map: "name") @db.VarChar(50)
   group_id              Int             @default(1)
   account_id            Int             @default(0)
   level                 Int             @default(1)
@@ -130,7 +130,7 @@ model player_death {
 
 model town {
   id   Int    @id @default(autoincrement())
-  name String @unique(map: "name") @db.VarChar(255)
+  name String @unique(map: "name") @db.VarChar(50)
   posx Int    @default(0)
   posy Int    @default(0)
   posz Int    @default(0)
