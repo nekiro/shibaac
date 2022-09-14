@@ -1,11 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import prisma from '../../../prisma';
 import apiHandler from '../../../middleware/apiHandler';
+import { getPlayers } from '../../../services/playerService';
 
-const get = async (req: NextApiRequest, res: NextApiResponse) => {
-  const players = await prisma.player.findMany({
+const get = async (_: NextApiRequest, res: NextApiResponse) => {
+  const players = await getPlayers({
     orderBy: { level: 'desc' },
     select: { name: true, level: true },
+    take: 5,
   });
 
   res.json({ success: true, args: { players } });

@@ -1,4 +1,4 @@
-import { player } from '@prisma/client';
+import { player, Prisma } from '@prisma/client';
 import prisma from '../prisma';
 
 export type Player = player | null;
@@ -19,7 +19,7 @@ export const createPlayer = async (
   name: string,
   account_id: number,
   vocation: number,
-  sex: number
+  sex: number,
 ): Promise<Player> => {
   try {
     const player = await prisma.player.create({
@@ -46,6 +46,15 @@ export const deletePlayer = async (characterId: number): Promise<Player> => {
     });
 
     return player;
+  } catch (err) {
+    return null;
+  }
+};
+
+export const getPlayers = async (args: Prisma.playerFindManyArgs) => {
+  try {
+    const players = await prisma.player.findMany(args);
+    return players;
   } catch (err) {
     return null;
   }

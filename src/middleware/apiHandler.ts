@@ -1,4 +1,4 @@
-import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
+import { NextApiHandler } from 'next';
 
 type Handler = {
   get?: NextApiHandler;
@@ -7,7 +7,7 @@ type Handler = {
 
 const apiHandler =
   (handler: Handler): NextApiHandler =>
-  async (req: NextApiRequest, res: NextApiResponse) => {
+  async (req, res) => {
     const method = req.method?.toLowerCase() as string;
 
     // check handler supports HTTP method

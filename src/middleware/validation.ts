@@ -5,7 +5,7 @@ import { ObjectShape, OptionalObjectSchema } from 'yup/lib/object';
 export const validate =
   (
     schema: OptionalObjectSchema<ObjectShape>,
-    handler: NextApiHandler
+    handler: NextApiHandler,
   ): NextApiHandler =>
   async (req: NextApiRequest, res: NextApiResponse) => {
     try {
@@ -19,9 +19,9 @@ export const validate =
         return res
           .status(400)
           .json({ success: false, message: yupError.errors.join(', ') });
-      } else {
-        return res.status(500).json({ success: false });
       }
+
+      return res.status(500).json({ success: false });
     }
 
     await handler(req, res);

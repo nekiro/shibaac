@@ -7,10 +7,19 @@ export type FetchResult = {
   success: boolean;
 };
 
+export type FetchMethods = 'GET' | 'POST' | 'PUT' | 'PATCH';
+
+export type ResponseData = {
+  yupError?: {};
+  message: string;
+  success: boolean;
+  args?: any;
+};
+
 export const fetchApi = async <T = void>(
-  method: string,
+  method: FetchMethods,
   url: string,
-  options?: FetchOptions
+  options?: FetchOptions,
 ): Promise<FetchResult & T> => {
   const _options: RequestInit = {
     method,
@@ -23,10 +32,10 @@ export const fetchApi = async <T = void>(
 
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}${url}`,
-    _options
+    _options,
   );
 
-  const data = await response.json();
+  const data = (await response.json()) as ResponseData;
 
   if (data.yupError) {
     return {
@@ -39,5 +48,5 @@ export const fetchApi = async <T = void>(
     message: data.message,
     success: data.success,
     ...(data.args ? data.args : []),
-  };
+  } as FetchResult & T;
 };

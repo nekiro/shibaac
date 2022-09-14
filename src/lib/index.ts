@@ -1,6 +1,6 @@
 import { XMLParser } from 'fast-xml-parser';
 
-export const timestampToDate = (timestamp: number): string => {
+export const timestampToDate = (timestamp: number) => {
   return new Date(timestamp * 1000).toLocaleTimeString('en-GB', {
     year: 'numeric',
     month: 'long',
@@ -10,7 +10,7 @@ export const timestampToDate = (timestamp: number): string => {
   });
 };
 
-export const secondsToTime = (seconds: number): string => {
+export const secondsToTime = (seconds: number) => {
   const days = Math.floor(seconds / (24 * 60 * 60));
   seconds -= days * (24 * 60 * 60);
   const hours = Math.floor(seconds / (60 * 60));

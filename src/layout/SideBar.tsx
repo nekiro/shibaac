@@ -3,45 +3,39 @@ import Panel from '../components/Panel';
 import Label from '../components/Label';
 import { fetchApi } from '../lib/request';
 import Link from '../components/Link';
-
-import { Box } from '@chakra-ui/react';
+import { Box, LayoutProps } from '@chakra-ui/react';
 import StripedTable from '../components/StrippedTable';
+import { type ProtocolStatusCache } from '../cache/protocolStatus';
+import { player } from '.prisma/client';
 
-const SideBar = (props) => {
-  const [state, setState] = useState({
-    topPlayers: null,
-    serverStatus: null,
-  });
-
-  const fetchData = async () => {
-    const [top5, status] = await Promise.all([
-      fetchApi('GET', `/api/player/top5`),
-      fetchApi('GET', `/api/status`),
-    ]);
-
-    if (top5.success && status.success) {
-      setState({
-        topPlayers: top5.players,
-        serverStatus: status.status,
-      });
-    }
-  };
+const SideBar = (props: LayoutProps) => {
+  const [serverStatus, setServerStatus] = useState<ProtocolStatusCache>();
+  const [topPlayers, setTopPlayers] = useState<player[]>();
 
   useEffect(() => {
+    const fetchData = async () => {
+      const [players, status] = await Promise.all([
+        fetchApi<{ players: player[] }>('GET', `/api/player/top5`),
+        fetchApi<{ status: ProtocolStatusCache }>('GET', `/api/status`),
+      ]);
+
+      if (players.success && status.success) {
+        setTopPlayers(players.players);
+        setServerStatus(status.status);
+      }
+    };
+
     fetchData();
   }, []);
 
   return (
     <Box minWidth="15em" {...props}>
-      <Panel
-        header="Server Status"
-        isLoading={!state.topPlayers || !state.serverStatus}
-      >
+      <Panel header="Server Status" isLoading={!topPlayers || !serverStatus}>
         <table className="table table-condensed table-content table-striped">
           <tbody>
             <tr>
               <td>
-                {state.serverStatus && state.serverStatus.online ? (
+                {serverStatus?.online ? (
                   <Label colorScheme="green">ONLINE</Label>
                 ) : (
                   <Label colorScheme="red">OFFLINE</Label>
@@ -50,10 +44,10 @@ const SideBar = (props) => {
             </tr>
             <tr>
               <td>
-                {state.serverStatus && (
+                {serverStatus && (
                   <Link
                     href="/online"
-                    text={`${state.serverStatus.onlineCount} players online`}
+                    text={`${serverStatus.onlineCount} players online`}
                   />
                 )}
               </td>
@@ -62,11 +56,11 @@ const SideBar = (props) => {
         </table>
       </Panel>
 
-      <Panel header="Top 5 Level" isLoading={!state.topPlayers}>
+      <Panel header="Top 5 Level" isLoading={!topPlayers}>
         <StripedTable
           body={
-            state.topPlayers
-              ? state.topPlayers.map((player, index) => [
+            topPlayers
+              ? topPlayers.map((player, index) => [
                   {
                     text: `${index + 1}. ${player.name}`,
                     href: `/character/${player.name}`,

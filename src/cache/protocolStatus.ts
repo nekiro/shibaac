@@ -4,7 +4,7 @@ import { parseXml } from '../lib';
 
 let lastUpdated = 0;
 
-type ProtocolStatusCache = {
+export type ProtocolStatusCache = {
   onlineCount: number;
   maxOnlineCount: number;
   uptime: number;
@@ -20,7 +20,7 @@ const cache: ProtocolStatusCache = {
   name: '',
 };
 
-export const getCache = async (): Promise<ProtocolStatusCache> => {
+export const getCache = async () => {
   if (lastUpdated == 0 || Date.now() >= lastUpdated + 30000) {
     await updateCache();
   }
@@ -35,7 +35,7 @@ export const updateCache = async () => {
     const socket = new PromiseSocket(new net.Socket());
     await socket.connect(
       parseInt(process.env.STATUS_PORT as string),
-      process.env.STATUS_HOST as string
+      process.env.STATUS_HOST as string,
     );
 
     await socket.write(
@@ -45,7 +45,7 @@ export const updateCache = async () => {
       // 0xFF -> protocol identifier (protocol status)
       // 0xFF -> status byte
       // 0x69 0x6E 0x66 0x6F (info) -> string
-      Buffer.from([0x06, 0x00, 0xff, 0xff, 0x69, 0x6e, 0x66, 0x6f])
+      Buffer.from([0x06, 0x00, 0xff, 0xff, 0x69, 0x6e, 0x66, 0x6f]),
     );
 
     // wait 1s for response
