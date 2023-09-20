@@ -6,21 +6,25 @@ import Link from '../components/Link';
 import { Box, LayoutProps } from '@chakra-ui/react';
 import StripedTable from '../components/StrippedTable';
 import { type ProtocolStatusCache } from '../cache/protocolStatus';
-import { player } from '.prisma/client';
+import { players } from '.prisma/client';
 
 const SideBar = (props: LayoutProps) => {
   const [serverStatus, setServerStatus] = useState<ProtocolStatusCache>();
-  const [topPlayers, setTopPlayers] = useState<player[]>();
+  const [topPlayers, setTopPlayers] = useState<players[]>();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
+
       const [players, status] = await Promise.all([
         fetchApi<{ players: player[] }>('GET', `/api/player/top5`),
         fetchApi<{ status: ProtocolStatusCache }>('GET', `/api/status`),
       ]);
 
       if (players.success && status.success) {
-        setTopPlayers(players.players);
+        setIsLoading(false);
+        setTopPlayers(players.players || []);
         setServerStatus(status.status);
       }
     };
@@ -30,7 +34,7 @@ const SideBar = (props: LayoutProps) => {
 
   return (
     <Box minWidth="15em" {...props}>
-      <Panel header="Server Status" isLoading={!topPlayers || !serverStatus}>
+      <Panel header="Server Status" isLoading={isLoading}>
         <table className="table table-condensed table-content table-striped">
           <tbody>
             <tr>
@@ -56,10 +60,11 @@ const SideBar = (props: LayoutProps) => {
         </table>
       </Panel>
 
-      <Panel header="Top 5 Level" isLoading={!topPlayers}>
+      <Panel header="Top 5 Level" isLoading={isLoading}>
         <StripedTable
+          head={[{ text: 'Name' }, { text: 'Level' }]}
           body={
-            topPlayers
+            topPlayers && topPlayers.length > 0
               ? topPlayers.map((player, index) => [
                   {
                     text: `${index + 1}. ${player.name}`,
@@ -69,7 +74,14 @@ const SideBar = (props: LayoutProps) => {
                     text: player.level,
                   },
                 ])
-              : []
+              : [
+                  [
+                    {
+                      text: 'Não há dados para mostrar',
+                      colspan: 2,
+                    },
+                  ],
+                ]
           }
         />
       </Panel>

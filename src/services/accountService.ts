@@ -1,22 +1,22 @@
-import { account, Prisma } from '@prisma/client';
+import { accounts, Prisma } from '@prisma/client';
 import prisma from '../prisma';
 import { sha1Encrypt } from '../lib/crypt';
 
-type Account = Promise<account | null>;
+type Account = Promise<accounts | null>;
 
-export const getAccountByIdIncludeDefault: Prisma.accountInclude = {
+export const getAccountByIdIncludeDefault: Prisma.accountsInclude = {
   players: { select: { name: true, level: true, vocation: true } },
 };
 
 export const getAccountById = async (
   accountId: number,
   include:
-    | Prisma.accountInclude
+    | Prisma.accountsInclude
     | null
-    | undefined = getAccountByIdIncludeDefault
+    | undefined = getAccountByIdIncludeDefault,
 ): Account => {
   try {
-    const account = await prisma.account.findFirst({
+    const account = await prisma.accounts.findFirst({
       where: {
         id: accountId,
       },
@@ -31,10 +31,10 @@ export const getAccountById = async (
 
 export const getAccountByName = async (
   accountName: string,
-  include?: Prisma.accountInclude
+  include?: Prisma.accountsInclude,
 ): Account => {
   try {
-    const account = await prisma.account.findFirst({
+    const account = await prisma.accounts.findFirst({
       where: {
         name: accountName,
       },
@@ -48,11 +48,11 @@ export const getAccountByName = async (
 };
 
 export const getAccountBy = async (
-  where?: Prisma.accountWhereInput,
-  select?: Prisma.accountSelect
+  where?: Prisma.accountsWhereInput,
+  select?: Prisma.accountsSelect,
 ): Account => {
   try {
-    const account = (await prisma.account.findFirst({
+    const account = (await prisma.accounts.findFirst({
       where,
       select,
     })) as Account;
@@ -66,14 +66,15 @@ export const getAccountBy = async (
 export const createAccount = async (
   name: string,
   password: string,
-  email: string
+  email: string,
 ): Account => {
   try {
-    const account = await prisma.account.create({
+    const account = await prisma.accounts.create({
       data: {
         name,
         password: await sha1Encrypt(password),
         email,
+        twoFAEnabled: false,
       },
     });
 

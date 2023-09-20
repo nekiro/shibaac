@@ -38,7 +38,7 @@ const post = withSessionRoute(
         .status(500)
         .json({ success: false, message: "Couldn't create character." });
     }
-  }
+  },
 );
 
 export default apiHandler({
