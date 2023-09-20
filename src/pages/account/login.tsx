@@ -17,6 +17,12 @@ import { FormikHelpers } from 'formik';
 const fields: FormField[] = [
   { type: 'password', name: 'name', label: { text: 'Account Name' } },
   { type: 'password', name: 'password', label: { text: 'Password' } },
+  {
+    type: 'text',
+    name: 'twoFAToken',
+    placeholder: 'If you have 2FA, code: XXX-XXX',
+    label: { text: '2FA Token' },
+  },
 ];
 
 const buttons: FormButton[] = [
@@ -31,7 +37,7 @@ export default function Login() {
 
   const onSubmit = async (
     values: any,
-    { resetForm }: FormikHelpers<object>
+    { resetForm }: FormikHelpers<object>,
   ) => {
     const response = await fetchApi<{ account: User }>(
       'POST',
@@ -41,7 +47,7 @@ export default function Login() {
           name: values.name,
           password: values.password,
         },
-      }
+      },
     );
 
     setResponse(response);

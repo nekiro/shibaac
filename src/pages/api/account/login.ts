@@ -5,26 +5,47 @@ import { loginSchema } from '../../../schemas/Login';
 import { NextApiRequest, NextApiResponse } from 'next';
 import apiHandler from '../../../middleware/apiHandler';
 import * as accountService from '../../../services/accountService';
+import speakeasy from 'speakeasy';
 
 export const post = withSessionRoute(
   async (req: NextApiRequest, res: NextApiResponse) => {
-    const { name, password } = req.body;
+    const { name, password, twoFAToken } = req.body;
 
-    const account = await accountService.getAccountBy(
-      { name, password: await sha1Encrypt(password) },
-      { id: true, name: true }
-    );
+    try {
+      const account = await accountService.getAccountBy(
+        { name, password: await sha1Encrypt(password) },
+        { id: true, name: true, twoFAEnabled: true, twoFASecret: true },
+      );
 
-    if (!account) {
-      return res
-        .status(401)
-        .json({ success: false, message: 'Wrong credentials.' });
+      if (!account) {
+        return res
+          .status(401)
+          .json({ success: false, message: 'Wrong credentials.' });
+      }
+
+      if (account.twoFAEnabled) {
+        console.log('Secret:', account.twoFASecret);
+        console.log('Token:', twoFAToken);
+        const verified = speakeasy.totp.verify({
+          secret: String(account.twoFASecret),
+          encoding: 'base32',
+          token: twoFAToken,
+          window: 2,
+        });
+
+        if (!verified) {
+          return res.json({ success: false, message: 'Wrong 2FA token.' });
+        }
+      }
+
+      req.session.user = account;
+      await req.session.save();
+      res.json({ success: true, args: { account } });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, error: 'Internal server error' });
     }
-
-    req.session.user = account;
-    await req.session.save();
-    res.json({ success: true, args: { account } });
-  }
+  },
 );
 
 export default apiHandler({

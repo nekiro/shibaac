@@ -77,7 +77,7 @@ const SideBar = (props: LayoutProps) => {
               : [
                   [
                     {
-                      text: 'Não há dados para mostrar',
+                      text: 'There is no data to show',
                       colspan: 2,
                     },
                   ],

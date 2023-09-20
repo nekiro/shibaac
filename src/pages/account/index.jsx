@@ -5,20 +5,80 @@ import { fetchApi } from 'src/lib/request';
 import { withSessionSsr } from 'src/lib/session';
 import Button from '../../components/Button';
 import StripedTable from '../../components/StrippedTable';
-import { Wrap } from '@chakra-ui/react';
+import {
+  Alert,
+  AlertIcon,
+  Box,
+  Button as ChakraButton,
+  Center,
+  Image,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Spinner,
+  Text,
+  Wrap,
+} from '@chakra-ui/react';
 import { vocationIdToName } from '../../lib';
+import { Toggle } from '../../components/Toggle';
 
 export default function Account({ user }) {
   const [info, setInfo] = useState(null);
+  const [is2FAEnabled, setIs2FAEnabled] = useState(false);
+  const [qrCodeDataURL, setQRCodeDataURL] = useState(null);
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchData = useCallback(async () => {
     const response = await fetchApi('GET', `/api/account/${user.id}`);
     setInfo(response.account);
+    setIs2FAEnabled(response.account.twoFAEnabled);
   }, [user]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  const handleToggle = async () => {
+    try {
+      setIsLoading(true);
+
+      const response = await fetchApi(
+        'POST',
+        '/api/account/two-factor/enable-2fa',
+        {
+          data: {
+            isTwoFA: !is2FAEnabled,
+          },
+        },
+      );
+
+      if (response.success) {
+        setIs2FAEnabled((prevState) => !prevState);
+
+        if (response.dataURL) {
+          showQRCode(response.dataURL);
+          setIsOpenModal(true);
+        } else {
+          console.error('QR code data is missing');
+        }
+      }
+    } catch (error) {
+      setError('Failed to toggle 2FA');
+      console.error('Failed to toggle 2FA', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const showQRCode = (dataURL) => {
+    setQRCodeDataURL(dataURL);
+  };
 
   if (!info) {
     return (
@@ -64,6 +124,13 @@ export default function Account({ user }) {
         </Panel>
 
         <Panel header="Actions">
+          {error && (
+            <Alert status="error" mt={4} mb={2}>
+              <AlertIcon />
+              {error}
+            </Alert>
+          )}
+
           <Wrap>
             <Button
               value="Change Password"
@@ -85,6 +152,39 @@ export default function Account({ user }) {
               btnType="primary"
               href="/account/deletecharacter"
             />
+            {isLoading && <Spinner />}
+
+            <Box display="flex" alignItems="center" my={4}>
+              <Text mr={4}>Enable 2FA:</Text>
+              <Toggle isToggled={is2FAEnabled} onToggle={handleToggle} />
+            </Box>
+            {is2FAEnabled && qrCodeDataURL && (
+              <Modal isOpen={isOpenModal} onClose={() => setIsOpenModal(false)}>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader>Scan QR Code to enable 2FA</ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody>
+                    <Center>
+                      <Image
+                        src={qrCodeDataURL}
+                        alt="QR Code"
+                        boxSize="100px"
+                      />
+                    </Center>
+                  </ModalBody>
+                  <ModalFooter>
+                    <ChakraButton
+                      variant="ghost"
+                      onClick={() => setIsOpenModal(false)}
+                    >
+                      Close
+                    </ChakraButton>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
+            )}
+
             {/* <Button
               value="Generate recovery key"
               btnType="primary"
