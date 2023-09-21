@@ -7,7 +7,9 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest --verbose",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage",
+    "migrations:run": "npx prisma migrate dev",
+    "create:seeds": "npx prisma db seed"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} src/prisma/seed.ts",

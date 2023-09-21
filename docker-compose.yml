@@ -3,6 +3,10 @@ version: '3.9'
 services:
   database:
     image: mysql:5.7
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+      timeout: 20s
+      retries: 10
     container_name: database_otserv
     restart: always
     ports:
@@ -12,8 +16,26 @@ services:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     volumes:
-      - mysqldata:/data/mysql
-      # - ./db.sql:/docker-entrypoint-initdb.d/db.sql
+      - mysqldata:/var/lib/mysql
+    networks:
+      - backend
+
+  app:
+    build: .
+    container_name: next_app
+    ports:
+      - '3000:3000'
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: 'mysql://root:${MYSQL_ROOT_PASSWORD}@database:3306/${MYSQL_DATABASE}'
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
 
 volumes:
   mysqldata:
