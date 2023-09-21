@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Panel from '../../components/Panel';
 import Head from '../../layout/Head';
-
 import { fetchApi } from '../../lib/request';
 import StrippedTable from '../../components/StrippedTable';
 import {
@@ -10,12 +9,13 @@ import {
   ButtonGroup,
   Flex,
   Heading,
-  Stack,
   Text,
 } from '@chakra-ui/react';
 
+import { PlayerData } from '../../shared/interfaces/IPlayer';
+
 export default function Highscores() {
-  const [highscores, setHighscores] = useState([]);
+  const [highscores, setHighscores] = useState<PlayerData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [filter, setFilter] = useState({
     category: 'level',
