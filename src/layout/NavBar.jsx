@@ -23,7 +23,7 @@ const navigationItems = [
   { text: 'Home', href: '/' },
   {
     hasMenu: true,
-    menuItems: [{ text: 'Highscores', url: '/highscores' }],
+    menuItems: [{ text: 'Highscores', url: '/community/highscores' }],
     text: 'Community',
   },
   {
@@ -156,7 +156,7 @@ const NavBar = () => {
     },
     {
       fallback: 'md',
-    }
+    },
   );
 
   return <NavComponent user={user} />;

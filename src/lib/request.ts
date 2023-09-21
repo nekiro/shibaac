@@ -1,5 +1,7 @@
 type FetchOptions = {
   data: object;
+  params?: Record<string, string | number>;
+  multipart?: boolean;
 };
 
 export type FetchResult = {
