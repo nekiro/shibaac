@@ -14,6 +14,7 @@ import {
   Td,
   Link as ChakraLink,
   VStack,
+  HStack,
 } from '@chakra-ui/react';
 
 interface INewsList {
@@ -33,7 +34,8 @@ function AdminPanel() {
     const fetchNews = async () => {
       try {
         const response = await fetchApi('GET', '/api/news');
-        setNewsList(response.data.news);
+
+        setNewsList(response.data);
       } catch (error) {
         console.error(error);
       }
@@ -79,7 +81,7 @@ function AdminPanel() {
                 <Td>{news.title}</Td>
                 <Td>{news.playerNick}</Td>
                 <Td>
-                  <VStack spacing={2} direction="row">
+                  <HStack spacing={2}>
                     <Link href={`/admin/editNews/${news.id}`} passHref>
                       <ChakraLink>
                         <Button colorScheme="teal" size="sm">
@@ -94,7 +96,7 @@ function AdminPanel() {
                     >
                       Delete
                     </Button>
-                  </VStack>
+                  </HStack>
                 </Td>
               </Tr>
             ))}

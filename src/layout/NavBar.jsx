@@ -87,6 +87,7 @@ const MobileNavigation = ({ user }) => {
           hasMenu={true}
           list={[
             { text: 'Account Management', url: '/account' },
+            { text: 'Admin Panel', url: '/admin' },
             { text: 'Sign out', url: '/account/logout' },
           ]}
         />
@@ -142,6 +143,7 @@ const DesktopNavigation = ({ user }) => {
           hasMenu={true}
           list={[
             { text: 'Account Management', url: '/account' },
+            { text: 'Admin Panel', url: '/admin' },
             { text: 'Sign out', url: '/account/logout' },
           ]}
         />
