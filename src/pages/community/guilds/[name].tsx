@@ -457,7 +457,22 @@ export default function Guild({ user }: any) {
                         guild.guild_membership.length > 0
                           ? guild.guild_membership.map((member, index) => [
                               { text: RankGuild[member.rank_id] },
-                              { text: member.nick },
+                              {
+                                text: (
+                                  <Link
+                                    href={`/character/${member.nick}`}
+                                    passHref
+                                  >
+                                    <Box
+                                      as="span"
+                                      color="purple"
+                                      cursor="pointer"
+                                    >
+                                      {member.nick}
+                                    </Box>
+                                  </Link>
+                                ),
+                              },
                               { text: member.online ? 'Online' : 'Offline' },
                               {
                                 text: member.player
