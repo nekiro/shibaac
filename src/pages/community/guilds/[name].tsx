@@ -429,10 +429,17 @@ export default function Guild({ user }: any) {
             onChange={handleTabChange}
           >
             <TabList>
-              <Tab>Members</Tab>
-              <Tab>Configuration</Tab>
-              <Tab>Disband Guild</Tab>
+              <Tab _selected={{ bg: 'purple.500', color: 'white' }}>
+                Members
+              </Tab>
+              <Tab _selected={{ bg: 'purple.500', color: 'white' }}>
+                Configuration
+              </Tab>
+              <Tab _selected={{ bg: 'purple.500', color: 'white' }}>
+                Disband Guild
+              </Tab>
             </TabList>
+
             <TabPanels>
               <TabPanel>
                 {activeTab === 'members' && (
@@ -529,7 +536,6 @@ export default function Guild({ user }: any) {
                     </div>
 
                     <div style={{ marginBottom: '20px' }}>
-                      <h2>Update Logo</h2>
                       <input type="file" onChange={handleFileChange} />
                       {previewUrl && (
                         <div
