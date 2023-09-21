@@ -154,7 +154,7 @@ export default function Account({ user }) {
             />
             {isLoading && <Spinner />}
 
-            <Box display="flex" alignItems="center" my={4}>
+            <Box display="flex" alignItems="center">
               <Text mr={4}>Enable 2FA:</Text>
               <Toggle isToggled={is2FAEnabled} onToggle={handleToggle} />
             </Box>
