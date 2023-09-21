@@ -68,6 +68,8 @@ export const createAccount = async (
   password: string,
   email: string,
 ): Account => {
+  const timestampInSeconds = Math.floor(Date.now() / 1000);
+
   try {
     const account = await prisma.accounts.create({
       data: {
@@ -75,6 +77,7 @@ export const createAccount = async (
         password: await sha1Encrypt(password),
         email,
         twoFAEnabled: false,
+        creation: timestampInSeconds,
       },
     });
 

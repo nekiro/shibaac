@@ -46,6 +46,7 @@ export default function Login() {
         data: {
           name: values.name,
           password: values.password,
+          twoFAToken: values.twoFAToken,
         },
       },
     );

@@ -49,5 +49,5 @@ export const post = withSessionRoute(
 );
 
 export default apiHandler({
-  post: validate(loginSchema, post),
+  post: post,
 });

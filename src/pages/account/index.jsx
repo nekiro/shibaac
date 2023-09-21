@@ -108,7 +108,7 @@ export default function Account({ user }) {
                 },
               ],
               //{ name: 'Last Login', value: '11/02/2021' },
-              [{ text: 'Shop Coins' }, { text: 0 }],
+              [{ text: 'Shop Coins' }, { text: info.coins }],
             ]}
           >
             {/* '.(!$rec_key ? '
