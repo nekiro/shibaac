@@ -1,12 +1,12 @@
 import { PrismaClient } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import mercadopago from '../../../util/mercadopagoConfig';
+import mercadopago from '../../../lib/mercadopagoConfig';
 
 const prisma = new PrismaClient();
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   if (req.method === 'GET') {
     try {
@@ -16,7 +16,7 @@ export default async function handler(
           headers: {
             Authorization: `Bearer ${process.env.MERCADO_PAGO_ACCESS_TOKEN}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -68,7 +68,7 @@ export default async function handler(
       };
 
       const preferenceResponse = await mercadopago.preferences.create(
-        preference
+        preference,
       );
 
       try {
@@ -101,7 +101,7 @@ export default async function handler(
       } catch (err: any) {
         console.error(
           '⚠️ Database error: Unable to create purchase record',
-          err
+          err,
         );
         return res.status(500).send('Database error');
       }

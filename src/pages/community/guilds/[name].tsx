@@ -17,11 +17,9 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
-  Text,
   useToast,
   VStack,
 } from '@chakra-ui/react';
-import Head from 'next/head';
 
 export type FormButton = {
   type?: 'submit' | 'button' | 'reset';

@@ -44,9 +44,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
 
-      res
-        .status(200)
-        .json({ message: 'Bid criado com sucesso', house: updatedHouse });
+      res.status(200).json({
+        message: 'Bid criado com sucesso',
+        success: true,
+        args: { data: updatedHouse },
+      });
     } catch (error) {
       res.status(400).json({ error: error.message });
     }

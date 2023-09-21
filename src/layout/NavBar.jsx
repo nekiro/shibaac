@@ -26,14 +26,20 @@ const navigationItems = [
     menuItems: [
       { text: 'Highscores', url: '/community/highscores' },
       { text: 'Guilds', url: '/community/guilds' },
+      { text: 'Houses', url: '/community/houses' },
     ],
     text: 'Community',
   },
   {
     hasMenu: true,
-    menuItems: [{ text: 'Server Information', url: '/serverinfo' }],
+    menuItems: [
+      { text: 'Server Information', url: '/serverinfo' },
+      { text: 'Downloads', url: '/downloads' },
+    ],
     text: 'Library',
   },
+  { text: 'Donate', href: '/' },
+  { text: 'Shopping', href: '/' },
 ];
 
 const MobileNavigation = ({ user }) => {
