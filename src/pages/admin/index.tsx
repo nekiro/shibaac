@@ -1,9 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { fetchApi } from 'src/util/request';
-import Head from 'src/layout/Head';
-import Panel from 'src/components/Panel';
-import { withSessionSsr } from 'src/util/session';
+import { fetchApi } from '../../lib/request';
+import Head from '../../layout/Head';
+import Panel from '../../components/Panel';
+import { withSessionSsr } from '../../lib/session';
+import {
+  Button,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Link as ChakraLink,
+  VStack,
+} from '@chakra-ui/react';
 
 interface INewsList {
   authorId: number;
@@ -44,40 +55,51 @@ function AdminPanel() {
     <>
       <Head title="Admin Panel" />
       <Panel header="Admin Panel">
-        <Link href="/admin/createnews">
-          <a className="btn btn-primary mb-3">Create News</a>
+        <Link href="/admin/createnews" passHref>
+          <ChakraLink>
+            <Button colorScheme="purple" mb={3}>
+              Create News
+            </Button>
+          </ChakraLink>
         </Link>
 
-        <table className="table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Title</th>
-              <th>Author</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table variant="simple">
+          <Thead>
+            <Tr>
+              <Th>ID</Th>
+              <Th>Title</Th>
+              <Th>Author</Th>
+              <Th>Actions</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
             {newsList.map((news, index) => (
-              <tr key={index}>
-                <td>{news.id}</td>
-                <td>{news.title}</td>
-                <td>{news.playerNick}</td>
-                <td>
-                  <Link href={`/admin/editNews/${news.id}`}>
-                    <a className="btn btn-secondary mr-2">Edit</a>
-                  </Link>
-                  <button
-                    className="btn btn-danger"
-                    onClick={() => handleDelete(news.id)}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
+              <Tr key={index}>
+                <Td>{news.id}</Td>
+                <Td>{news.title}</Td>
+                <Td>{news.playerNick}</Td>
+                <Td>
+                  <VStack spacing={2} direction="row">
+                    <Link href={`/admin/editNews/${news.id}`} passHref>
+                      <ChakraLink>
+                        <Button colorScheme="teal" size="sm">
+                          Edit
+                        </Button>
+                      </ChakraLink>
+                    </Link>
+                    <Button
+                      colorScheme="red"
+                      size="sm"
+                      onClick={() => handleDelete(news.id)}
+                    >
+                      Delete
+                    </Button>
+                  </VStack>
+                </Td>
+              </Tr>
             ))}
-          </tbody>
-        </table>
+          </Tbody>
+        </Table>
       </Panel>
     </>
   );

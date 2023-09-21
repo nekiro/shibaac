@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react';
 import Loader from './Loader';
 import { Flex, Box, Text, Grid } from '@chakra-ui/react';
 import { TimeIcon } from '@chakra-ui/icons';
+import { formatDate } from '../lib/';
 
 interface PanelProps {
   header?: string;
@@ -34,9 +35,9 @@ const Panel: React.FC<PanelProps> = ({
         <Grid margin="10px" width="100%" templateColumns="1fr auto">
           <Text>{header}</Text>
           {date && (
-            <Box>
-              <Text align="right">
-                <TimeIcon /> {date}
+            <Box display="flex" justifyContent="flex-end">
+              <Text display="flex" alignItems="center">
+                <TimeIcon mr={2} /> {formatDate(date)}
               </Text>
             </Box>
           )}

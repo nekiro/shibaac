@@ -1,12 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
-import Panel from 'src/components/Panel';
-import Head from 'src/layout/Head';
-import { fetchApi } from 'src/util/request';
-import { withSessionSsr } from 'src/util/session';
-
-import { CKEditorComponent } from 'src/components/Editor';
+import Panel from '../../components/Panel';
+import Head from '../../layout/Head';
+import { fetchApi } from '../../lib/request';
+import { withSessionSsr } from '../../lib/session';
+import { CKEditorComponent } from '../../components/Editor';
+import {
+  FormControl,
+  FormLabel,
+  Input,
+  Select,
+  Button,
+  VStack,
+} from '@chakra-ui/react';
 
 interface Player {
   id: number;
@@ -31,15 +37,9 @@ export default function CreateNews({ user }: any) {
   const router = useRouter();
 
   const fetchData = useCallback(async () => {
-    const response = await fetchApi('GET', `/api/accounts/${user.id}`);
+    const response = await fetchApi('GET', `/api/account/${user.id}`);
 
-    const mappedResponse = {
-      id: response.data.account.id,
-      name: response.data.account.name,
-      players: response.data.account.players,
-    };
-
-    setInfo(mappedResponse);
+    setInfo(response.account);
   }, [user]);
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export default function CreateNews({ user }: any) {
     e.preventDefault();
 
     const findNameWithId = info?.players.find(
-      (player) => player.name === playerNick
+      (player) => player.name === playerNick,
     );
 
     try {
@@ -76,55 +76,50 @@ export default function CreateNews({ user }: any) {
 
   return (
     <>
-      <Head title="Create News"></Head>
+      <Head title="Create News" />
       <Panel header="Create News">
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Title</label>
-            <input
-              type="text"
-              className="form-control"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </div>
-          <div className="form-group">
-            <label>Content</label>
-
-            {isClient && (
-              <CKEditorComponent setValue={setContent} value={content} />
-            )}
-          </div>
-          <div className="form-group">
-            <label>Author</label>
-            <select
-              className="form-control"
-              value={playerNick}
-              onChange={(e) => setPlayerNick(e.target.value)}
-            >
-              <option value="" disabled>
-                Selecione
-              </option>
-              {info?.players?.map((player, index) => (
-                <option key={index} value={player.name}>
-                  {player.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label>Image URL</label>
-            <input
-              type="text"
-              className="form-control"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-            />
-          </div>
-          <button type="submit" className="btn btn-primary">
-            Create
-          </button>
+          <VStack spacing={4} w="100%">
+            <FormControl id="title">
+              <FormLabel>Title</FormLabel>
+              <Input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            </FormControl>
+            <FormControl id="content">
+              <FormLabel>Content</FormLabel>
+              {isClient && (
+                <CKEditorComponent setValue={setContent} value={content} />
+              )}
+            </FormControl>
+            <FormControl id="author">
+              <FormLabel>Author</FormLabel>
+              <Select
+                placeholder="Select"
+                value={playerNick}
+                onChange={(e) => setPlayerNick(e.target.value)}
+              >
+                {info?.players?.map((player, index) => (
+                  <option key={index} value={player.name}>
+                    {player.name}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl id="image-url">
+              <FormLabel>Image URL</FormLabel>
+              <Input
+                type="text"
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+              />
+            </FormControl>
+            <Button colorScheme="blue" type="submit">
+              Create
+            </Button>
+          </VStack>
         </form>
       </Panel>
     </>
