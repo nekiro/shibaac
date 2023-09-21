@@ -208,7 +208,7 @@ export default function Shopping({ user }: any) {
                         <ChakraImage
                           src={product.image}
                           alt={product.name}
-                          boxSize="100px"
+                          boxSize="64px"
                           objectFit="cover"
                           m="auto"
                         />

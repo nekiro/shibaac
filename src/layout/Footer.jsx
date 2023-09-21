@@ -10,7 +10,7 @@ const Footer = () => {
       padding="10px"
       textAlign="center"
     >
-      Copyright © 2021-2022 Nekiro, Pedrog
+      Copyright © 2021-2023 Nekiro, Pedrog
     </Box>
   );
 };

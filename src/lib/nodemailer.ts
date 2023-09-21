@@ -1,10 +1,10 @@
 import nodemailer from 'nodemailer';
 
 const transporter = nodemailer.createTransport({
-  service: 'hotmail.com',
+  service: process.env.MAIL_SERVICE,
   auth: {
-    user: 'your email',
-    pass: 'password',
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASSWORD,
   },
 });
 
@@ -22,7 +22,7 @@ export async function sendEmail(
 ): Promise<void> {
   try {
     const mailOptions: MailOptions = {
-      from: 'your email',
+      from: process.env.MAIL_FROM || 'default_email@example.com',
       to: email,
       subject: subject,
       text: message,
