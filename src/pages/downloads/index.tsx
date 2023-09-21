@@ -1,6 +1,6 @@
 import React from 'react';
-import Panel from 'src/components/Panel';
-import Head from 'src/layout/Head';
+import Panel from '../../components/Panel';
+import Head from '../../layout/Head';
 import { Box, Flex, Text, Heading, Grid } from '@chakra-ui/react';
 
 import { GrPersonalComputer, GrDocumentZip } from 'react-icons/gr';

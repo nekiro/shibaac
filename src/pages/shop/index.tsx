@@ -2,11 +2,21 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Panel from '../../components/Panel';
 import Head from '../../layout/Head';
 import { FiX } from 'react-icons/fi';
-import Button from 'src/components/Button';
-import { withSessionSsr } from 'src/util/session';
-import { fetchApi } from 'src/util/request';
-import { toast } from 'react-toastify';
-import { ToastConfig } from '../../util';
+import { withSessionSsr } from '../../lib/session';
+import { fetchApi } from '../../lib/request';
+import {
+  Box,
+  Flex,
+  Text,
+  Button,
+  Image,
+  Tabs,
+  TabList,
+  Tab,
+  TabPanels,
+  TabPanel,
+  useToast,
+} from '@chakra-ui/react';
 
 interface Product {
   id: number;
@@ -82,16 +92,12 @@ export default function Shopping({ user }: any) {
   const [isBagOpen, setIsBagOpen] = useState(false);
   const [account, setAccount] = useState<Account | null>(null);
 
+  const toast = useToast();
+
   const fetchData = useCallback(async () => {
-    const response = await fetchApi('GET', `/api/accounts/${user.id}`);
+    const response = await fetchApi('GET', `/api/account/${user.id}`);
 
-    const mappedResponse = {
-      id: response.data.account.id,
-      name: response.data.account.name,
-      coins: response.data.account.coins,
-    };
-
-    setAccount(mappedResponse);
+    setAccount(response.account);
   }, [user]);
 
   useEffect(() => {
@@ -103,15 +109,15 @@ export default function Shopping({ user }: any) {
       prevProducts.map((product) =>
         product.id === productId
           ? { ...product, quantity: Math.max(0, product.quantity + change) }
-          : product
-      )
+          : product,
+      ),
     );
     setIsBagOpen(true);
   }
 
   const totalPaymentCoins = products.reduce(
     (acc, product) => acc + product.coins * product.quantity,
-    0
+    0,
   );
 
   async function handlePurchase() {
@@ -137,19 +143,31 @@ export default function Shopping({ user }: any) {
         data: serealizedProduts,
       });
 
-      if (!response.success) {
-        toast.error('Houve um problema com a sua compra', ToastConfig);
+      if (response.success) {
+        toast({
+          position: 'top',
+          title: 'There was a problem with your purchase',
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+        });
+      } else {
+        toast({
+          position: 'top',
+          title: response.message,
+          status: 'warning',
+          duration: 9000,
+          isClosable: true,
+        });
       }
 
       setProducts((prevProducts) =>
         prevProducts.map((product) => ({
           ...product,
           quantity: 0,
-        }))
+        })),
       );
       setIsBagOpen(false);
-
-      toast.success('Sua compra foi realizada com successo!', ToastConfig);
     } catch (error) {
       console.error('Error:' + error);
     }
@@ -157,75 +175,75 @@ export default function Shopping({ user }: any) {
 
   return (
     <>
-      <Head title="Shopping"></Head>
+      <Head title="Shopping" />
       <Panel header="Shopping">
-        <div>
-          <ul className="tabList">
+        <Tabs isLazy>
+          <TabList>
             {['itens', 'outfits', 'misc', 'others'].map((tab) => (
-              <li
+              <Tab
                 key={tab}
-                style={{
-                  margin: '0 15px',
-                  cursor: 'pointer',
-                  fontWeight: selectedTab === tab ? 'bold' : 'normal',
-                }}
-                onClick={() => setSelectedTab(tab)}
+                fontWeight={selectedTab === tab ? 'bold' : 'normal'}
+                _selected={{ color: 'blue.500' }}
               >
                 {tab}
-              </li>
+              </Tab>
             ))}
-          </ul>
-          <hr />
-        </div>
-
-        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-          {products
-            .filter((product) => product.category === selectedTab)
-            .map((product) => (
-              <div key={product.id} className="productContainer">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="productImage"
-                />
-
-                <h3 style={{ margin: '10px 0' }}>{product.name}</h3>
-                <p style={{ margin: '10px 0' }}>
-                  {`Tibia Coins: ${product.coins}`}
-                  {product.quantity > 0 && (
-                    <span style={{ marginLeft: '10px' }}>
-                      Total: {product.coins * product.quantity}
-                    </span>
-                  )}
-                </p>
-
-                <div
-                  style={{
-                    margin: '10px 0',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Button
-                    onClick={() => handleQuantityChange(product.id, -1)}
-                    type="button"
-                    btnType="primary"
-                    value="-"
-                  />
-
-                  <p style={{ margin: '0 10px' }}>{product.quantity}</p>
-
-                  <Button
-                    onClick={() => handleQuantityChange(product.id, 1)}
-                    type="button"
-                    btnType="primary"
-                    value="+"
-                  />
-                </div>
-              </div>
+          </TabList>
+          <TabPanels>
+            {['itens', 'outfits', 'misc', 'others'].map((tab) => (
+              <TabPanel key={tab} p={4}>
+                <Flex flexWrap="wrap">
+                  {products
+                    .filter((product) => product.category === tab)
+                    .map((product) => (
+                      <Box
+                        key={product.id}
+                        p={4}
+                        border="1px"
+                        borderColor="gray.200"
+                        borderRadius="md"
+                        m={2}
+                      >
+                        <Image
+                          src={product.image}
+                          alt={product.name}
+                          boxSize="100px"
+                          objectFit="cover"
+                          m="auto"
+                        />
+                        <Text mt={2} fontSize="xl" fontWeight="bold">
+                          {product.name}
+                        </Text>
+                        <Text my={2}>{`Tibia Coins: ${product.coins}`}</Text>
+                        {product.quantity > 0 && (
+                          <Text color="green.500">
+                            Total: {product.coins * product.quantity}
+                          </Text>
+                        )}
+                        <Flex mt={2} justify="center" align="center">
+                          <Button
+                            onClick={() => handleQuantityChange(product.id, -1)}
+                            size="sm"
+                            colorScheme="purple"
+                          >
+                            -
+                          </Button>
+                          <Text mx={2}>{product.quantity}</Text>
+                          <Button
+                            onClick={() => handleQuantityChange(product.id, 1)}
+                            size="sm"
+                            colorScheme="purple"
+                          >
+                            +
+                          </Button>
+                        </Flex>
+                      </Box>
+                    ))}
+                </Flex>
+              </TabPanel>
             ))}
-        </div>
+          </TabPanels>
+        </Tabs>
       </Panel>
 
       <div
@@ -327,12 +345,9 @@ export default function Shopping({ user }: any) {
               <span>{totalPaymentCoins} Tibia Coins</span>
             </div>
 
-            <button
-              className="shopping-button"
-              onClick={() => handlePurchase()}
-            >
+            <Button colorScheme="green" onClick={() => handlePurchase()}>
               Comprar
-            </button>
+            </Button>
           </div>
         </>
       )}

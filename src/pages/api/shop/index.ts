@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import prisma from 'src/database/instance';
+import prisma from '../../../prisma';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
@@ -24,21 +24,31 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       const allPromises = [];
 
+      const totalCost = requests.reduce(
+        (acc, request) => acc + request.coins * request.count,
+        0,
+      );
+
+      const findAccount = await prisma.accounts.findUnique({
+        where: {
+          id: requests[0].accountId,
+        },
+      });
+
+      if (!findAccount) {
+        throw new Error('Account not found');
+      }
+
+      if (findAccount.coins < totalCost) {
+        return res
+          .status(400)
+          .json({
+            success: false,
+            message: 'Insufficient coins in the account',
+          });
+      }
+
       for (const request of requests) {
-        const findAccount = await prisma.accounts.findUnique({
-          where: {
-            id: request.accountId,
-          },
-        });
-
-        if (!findAccount) {
-          throw new Error('Account not found');
-        }
-
-        if (findAccount.coins < request.coins) {
-          throw new Error('Insufficient coins in the account');
-        }
-
         const orderCreatePromise = prisma.shop_orders.create({
           data: {
             accountId: request.accountId,
@@ -49,15 +59,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           },
         });
 
-        const updateAccountPromise = prisma.accounts.update({
-          where: { id: request.accountId },
-          data: {
-            coins: findAccount.coins - request.coins * request.count,
-          },
-        });
-
-        allPromises.push(orderCreatePromise, updateAccountPromise);
+        allPromises.push(orderCreatePromise);
       }
+
+      const updateAccountPromise = prisma.accounts.update({
+        where: { id: requests[0].accountId },
+        data: {
+          coins: findAccount.coins - totalCost,
+        },
+      });
+
+      allPromises.push(updateAccountPromise);
 
       await prisma.$transaction(allPromises);
 

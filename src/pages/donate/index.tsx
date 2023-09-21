@@ -2,12 +2,21 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Panel from '../../components/Panel';
 import Head from '../../layout/Head';
 
-import Button from 'src/components/Button';
-import StrippedTable from 'src/components/StrippedTable';
-import { fetchApi } from 'src/util/request';
+import StrippedTable from '../../components/StrippedTable';
+import { fetchApi } from '../../lib/request';
 import { loadStripe } from '@stripe/stripe-js';
-import { withSessionSsr } from 'src/util/session';
+import { withSessionSsr } from '../../lib/session';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
+
+import {
+  Grid,
+  useToast,
+  Box,
+  Text,
+  Image,
+  Button,
+  Heading,
+} from '@chakra-ui/react';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!);
 
@@ -24,12 +33,6 @@ interface PaymentMethod {
   image: string;
 }
 
-type ApiResponse = {
-  message: string;
-  success: boolean;
-  data: any;
-};
-
 interface Account {
   id: number;
   name: string;
@@ -42,7 +45,6 @@ export default function BuyCoins({ user }: any) {
   const [selectedCard, setSelectedCard] = useState<Package | null>(null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<PaymentMethod | null>(null);
-  const [response, setResponse] = useState<ApiResponse | null>(null);
   const [isPicPayAvailable, setIsPicPayAvailable] = useState(false);
   const [mercadoPagoMethods, setMercadoPagoMethods] = useState([]);
   const [paymentTypeMethod, setPaymentTypeMethod] = useState();
@@ -50,10 +52,14 @@ export default function BuyCoins({ user }: any) {
   const [isNameVisible, setIsNameVisible] = useState(false);
   const [email, setEmail] = useState('');
 
+  const toast = useToast();
+
   const packages: Package[] = [
     { id: 1, image: 'images/coins.png', coins: 50, price: 0.5 },
     { id: 2, image: 'images/coins.png', coins: 100, price: 9 },
     { id: 3, image: 'images/coins.png', coins: 200, price: 17 },
+    { id: 4, image: 'images/coins.png', coins: 450, price: 32 },
+    { id: 5, image: 'images/coins.png', coins: 650, price: 43 },
   ];
 
   const paymentMethods: PaymentMethod[] = [
@@ -63,9 +69,9 @@ export default function BuyCoins({ user }: any) {
   ];
 
   const fetchData = useCallback(async () => {
-    const response = await fetchApi('GET', `/api/accounts/${user.id}`);
+    const response = await fetchApi('GET', `/api/account/${user.id}`);
 
-    setAccount(response.data.account);
+    setAccount(response.account);
   }, [user]);
 
   useEffect(() => {
@@ -77,17 +83,28 @@ export default function BuyCoins({ user }: any) {
       try {
         const paymentMethodsResult = await fetchApi(
           'GET',
-          '/api/checkout/mercadopago-checkout'
+          '/api/checkout/mercadopago-checkout',
         );
 
-        if (paymentMethodsResult.success) {
+        if (
+          paymentMethodsResult.success &&
+          Array.isArray(paymentMethodsResult.data)
+        ) {
           const activeMethods = paymentMethodsResult.data.filter(
-            (method: any) => method.status === 'active'
+            (method: any) => method.status === 'active',
           );
           setMercadoPagoMethods(activeMethods);
         }
       } catch (error) {
         console.error('Failed to fetch Mercado Pago payment methods', error);
+        toast({
+          position: 'top',
+          title: 'Erro',
+          description: 'Erro ao criar a sessão de checkout.',
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        });
       }
     };
 
@@ -109,7 +126,7 @@ export default function BuyCoins({ user }: any) {
 
   const createMercadoPagoPayload = (
     selectedCard: Package | null,
-    email: string
+    email: string,
   ) => {
     if (!selectedCard) {
       throw new Error('Pacote não selecionado');
@@ -191,7 +208,7 @@ export default function BuyCoins({ user }: any) {
           '/api/checkout/mercadopago-checkout',
           {
             data: payload,
-          }
+          },
         );
 
         if (!result.success) {
@@ -221,7 +238,7 @@ export default function BuyCoins({ user }: any) {
   };
 
   const handlePaymentMethodChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
+    event: React.ChangeEvent<HTMLSelectElement>,
   ) => {
     setPaymentTypeMethod(event.target.value);
   };
@@ -236,65 +253,79 @@ export default function BuyCoins({ user }: any) {
             { text: 'E-mail' },
             { text: 'Tibia Coins' },
           ]}
-        >
-          <tr>
-            <td>
-              {isNameVisible ? account?.name : '••••••••'}
-              <button
-                onClick={() => setIsNameVisible((prev) => !prev)}
-                style={{
-                  marginLeft: '8px',
-                  cursor: 'pointer',
-                  background: 'none',
-                  border: 'none',
-                }}
-              >
-                {isNameVisible ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
-              </button>
-            </td>
-            <td>{account?.email}</td>
-            <td>{account?.coins}</td>
-          </tr>
-        </StrippedTable>
+          body={[
+            [
+              {
+                text: isNameVisible ? account?.name : '••••••••',
+                details: (
+                  <button
+                    onClick={() => setIsNameVisible((prev) => !prev)}
+                    style={{
+                      marginLeft: '8px',
+                      cursor: 'pointer',
+                      background: 'none',
+                      border: 'none',
+                    }}
+                  >
+                    {isNameVisible ? (
+                      <AiOutlineEyeInvisible />
+                    ) : (
+                      <AiOutlineEye />
+                    )}
+                  </button>
+                ),
+              },
+              { text: account?.email },
+              { text: account?.coins },
+            ],
+          ]}
+        />
       </Panel>
 
       <Panel header="Buy Coins">
         <h1>Faça a doação para receber as coins</h1>
         <hr style={{ margin: '20px 0' }} />
-        <h2>1. Escolha seu pacote de coins</h2>
 
-        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-          {packages.map((pkg) => (
-            <div
-              key={pkg.id}
-              style={{
-                border: selectedCard
-                  ? selectedCard.id === pkg.id
-                    ? '3px solid #800080'
-                    : '2px solid transparent'
-                  : '2px solid transparent',
-                padding: '10px',
-                margin: '10px',
-                flex: '1 0 30%',
-                cursor: 'pointer',
-                textAlign: 'center',
-              }}
-              onClick={() => handleCardClick(pkg)}
-            >
-              <img
-                src={pkg.image}
-                alt={`${pkg.coins} Coins`}
-                style={{
-                  width: '128px',
-                  height: '64px',
-                  margin: '0 auto',
-                  objectFit: 'cover',
-                }}
-              />
-              <p>{`${pkg.coins} Coins por $${pkg.price}`}</p>
-            </div>
-          ))}
-        </div>
+        <Box borderBottom="1px" borderColor="gray.300" py={4} mb={4}>
+          <Text fontSize="lg" mb={2}>
+            1. Escolha seu pacote de coins
+          </Text>
+          <Grid
+            templateColumns={{
+              base: 'repeat(1, 1fr)',
+              sm: 'repeat(1, 1fr)',
+              md: 'repeat(2, 1fr)',
+              lg: 'repeat(3, 1fr)',
+            }}
+            gap={4}
+          >
+            {packages.map((pkg) => (
+              <Box
+                key={pkg.id}
+                p={4}
+                cursor="pointer"
+                textAlign="center"
+                borderWidth={2}
+                borderRadius="md"
+                borderColor={
+                  selectedCard?.id === pkg.id ? 'purple.500' : 'transparent'
+                }
+                onClick={() => handleCardClick(pkg)}
+              >
+                <Image
+                  src={pkg.image}
+                  alt={`${pkg.coins} Coins`}
+                  w="128px"
+                  h="64px"
+                  m="auto"
+                  objectFit="cover"
+                />
+                <Text mt={2}>{`${pkg.coins} Coins por $${pkg.price}`}</Text>
+              </Box>
+            ))}
+          </Grid>
+        </Box>
+
         <hr style={{ margin: '20px 0' }} />
         {selectedCard && (
           <>
@@ -379,27 +410,26 @@ export default function BuyCoins({ user }: any) {
         <hr style={{ margin: '20px 0' }} />
         {selectedPaymentMethod && (
           <>
-            <h2>
+            <Heading as="h2" size="lg" mb={4}>
               3. Prossiga para o pagamento{' '}
               {selectedCard?.price.toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL',
               })}
-            </h2>
-            <div className="button-group">
+            </Heading>
+            <Box display="flex" justifyContent="space-between" w="100%">
+              <Button type="button" colorScheme="red" onClick={() => {}} mr={2}>
+                Voltar
+              </Button>
               <Button
                 type="button"
-                btnType="danger"
-                value="< Voltar"
-                style={{ marginRight: '20px' }}
-              />
-              <Button
-                type="button"
-                btnType="primary"
-                value="Fazer Pagamento"
+                colorScheme="purple"
                 onClick={handleCheckout}
-              />
-            </div>
+                ml={2}
+              >
+                Fazer Pagamento
+              </Button>
+            </Box>
           </>
         )}
       </Panel>

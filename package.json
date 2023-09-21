@@ -19,6 +19,7 @@
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
     "@prisma/client": "^4.2.1",
+    "@stripe/stripe-js": "^2.1.6",
     "@types/jsonwebtoken": "^9.0.3",
     "@types/multer": "^1.4.7",
     "@types/nodemailer": "^6.4.10",

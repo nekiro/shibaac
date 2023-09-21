@@ -38,8 +38,8 @@ const navigationItems = [
     ],
     text: 'Library',
   },
-  { text: 'Donate', href: '/' },
-  { text: 'Shopping', href: '/' },
+  { text: 'Donate', href: '/donate' },
+  { text: 'Shopping', href: '/shop' },
 ];
 
 const MobileNavigation = ({ user }) => {

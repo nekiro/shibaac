@@ -23,9 +23,11 @@ export default async function handler(
         throw new Error('Failed to fetch payment methods');
       }
 
-      const data = await response.json();
+      const resultMercadoPago = await response.json();
 
-      res.status(200).json({ success: true, data });
+      res
+        .status(200)
+        .json({ success: true, args: { data: resultMercadoPago } });
       return;
     } catch (error) {
       console.error('Failed to get Mercado Pago methods', error);
@@ -108,7 +110,7 @@ export default async function handler(
 
       return res.status(200).json({
         success: true,
-        data: preferenceResponse,
+        args: { data: preferenceResponse },
       });
     } catch (error) {
       console.error(error);
