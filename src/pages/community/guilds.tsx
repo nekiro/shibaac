@@ -12,7 +12,6 @@ import {
   Box,
   Flex,
   Button,
-  Image,
   Link as ChakraLink,
   Modal,
   ModalOverlay,
@@ -20,7 +19,7 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
-  Text,
+  Avatar,
 } from '@chakra-ui/react';
 
 type Button = {
@@ -92,6 +91,8 @@ export default function Guilds({ user }: any) {
   const [response, setResponse] = useState<ApiResponse | null>(null);
   const [info, setInfo] = useState<Account | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const fetchData = useCallback(async () => {
     try {
@@ -215,9 +216,13 @@ export default function Guilds({ user }: any) {
               ? guilds.map((guild, index) => [
                   {
                     text: (
-                      <img
-                        src={guild.logo}
-                        alt={guild.name}
+                      <Avatar
+                        src={
+                          guild.logoUrl
+                            ? `${baseUrl}/${guild.logoUrl}`
+                            : `/images/guild-logo-default.gif`
+                        }
+                        alt="Guild Logo"
                         width="50"
                         height="50"
                       />

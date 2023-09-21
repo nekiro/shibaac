@@ -114,7 +114,6 @@ export default function Guild({ user }: any) {
   const router = useRouter();
   const { name } = router.query;
   const [guild, setGuild] = useState<Guild | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [guildInvites, setGuildInvites] = useState<GuildInvite[]>([]);
   const [response, setResponse] = useState<ApiResponse | null>(null);
   const [activeTab, setActiveTab] = useState('members');
@@ -126,8 +125,6 @@ export default function Guild({ user }: any) {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const fetchGuildData = useCallback(async () => {
-    setIsLoading(true);
-
     if (name) {
       try {
         const response = await fetchApi(
@@ -138,8 +135,6 @@ export default function Guild({ user }: any) {
         setGuild(response.data);
       } catch (error) {
         console.error('Failed to fetch guild data:', error);
-      } finally {
-        setIsLoading(false);
       }
     }
   }, [name]);
