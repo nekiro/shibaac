@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import prisma from 'src/database/instance';
-import { bigIntsToStrings } from 'src/util';
+import prisma from '../../../prisma';
 
 type GuildSerialized = {
   [key: string]: any;
@@ -25,11 +24,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
 
       const serializedGuilds: GuildSerialized[] = guilds.map((guild) => ({
-        ...bigIntsToStrings(guild),
+        ...guild,
         memberCount: memberCountMap[guild.id] || 0,
       }));
 
-      res.status(200).json({ success: true, data: serializedGuilds });
+      res.status(200).json({ success: true, args: { data: serializedGuilds } });
     } catch (error) {
       console.error(error);
       res.status(500).json({ success: false, error: 'Internal server error' });
@@ -76,7 +75,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
 
-      res.status(200).json({ success: true, data: newGuild });
+      res.status(200).json({ success: true, args: { data: newGuild } });
     } catch (error) {
       console.error(error);
       res.status(500).json({ success: false, error: 'Internal server error' });

@@ -1,12 +1,27 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import Panel from 'src/components/Panel';
-import Head from 'src/layout/Head';
-import StrippedTable from 'src/components/StrippedTable';
-import FormWrapper from 'src/components/FormWrapper';
-import { withSessionSsr } from 'src/util/session';
-import { fetchApi } from 'src/util/request';
+import Panel from '../../components/Panel';
+import Head from '../../layout/Head';
+import StrippedTable from '../../components/StrippedTable';
+import FormWrapper from '../../components/FormWrapper';
+import { withSessionSsr } from '../../lib/session';
+import { fetchApi } from '../../lib/request';
 import Link from 'next/link';
-import { FiX } from 'react-icons/fi';
+import { ButtonType, ButtonColorType } from '../../components/Button';
+
+import {
+  Box,
+  Flex,
+  Button,
+  Image,
+  Link as ChakraLink,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  Text,
+} from '@chakra-ui/react';
 
 type Button = {
   type?: 'submit' | 'button' | 'reset';
@@ -63,23 +78,35 @@ interface Account {
   players: Player[];
 }
 
+export type FormButton = {
+  type?: ButtonType;
+  btnType: any;
+  value: string;
+  href?: string;
+};
+
 export default function Guilds({ user }: any) {
   const [guilds, setGuilds] = useState<any>([]);
   const [filter, setFilter] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [response, setResponse] = useState<ApiResponse | null>(null);
   const [info, setInfo] = useState<Account | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchData = useCallback(async () => {
-    const response = await fetchApi('GET', `/api/accounts/${user.id}`);
+    try {
+      setIsLoading(true);
 
-    const mappedResponse = {
-      id: response.data.account.id,
-      name: response.data.account.name,
-      players: response.data.account.players,
-    };
+      const response = await fetchApi('GET', `/api/account/${user.id}`);
 
-    setInfo(mappedResponse);
+      if (response.success) {
+        setInfo(response.account);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   }, [user]);
 
   useEffect(() => {
@@ -116,7 +143,7 @@ export default function Guilds({ user }: any) {
       },
     });
 
-    setResponse(response);
+    setResponse(response.data);
     resetForm();
 
     if (response.success) {
@@ -140,12 +167,15 @@ export default function Guilds({ user }: any) {
       label: { text: 'Character Name', size: 3 },
       size: 9,
       options: info
-        ? info.players.map((player) => ({
-            label: player.name,
-            value: player.id,
-            text: player.name,
-          }))
-        : [],
+        ? [
+            { label: '<Selecione>', value: '', text: '<Selecione>' },
+            ...info.players.map((player) => ({
+              label: player.name,
+              value: player.id,
+              text: player.name,
+            })),
+          ]
+        : [{ label: '<Selecione>', value: '', text: '<Selecione>' }],
     },
     {
       type: 'text',
@@ -155,40 +185,24 @@ export default function Guilds({ user }: any) {
     },
   ];
 
-  const buttons: Button[] = [
+  const buttons: FormButton[] = [
     { type: 'submit', btnType: 'primary', value: 'Submit' },
   ];
-
-  if (!guilds) {
-    return (
-      <>
-        <Head title="Guilds" />
-        <Panel header="Guilds" isLoading={true}></Panel>
-      </>
-    );
-  }
 
   return (
     <>
       <Head title="Guilds" />
       <Panel header="Guilds">
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '10px',
-          }}
-        >
-          <div></div>
-          <button
-            className="btn btn-primary btn-sm"
+        <Flex justifyContent="space-between" alignItems="center" mb="2">
+          <Box></Box>
+          <Button
+            size="sm"
+            colorScheme="purple"
             onClick={() => handleCreateGuild()}
           >
             <i className="fa fa-lock"></i> Create Guild
-          </button>
-        </div>
-
+          </Button>
+        </Flex>
         <StrippedTable
           head={[
             { text: 'Logo' },
@@ -196,76 +210,66 @@ export default function Guilds({ user }: any) {
             { text: 'Membros' },
             { text: 'Nível Médio' },
           ]}
-        >
-          {guilds.map((guild: any, index: any) => (
-            <tr key={index}>
-              <td>
-                <img src={guild.logo} alt={guild.name} width="50" height="50" />
-              </td>
-              <td>
-                <Link
-                  href={`/community/guilds/${encodeURIComponent(guild.name)}`}
-                >
-                  <a>{guild.name}</a>
-                </Link>
-              </td>
-              <td>{guild.memberCount}</td>
-              <td>{guild.level}</td>
-            </tr>
-          ))}
-        </StrippedTable>
+          body={
+            guilds && guilds.length > 0
+              ? guilds.map((guild, index) => [
+                  {
+                    text: (
+                      <img
+                        src={guild.logo}
+                        alt={guild.name}
+                        width="50"
+                        height="50"
+                      />
+                    ),
+                  },
+                  {
+                    text: (
+                      <Link
+                        href={`/community/guilds/${encodeURIComponent(
+                          guild.name,
+                        )}`}
+                      >
+                        <a>{guild.name}</a>
+                      </Link>
+                    ),
+                  },
+                  {
+                    text: guild.memberCount,
+                  },
+                  {
+                    text: guild.level,
+                  },
+                ])
+              : [
+                  [
+                    {
+                      text: 'There is no data to show',
+                      colspan: 4,
+                    },
+                  ],
+                ]
+          }
+        />
       </Panel>
 
       {isModalOpen && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'rgba(0,0,0,0.5)',
-          }}
-          onClick={closeModal}
-        >
-          <div
-            style={{
-              width: '500px',
-              padding: '20px',
-              backgroundColor: 'white',
-              borderRadius: '10px',
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <h2>Create guild</h2>
-              <FiX
-                size={24}
-                style={{ cursor: 'pointer' }}
-                onClick={() => setIsModalOpen(false)}
+        <Modal isOpen={isModalOpen} onClose={closeModal}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Create guild</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <FormWrapper
+                validationSchema={''}
+                onSubmit={onSubmit}
+                fields={fields}
+                buttons={buttons}
+                response={response}
               />
-            </div>
-
-            <FormWrapper
-              validationSchema={null}
-              onSubmit={onSubmit}
-              fields={fields}
-              buttons={buttons}
-              response={response}
-            />
-
-            <button onClick={closeModal}>Close</button>
-          </div>
-        </div>
+            </ModalBody>
+          </ModalContent>
+        </Modal>
       )}
     </>
   );

@@ -5,7 +5,7 @@ import { sha1Encrypt } from '../lib/crypt';
 type Account = Promise<accounts | null>;
 
 export const getAccountByIdIncludeDefault: Prisma.accountsInclude = {
-  players: { select: { name: true, level: true, vocation: true } },
+  players: { select: { id: true, name: true, level: true, vocation: true } },
 };
 
 export const getAccountById = async (

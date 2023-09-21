@@ -144,6 +144,7 @@ export default function Lost() {
   const next = useCallback(async () => {
     if (step === 1 && selectedOption === null) {
       toast({
+        position: 'top',
         title: 'Error.',
         description: 'Please select a recovery option before proceeding.',
         status: 'error',
@@ -185,6 +186,7 @@ export default function Lost() {
         } else {
           console.error('Error:', response.message);
           toast({
+            position: 'top',
             title: 'Error.',
             description: response.message,
             status: 'error',
@@ -196,6 +198,7 @@ export default function Lost() {
       } catch (error) {
         console.error('Error:', error);
         toast({
+          position: 'top',
           title: 'Error.',
           description: 'An unexpected error occurred.',
           status: 'error',
@@ -214,6 +217,7 @@ export default function Lost() {
       setProgress(0);
       setSelectedOption(null);
       toast({
+        position: 'top',
         title: 'Thank You!',
         description:
           'Your account recovery request has been submitted successfully. Please check your email for further instructions.',

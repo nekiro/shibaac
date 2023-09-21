@@ -53,3 +53,10 @@ export const groupToName = [
   'Community Manager',
   'God',
 ];
+
+export const RankGuild = [
+  'None',
+  'Leader', // 1
+  'Vice-Leader', // 2
+  'Member', // 3
+];

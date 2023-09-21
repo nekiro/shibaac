@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import prisma from 'src/database/instance';
+import prisma from '../../../../prisma';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
@@ -14,7 +14,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
 
-      res.status(200).json({ success: true, data: invites });
+      res.status(200).json({ success: true, args: { data: invites } });
     } catch (error) {
       console.error(error);
       res.status(500).json({ success: false, error: 'Internal server error' });
@@ -37,6 +37,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.json({ success: false, message: 'Player not found' });
       }
 
+      const existingInvite = await prisma.guild_invites.findFirst({
+        where: {
+          player_id: getPlayerToInvite.id,
+          guild_id: Number(guild_id),
+        },
+      });
+
+      if (existingInvite) {
+        return res.json({
+          success: false,
+          message: 'Player is already invited to the guild',
+        });
+      }
+
       const newInvite = await prisma.guild_invites.create({
         data: {
           player_id: Number(getPlayerToInvite.id),
@@ -45,7 +59,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
 
-      res.status(201).json({ success: true, data: newInvite });
+      res.status(201).json({ success: true, args: { data: newInvite } });
     } catch (error) {
       console.error(error);
       res.status(500).json({ success: false, error: 'Internal server error' });

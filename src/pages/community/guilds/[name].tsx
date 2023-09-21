@@ -1,29 +1,33 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import Panel from 'src/components/Panel';
-import { fetchApi } from 'src/util/request';
-import FormWrapper from 'src/components/FormWrapper';
+import Panel from '../../../components/Panel';
+import { fetchApi } from '../../../lib/request';
+import FormWrapper from '../../../components/FormWrapper';
 import { useRouter } from 'next/router';
-import StrippedTable from 'src/components/StrippedTable';
+import StrippedTable from '../../../components/StrippedTable';
 import Link from 'next/link';
-import { vocationIdToName, RankGuild, ToastConfig } from 'src/util';
-import { withSessionSsr } from 'src/util/session';
-import Button from 'src/components/Button';
-import { toast } from 'react-toastify';
+import { vocationIdToName, RankGuild } from '../../../lib';
+import { withSessionSsr } from '../../../lib/session';
+import Button from '../../../components/Button';
 import { CgUserRemove } from 'react-icons/cg';
 
-type Button = {
+import {
+  Box,
+  Button as ChakraButton,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Text,
+  useToast,
+  VStack,
+} from '@chakra-ui/react';
+
+export type FormButton = {
   type?: 'submit' | 'button' | 'reset';
-  btnType?:
-    | 'primary'
-    | 'default'
-    | 'secondary'
-    | 'danger'
-    | 'warning'
-    | 'info'
-    | 'light'
-    | 'dark';
-  href?: string;
+  btnType: any;
   value: string;
+  href?: string;
 };
 
 type Field = {
@@ -104,7 +108,7 @@ const fields: Field[] = [
   },
 ];
 
-const buttons: Button[] = [
+const buttons: FormButton[] = [
   { type: 'submit', btnType: 'primary', value: 'Submit' },
 ];
 
@@ -118,6 +122,8 @@ export default function Guild({ user }: any) {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [file, setFile] = useState(null);
 
+  const toast = useToast();
+
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const fetchGuildData = useCallback(async () => {
@@ -125,7 +131,7 @@ export default function Guild({ user }: any) {
       try {
         const response = await fetchApi(
           'GET',
-          `/api/community/guilds/${encodeURIComponent(name)}`
+          `/api/community/guilds/${encodeURIComponent(name)}`,
         );
 
         setGuild(response.data);
@@ -144,7 +150,7 @@ export default function Guild({ user }: any) {
       if (guild?.id) {
         const response = await fetchApi(
           'GET',
-          `/api/community/guilds/inviteplayer/?guildId=${guild.id}`
+          `/api/community/guilds/inviteplayer/?guildId=${guild.id}`,
         );
 
         setGuildInvites(response.data);
@@ -160,7 +166,7 @@ export default function Guild({ user }: any) {
 
   const onSubmit = async (
     values: FormValues,
-    { resetForm }: { resetForm: () => void }
+    { resetForm }: { resetForm: () => void },
   ) => {
     const response = await fetchApi(
       'POST',
@@ -170,23 +176,39 @@ export default function Guild({ user }: any) {
           player_invite: values.player_invite,
           guild_id: guild?.id,
         },
-      }
+      },
     );
 
     if (response.success) {
-      toast.success('Player invited successfuly!', ToastConfig);
+      toast({
+        position: 'top',
+        title: 'Player invited successfully!',
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+      });
 
       setResponse(response);
       resetForm();
       fetchGuildInvites();
+    } else {
+      toast({
+        position: 'top',
+        title: response.message,
+        status: 'warning',
+        duration: 9000,
+        isClosable: true,
+      });
     }
   };
 
   const handleDeleteInvite = async (inviteId: number) => {
+    console.log('inviteId', inviteId);
+
     try {
       const response = await fetchApi(
         'DELETE',
-        `/api/community/guilds/inviteplayer?inviteId=${inviteId}&guildId=${guild?.id}`
+        `/api/community/guilds/inviteplayer?inviteId=${inviteId}&guildId=${guild?.id}`,
       );
 
       if (response.success) {
@@ -196,10 +218,23 @@ export default function Guild({ user }: any) {
           data: {},
         });
 
-        toast.success('Player deleted successfuly!', ToastConfig);
+        toast({
+          position: 'top',
+          title: 'Invite deleted successfully',
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+        });
 
         fetchGuildInvites();
       } else {
+        toast({
+          position: 'top',
+          title: 'Failed to delete invite',
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        });
         setResponse({
           message: 'Failed to delete invite',
           success: false,
@@ -207,8 +242,14 @@ export default function Guild({ user }: any) {
         });
       }
     } catch (error) {
-      toast.success('Ahhhh! Failed to delete invite', ToastConfig);
       console.error('Failed to delete invite:', error);
+      toast({
+        position: 'top',
+        title: 'Failed to delete invite',
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
       setResponse({
         message: 'Failed to delete invite',
         success: false,
@@ -219,13 +260,13 @@ export default function Guild({ user }: any) {
 
   const handleAcceptInvite = async (inviteId: number) => {
     const findIdByAccept = guildInvites.find(
-      (invite) => invite.player_id === inviteId
+      (invite) => invite.player_id === inviteId,
     );
 
     try {
       const response = await fetchApi(
         'POST',
-        `/api/community/guilds/acceptinvite?inviteId=${inviteId}&player_name=${findIdByAccept?.player.name}`
+        `/api/community/guilds/acceptinvite?inviteId=${inviteId}&player_name=${findIdByAccept?.player.name}`,
       );
 
       if (response.success) {
@@ -235,19 +276,25 @@ export default function Guild({ user }: any) {
           data: {},
         });
 
-        toast.success('Player deleted successfuly!', ToastConfig);
+        toast({
+          position: 'top',
+          title: 'Player deleted successfuly!',
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+        });
 
         fetchGuildInvites();
         fetchGuildData();
-      } else {
-        setResponse({
-          message: 'Failed to delete invite',
-          success: false,
-          data: {},
-        });
       }
     } catch (error) {
-      toast.success('Ahhhh! Failed to delete invite', ToastConfig);
+      toast({
+        position: 'top',
+        title: 'Player deleted successfuly!',
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+      });
       console.error('Failed to delete invite:', error);
       setResponse({
         message: 'Failed to delete invite',
@@ -261,28 +308,44 @@ export default function Guild({ user }: any) {
     try {
       const response = await fetchApi(
         'POST',
-        `/api/community/guilds/leaveguild?guildId=${guild?.id}&memberId=${memberId}`
+        `/api/community/guilds/leaveguild?guildId=${guild?.id}&memberId=${memberId}`,
       );
 
       if (response.success) {
-        toast.success('Você saiu da guilda com sucesso!', ToastConfig);
+        toast({
+          position: 'top',
+          title: 'You have successfully left the guild!',
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+        });
         fetchGuildData();
-      } else {
-        toast.error('Falha ao sair da guilda', ToastConfig);
       }
     } catch (error) {
-      toast.error('Ocorreu um erro ao sair da guilda', ToastConfig);
       console.error('Failed to leave guild:', error);
+      toast({
+        position: 'top',
+        title: 'There was a problem leaving the guild!',
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+      });
     }
   };
 
   const handleExpelMember = async (playerId: number) => {
     const findLeader = guild?.guild_membership.filter(
-      (member) => member.rank_id === 1
+      (member) => member.rank_id === 1,
     );
 
     if (!findLeader || findLeader.length === 0) {
-      toast.error('Leader not found', ToastConfig);
+      toast({
+        position: 'top',
+        title: 'Leader not found',
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
       return;
     }
 
@@ -291,22 +354,29 @@ export default function Guild({ user }: any) {
     try {
       const response = await fetchApi(
         'POST',
-        `/api/community/guilds/expelMember?guildId=${guild?.id}&playerId=${playerId}&leaderId=${leaderId}`
+        `/api/community/guilds/expelMember?guildId=${guild?.id}&playerId=${playerId}&leaderId=${leaderId}`,
       );
 
       if (response.success) {
-        toast.success('Member expelled successfully!', ToastConfig);
+        toast({
+          position: 'top',
+          title: 'Member expelled successfully',
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+        });
 
         fetchGuildData();
-      } else {
-        toast.error('Failed to expel member', ToastConfig);
       }
     } catch (error) {
-      toast.error(
-        'An error occurred while trying to expel the member',
-        ToastConfig
-      );
       console.error('Failed to expel member:', error);
+      toast({
+        position: 'top',
+        title: 'An error occurred while trying to expel the member',
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
     }
   };
 
@@ -336,7 +406,7 @@ export default function Guild({ user }: any) {
       await fetchApi(
         'PATCH',
         `/api/community/guilds/updateLogoGuild?guildId=${guild?.id}`,
-        { data: formData, multipart: true }
+        { data: formData, multipart: true },
       );
 
       fetchGuildData();
@@ -348,192 +418,221 @@ export default function Guild({ user }: any) {
     }
   };
 
+  const handleTabChange = (index: number) => {
+    setActiveTab(index === 0 ? 'members' : 'settings');
+  };
+
   if (!guild) {
     return <div>Loading...</div>;
   }
 
-  return (
-    <>
-      <Panel header="Guild Information">
-        <div className="tab-pills">
-          <button
-            className={activeTab === 'members' ? 'active' : ''}
-            onClick={() => setActiveTab('members')}
+  return !guild ? (
+    <Text>Loading...</Text>
+  ) : (
+    <Panel>
+      <VStack spacing={4} align="start">
+        <Box borderWidth={1} borderRadius="lg" p={4} width="full">
+          <Tabs
+            variant="enclosed"
+            index={activeTab === 'members' ? 0 : 1}
+            onChange={handleTabChange}
           >
-            Membros
-          </button>
-          <button
-            className={activeTab === 'config' ? 'active' : ''}
-            onClick={() => setActiveTab('config')}
-          >
-            Configuração
-          </button>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <img
-            src={`${baseUrl}/${guild.logoUrl}`}
-            alt={`${guild.name} logo`}
-            style={{ width: '64px', height: '64px', marginRight: '20px' }}
-          />
-          <h1>{guild.name}</h1>
-        </div>
-        <p>
-          A guilda foi fundada em{' '}
-          {new Date(guild.creationdata).toLocaleString()}.
-        </p>
-        <p>{guild.motd || 'Nova guilda. O líder deve editar este texto :)'}</p>
-
-        {activeTab === 'members' && (
-          <Panel header="Guild Information">
-            <StrippedTable
-              head={[
-                { text: 'Classificação' },
-                { text: 'Nome' },
-                { text: 'Status' },
-                { text: 'Level/Vocação' },
-                { text: 'Ações' },
-              ]}
-            >
-              {guild.guild_membership.map((member, index) => (
-                <tr key={index}>
-                  <td>{RankGuild[member.rank_id]}</td>
-                  <td>{member.nick}</td>
-                  <td>{member.online ? 'Online' : 'Offline'}</td>
-                  <td>
-                    {member.player
-                      ? `${member.player.level}/${
-                          vocationIdToName[member.player.vocation]
-                        }`
-                      : 'N/A'}
-                  </td>
-                  <td>
-                    {user.id === guild.ownerid &&
-                    user.id !== member.player_id ? (
-                      <CgUserRemove
-                        size={24}
-                        cursor="pointer"
-                        color="red"
-                        onClick={() => handleExpelMember(member.player_id)}
+            <TabList>
+              <Tab>Membros</Tab>
+              <Tab>Configuração</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel>
+                {activeTab === 'members' && (
+                  <Panel header="Guild Information">
+                    <StrippedTable
+                      head={[
+                        { text: 'Classificação' },
+                        { text: 'Nome' },
+                        { text: 'Status' },
+                        { text: 'Level/Vocação' },
+                        { text: 'Ações' },
+                      ]}
+                      body={
+                        guild.guild_membership &&
+                        guild.guild_membership.length > 0
+                          ? guild.guild_membership.map((member, index) => [
+                              { text: RankGuild[member.rank_id] },
+                              { text: member.nick },
+                              { text: member.online ? 'Online' : 'Offline' },
+                              {
+                                text: member.player
+                                  ? `${member.player.level}/${
+                                      vocationIdToName[member.player.vocation]
+                                    }`
+                                  : 'N/A',
+                              },
+                              {
+                                element: (
+                                  <td>
+                                    {user.id === guild.ownerid &&
+                                    user.id !== member.player_id ? (
+                                      <CgUserRemove
+                                        size={24}
+                                        cursor="pointer"
+                                        color="red"
+                                        onClick={() =>
+                                          handleExpelMember(member.player_id)
+                                        }
+                                      />
+                                    ) : (
+                                      user.id === member.player_id &&
+                                      user.id !== guild.ownerid && (
+                                        <Button
+                                          onClick={() =>
+                                            handleLeaveGuild(member.player_id)
+                                          }
+                                          type="button"
+                                          btnType="danger"
+                                          value="Leave Guild"
+                                        />
+                                      )
+                                    )}
+                                  </td>
+                                ),
+                              },
+                            ])
+                          : [
+                              [
+                                {
+                                  text: 'There is no data to show',
+                                  colspan: 5,
+                                },
+                              ],
+                            ]
+                      }
+                    />
+                  </Panel>
+                )}
+              </TabPanel>
+              <TabPanel>
+                {activeTab === 'settings' && (
+                  <Panel header="Configuração da Guild">
+                    <div style={{ marginBottom: '20px' }}>
+                      <h2>Logo da Guild</h2>
+                      <img
+                        src={
+                          guild.logoUrl
+                            ? `${baseUrl}/${guild.logoUrl}`
+                            : `/images/guild-logo-default.gif`
+                        }
+                        alt={`${guild.name} logo`}
+                        style={{
+                          width: '100px',
+                          height: '100px',
+                          objectFit: 'cover',
+                          marginBottom: '20px',
+                        }}
                       />
-                    ) : (
-                      user.id === member.player_id &&
-                      user.id !== guild.ownerid && (
-                        <Button
-                          onClick={() => handleLeaveGuild(member.player_id)}
-                          type="button"
-                          btnType="danger"
-                          value="Leave Guild"
-                        />
-                      )
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </StrippedTable>
-          </Panel>
-        )}
+                    </div>
 
-        {activeTab === 'config' && (
-          <Panel header="Configuração da Guild">
-            <div style={{ marginBottom: '20px' }}>
-              <h2>Logo da Guild</h2>
-              <img
-                src={`${baseUrl}/${guild.logoUrl}`}
-                alt={`${guild.name} logo`}
-                style={{
-                  width: '100px',
-                  height: '100px',
-                  objectFit: 'cover',
-                  marginBottom: '20px',
-                }}
-              />
-            </div>
+                    <div style={{ marginBottom: '20px' }}>
+                      <h2>Atualizar Logo</h2>
+                      <input type="file" onChange={handleFileChange} />
+                      {previewUrl && (
+                        <div style={{ marginTop: '20px' }}>
+                          <h3>Preview</h3>
+                          <img
+                            src={previewUrl}
+                            alt="Preview"
+                            style={{
+                              width: '100px',
+                              height: '100px',
+                              objectFit: 'cover',
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
 
-            <div style={{ marginBottom: '20px' }}>
-              <h2>Atualizar Logo</h2>
-              <input type="file" onChange={handleFileChange} />
-              {previewUrl && (
-                <div style={{ marginTop: '20px' }}>
-                  <h3>Preview</h3>
-                  <img
-                    src={previewUrl}
-                    alt="Preview"
-                    style={{
-                      width: '100px',
-                      height: '100px',
-                      objectFit: 'cover',
-                    }}
-                  />
-                </div>
-              )}
-            </div>
+                    <button onClick={handleUpload}>Upload Logo</button>
+                  </Panel>
+                )}
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
+        </Box>
 
-            <button onClick={handleUpload}>Upload Logo</button>
-          </Panel>
-        )}
-      </Panel>
-
-      <Panel header="Player Invites">
-        <StrippedTable
-          head={[
-            { text: 'Player Name' },
-            { text: 'Level/Vocation' },
-            { text: 'Invite Date' },
-            { text: 'Actions' },
-          ]}
-        >
-          {guildInvites.length > 0 ? (
-            guildInvites.map((invite, index) => (
-              <tr key={index}>
-                <td>
-                  <Link href={`/character/${invite.player.name}`}>
-                    {invite.player.name}
-                  </Link>
-                </td>
-                <td>{`${invite.player.level} - ${
-                  vocationIdToName[invite.player.vocation]
-                }`}</td>
-                <td>{new Date(invite.date).toLocaleString()}</td>
-                <td>
-                  {user.id === guild.ownerid ? (
-                    <Button
-                      onClick={() => handleDeleteInvite(invite.player_id)}
-                      type="button"
-                      btnType="danger"
-                      value="Delete"
-                    />
-                  ) : invite.player_id === user.id ? (
-                    <Button
-                      onClick={() => handleAcceptInvite(invite.player_id)}
-                      type="button"
-                      btnType="primary"
-                      value="Aceitar"
-                    />
-                  ) : null}
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={3} style={{ textAlign: 'center' }}>
-                Sem dados para mostrar
-              </td>
-            </tr>
-          )}
-        </StrippedTable>
-
-        {user.id === guild.ownerid ? (
-          <FormWrapper
-            validationSchema={null}
-            onSubmit={onSubmit}
-            fields={fields}
-            buttons={buttons}
-            response={response}
+        <Box borderWidth={1} borderRadius="lg" p={4} width="full">
+          <StrippedTable
+            head={[
+              { text: 'Player Name' },
+              { text: 'Level/Vocation' },
+              { text: 'Invite Date' },
+              { text: 'Actions' },
+            ]}
+            body={
+              guildInvites && guildInvites.length > 0
+                ? guildInvites.map((invite, index) => [
+                    {
+                      text: (
+                        <Link href={`/character/${invite.player.name}`}>
+                          {invite.player.name}
+                        </Link>
+                      ),
+                    },
+                    {
+                      text: `${invite.player.level} - ${
+                        vocationIdToName[invite.player.vocation]
+                      }`,
+                    },
+                    { text: new Date(invite.date).toLocaleString() },
+                    {
+                      text: (
+                        <td>
+                          {user.id === guild.ownerid ? (
+                            <ChakraButton
+                              onClick={() =>
+                                handleDeleteInvite(invite.player_id)
+                              }
+                              colorScheme="red"
+                              type="button"
+                            >
+                              Delete
+                            </ChakraButton>
+                          ) : invite.player_id === user.id ? (
+                            <ChakraButton
+                              onClick={() =>
+                                handleAcceptInvite(invite.player_id)
+                              }
+                              colorScheme="green"
+                              type="button"
+                            >
+                              Aceitar
+                            </ChakraButton>
+                          ) : null}
+                        </td>
+                      ),
+                    },
+                  ])
+                : [
+                    [
+                      {
+                        text: 'There is no data to show',
+                        colspan: 6,
+                      },
+                    ],
+                  ]
+            }
           />
-        ) : null}
-      </Panel>
-    </>
+
+          {user.id === guild.ownerid ? (
+            <FormWrapper
+              validationSchema={''}
+              onSubmit={onSubmit}
+              fields={fields}
+              buttons={buttons}
+              response={response}
+            />
+          ) : null}
+        </Box>
+      </VStack>
+    </Panel>
   );
 }
 

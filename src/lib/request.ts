@@ -10,7 +10,7 @@ export type FetchResult = {
   success: boolean;
 };
 
-export type FetchMethods = 'GET' | 'POST' | 'PUT' | 'PATCH';
+export type FetchMethods = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 export type ResponseData = {
   yupError?: {};

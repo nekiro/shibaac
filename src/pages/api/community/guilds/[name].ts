@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import prisma from 'src/database/instance';
+import prisma from '../../../../prisma';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const {
@@ -45,7 +45,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(404).json({ error: 'Guild not found' });
     }
 
-    res.status(200).json({ success: true, data: guild });
+    res.status(200).json({ success: true, args: { data: guild } });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, error: 'Internal server error' });

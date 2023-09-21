@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react';
 import TextInput from './TextInput';
 import Button, { ButtonType, ButtonColorType } from './Button';
+import { CustomSelect } from './CustomSelect';
 import { FetchResult } from '../lib/request';
 
 export type FormField = {
@@ -58,6 +59,7 @@ const FormWrapper = ({
       !toast.isActive('forms-response-toast')
     ) {
       toast({
+        position: 'top',
         title: response.message,
         id: 'forms-response-toast',
         position: 'top',
@@ -91,19 +93,20 @@ const FormWrapper = ({
                     <FormLabel fontSize="sm" htmlFor={field.name}>
                       {field.label.text}
                     </FormLabel>
-                    <Field
-                      as={field.as ?? TextInput}
-                      type={field.type}
-                      name={field.name}
-                      placeholder={field.placeholder}
-                    >
-                      {field.options &&
-                        field.options.map((option) => (
-                          <option key={option.value} value={option.value}>
-                            {option.text}
-                          </option>
-                        ))}
-                    </Field>
+                    {field.type === 'select' ? (
+                      <Field
+                        name={field.name}
+                        as={CustomSelect}
+                        options={field.options}
+                      />
+                    ) : (
+                      <Field
+                        as={TextInput}
+                        type={field.type}
+                        name={field.name}
+                        placeholder={field.placeholder}
+                      />
+                    )}
                     <FormErrorMessage fontSize="sm">
                       {errors[field.name] as string}
                     </FormErrorMessage>

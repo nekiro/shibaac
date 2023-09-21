@@ -23,7 +23,10 @@ const navigationItems = [
   { text: 'Home', href: '/' },
   {
     hasMenu: true,
-    menuItems: [{ text: 'Highscores', url: '/community/highscores' }],
+    menuItems: [
+      { text: 'Highscores', url: '/community/highscores' },
+      { text: 'Guilds', url: '/community/guilds' },
+    ],
     text: 'Community',
   },
   {
