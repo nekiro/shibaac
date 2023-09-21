@@ -14,7 +14,7 @@ import {
   Button,
   useToast,
 } from '@chakra-ui/react';
-import { House } from '../../shared/interfaces/IHouses';
+import { House } from '../../shared/interfaces/Houses';
 
 interface Player {
   id: number;

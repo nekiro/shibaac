@@ -12,7 +12,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 
-import { PlayerData } from '../../shared/interfaces/IPlayer';
+import { PlayerData } from '../../shared/interfaces/PlayerData';
 
 export default function Highscores() {
   const [highscores, setHighscores] = useState<PlayerData[]>([]);
