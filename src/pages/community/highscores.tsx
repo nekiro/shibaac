@@ -87,29 +87,6 @@ export default function Highscores() {
     return vocation ? vocation.label : vocationValue;
   };
 
-  const categoryStyle = (selectedCategory) => ({
-    cursor: 'pointer',
-    marginRight: '10px',
-    fontWeight: 'bold',
-    border: '1px solid #ccc',
-    borderRadius: '5px',
-    padding: '5px 10px',
-    backgroundColor:
-      filter.category === selectedCategory ? '#800080' : 'transparent',
-    color: filter.category === selectedCategory ? '#fff' : '#000',
-  });
-
-  const vocationButtonStyle = (selectedVocation) => ({
-    fontWeight: 'bold',
-    marginRight: '10px',
-    border: '1px solid #ccc',
-    borderRadius: '5px',
-    padding: '5px 10px',
-    backgroundColor:
-      filter.vocation === selectedVocation ? '#800080' : 'transparent',
-    color: filter.vocation === selectedVocation ? '#fff' : '#000',
-  });
-
   const handleCategoryChange = (categoryValue) => {
     setFilter((prevFilter) => ({
       ...prevFilter,
