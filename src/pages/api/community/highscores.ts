@@ -14,6 +14,8 @@ export const get = async function handler(
       per_page = '900',
     } = req.query;
 
+    console.log('requset', req.query);
+
     let filterVocation = vocation === 'all' ? 'all' : Number(vocation);
     let highscoresPlayer;
 

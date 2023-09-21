@@ -1,7 +1,8 @@
 type FetchOptions = {
-  data: object;
+  data?: object;
   params?: Record<string, string | number>;
   multipart?: boolean;
+  headers?: Record<string, string | number>;
 };
 
 export type FetchResult = {
@@ -25,15 +26,30 @@ export const fetchApi = async <T = void>(
 ): Promise<FetchResult & T> => {
   const _options: RequestInit = {
     method,
+    headers: {
+      ...options?.headers,
+      ...(method !== 'GET' && options
+        ? { 'Content-Type': 'application/json' }
+        : {}),
+    },
   };
+
+  let urlWithParams = url;
+
+  if (options?.params) {
+    const params = new URLSearchParams(
+      options.params as Record<string, string>,
+    ).toString();
+    urlWithParams = `${url}?${params}`;
+  }
 
   if (method !== 'GET' && options) {
     _options.headers = { 'Content-Type': 'application/json' };
     _options.body = JSON.stringify(options.data);
   }
 
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}${url}`,
+  const response: Response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}${urlWithParams}`,
     _options,
   );
 
