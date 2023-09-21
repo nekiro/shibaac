@@ -14,6 +14,7 @@ import {
   Button,
   useToast,
 } from '@chakra-ui/react';
+import { House } from '../../shared/interfaces/IHouses';
 
 interface Player {
   id: number;
@@ -28,8 +29,8 @@ interface Account {
 }
 
 export default function HousePage({ user }: any) {
-  const [houses, setHouses] = useState([]);
-  const [selectedHouse, setSelectedHouse] = useState(null);
+  const [houses, setHouses] = useState<House[]>([]);
+  const [selectedHouse, setSelectedHouse] = useState<House | null>(null);
   const [bid, setBid] = useState({ character: '', amount: '' });
   const [account, setAccount] = useState<Account | null>(null);
 
@@ -69,10 +70,10 @@ export default function HousePage({ user }: any) {
       try {
         const response = await fetchApi(
           'POST',
-          `/api/houses/${selectedHouse.id}`,
+          `/api/houses/${selectedHouse?.id}`,
           {
             data: {
-              houseId: selectedHouse.id,
+              houseId: selectedHouse?.id,
               characterId: Number(bid.character),
               bid: Number(bid.amount),
             },
@@ -92,7 +93,7 @@ export default function HousePage({ user }: any) {
 
           await fetchHouses();
 
-          const updatedHouse = houses.find((h) => h.id === selectedHouse.id);
+          const updatedHouse = houses.find((h) => h.id === selectedHouse?.id);
           setSelectedHouse(updatedHouse);
         }
       } catch (error) {
@@ -109,7 +110,7 @@ export default function HousePage({ user }: any) {
       <Panel header="Houses">
         <Box display="flex" flexDirection="row">
           <Box width="50%" marginRight="4">
-            <Text fontSize="2xl">Lista de Casas</Text>
+            <Text fontSize="2xl">List Houses</Text>
 
             <StrippedTable
               head={[{ text: 'Name' }, { text: 'Size' }, { text: 'Owner' }]}
@@ -143,7 +144,7 @@ export default function HousePage({ user }: any) {
           </Box>
           {selectedHouse && (
             <Box width="50%">
-              <Text fontSize="3xl">Nome da casa: {selectedHouse.name}</Text>
+              <Text fontSize="3xl">{selectedHouse.name}</Text>
               <Text>
                 Owner:
                 {selectedHouse.owner === 0
@@ -162,7 +163,7 @@ export default function HousePage({ user }: any) {
               </Text>
               <form onSubmit={handleBidSubmit}>
                 <FormControl mb="3">
-                  <FormLabel>Personagem</FormLabel>
+                  <FormLabel>Character</FormLabel>
                   <Select
                     name="character"
                     onChange={handleBidChange}
@@ -177,7 +178,7 @@ export default function HousePage({ user }: any) {
                   </Select>
                 </FormControl>
                 <FormControl mb="3">
-                  <FormLabel>Bid em gold</FormLabel>
+                  <FormLabel>Bid on gold</FormLabel>
                   <Input
                     type="number"
                     min="1000"

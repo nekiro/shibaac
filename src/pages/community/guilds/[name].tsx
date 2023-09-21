@@ -428,8 +428,9 @@ export default function Guild({ user }: any) {
             onChange={handleTabChange}
           >
             <TabList>
-              <Tab>Membros</Tab>
-              <Tab>Configuração</Tab>
+              <Tab>Members</Tab>
+              <Tab>Configuration</Tab>
+              <Tab>Disband Guild</Tab>
             </TabList>
             <TabPanels>
               <TabPanel>
@@ -437,11 +438,11 @@ export default function Guild({ user }: any) {
                   <Panel header="Guild Information">
                     <StrippedTable
                       head={[
-                        { text: 'Classificação' },
-                        { text: 'Nome' },
+                        { text: 'Classification' },
+                        { text: 'Name' },
                         { text: 'Status' },
-                        { text: 'Level/Vocação' },
-                        { text: 'Ações' },
+                        { text: 'Level/Vocations' },
+                        { text: 'Actions' },
                       ]}
                       body={
                         guild?.guild_membership &&
@@ -503,9 +504,9 @@ export default function Guild({ user }: any) {
               </TabPanel>
               <TabPanel>
                 {activeTab === 'settings' && (
-                  <Panel header="Configuração da Guild">
+                  <Panel header="Settings Guild">
                     <div style={{ marginBottom: '20px' }}>
-                      <h2>Logo da Guild</h2>
+                      <h2>Logo of Guild</h2>
                       <img
                         src={
                           guild.logoUrl
@@ -523,7 +524,7 @@ export default function Guild({ user }: any) {
                     </div>
 
                     <div style={{ marginBottom: '20px' }}>
-                      <h2>Atualizar Logo</h2>
+                      <h2>Update Logo</h2>
                       <input type="file" onChange={handleFileChange} />
                       {previewUrl && (
                         <div style={{ marginTop: '20px' }}>

@@ -190,6 +190,15 @@ export default function Guilds({ user }: any) {
     { type: 'submit', btnType: 'primary', value: 'Submit' },
   ];
 
+  if (!guilds) {
+    return (
+      <>
+        <Head title="Guilds" />
+        <Panel header="Guilds" isLoading={isLoading}></Panel>
+      </>
+    );
+  }
+
   return (
     <>
       <Head title="Guilds" />
