@@ -32,6 +32,9 @@ This project aims to provide a fully featured, secure and fast AAC (Automatic Ac
 - Secure API
 - Mix of dynamic and static pages, most pages use dynamic loading
 - RWD
+- lost account interface
+- guilds
+- houses
 
 ## Tutorials
 
@@ -39,9 +42,6 @@ This project aims to provide a fully featured, secure and fast AAC (Automatic Ac
 
 ## To Do
 
-- lost account interface
-- guilds
-- houses
 - use typescript where possible
 - db migrations
 - tests
