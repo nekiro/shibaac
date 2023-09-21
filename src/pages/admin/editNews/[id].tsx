@@ -4,8 +4,14 @@ import Panel from '../../../components/Panel';
 import Head from '../../../layout/Head';
 import { fetchApi } from '../../../lib/request';
 import { withSessionSsr } from '../../../lib/session';
-import Button from '../../../components/Button';
 import { CKEditorComponent } from '../../../components/Editor';
+import {
+  FormControl,
+  FormLabel,
+  Input,
+  Button,
+  VStack,
+} from '@chakra-ui/react';
 
 function EditNews() {
   const router = useRouter();
@@ -23,10 +29,11 @@ function EditNews() {
 
       try {
         const response = await fetchApi('GET', `/api/news/${id}`);
-        setNewsData(response.data.news);
-        setTitle(response.data.news.title);
-        setContent(response.data.news.content);
-        setImageUrl(response.data.news.imageUrl);
+
+        setNewsData(response.data);
+        setTitle(response.data.title);
+        setContent(response.data.content);
+        setImageUrl(response.data.imageUrl);
       } catch (error) {
         console.error(error);
       }
@@ -63,52 +70,37 @@ function EditNews() {
     <>
       <Head title="Edit News" />
       <Panel header="Edit News">
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '10px',
-          }}
-        >
-          <div></div>
-          <Button
-            type="button"
-            btnType="danger"
-            value="< Voltar"
-            onClick={() => router.push('/admin')}
-          />
-        </div>
-
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Title</label>
-            <input
+        <VStack spacing={4} w="100%">
+          <FormControl id="title">
+            <FormLabel>Title</FormLabel>
+            <Input
               type="text"
-              className="form-control"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
-          </div>
-          <div className="form-group">
-            <label>Content</label>
+          </FormControl>
+          <FormControl id="content">
+            <FormLabel>Content</FormLabel>
             {isClient && (
               <CKEditorComponent setValue={setContent} value={content} />
             )}
-          </div>
-          <div className="form-group">
-            <label>Image URL</label>
-            <input
+          </FormControl>
+          <FormControl id="image-url">
+            <FormLabel>Image URL</FormLabel>
+            <Input
               type="text"
-              className="form-control"
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
             />
-          </div>
-          <button type="submit" className="btn btn-primary">
+          </FormControl>
+          <Button
+            colorScheme="blue"
+            type="submit"
+            onClick={(event) => handleSubmit(event)}
+          >
             Update
-          </button>
-        </form>
+          </Button>
+        </VStack>
       </Panel>
     </>
   );

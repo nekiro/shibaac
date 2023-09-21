@@ -22,7 +22,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           .json({ success: false, error: 'News not found' });
       }
 
-      res.status(200).json({ success: true, data: { news } });
+      res.status(200).json({ success: true, args: { data: news } });
     } catch (error) {
       console.error(error);
       res.status(500).json({ success: false, error: 'Internal server error' });
@@ -53,7 +53,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       return res
         .status(200)
-        .json({ success: true, data: { news: updatedNews } });
+        .json({ success: true, args: { data: updatedNews } });
     } catch (error) {
       console.error(error);
       return res
