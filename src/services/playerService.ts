@@ -1,11 +1,11 @@
-import { player, Prisma } from '@prisma/client';
+import { players, Prisma } from '@prisma/client';
 import prisma from '../prisma';
 
-export type Player = player | null;
+export type Player = players | null;
 
 export const findPlayerByName = async (name: string): Promise<Player> => {
   try {
-    const player = await prisma.player.findFirst({
+    const player = await prisma.players.findFirst({
       where: { name },
     });
 
@@ -22,7 +22,7 @@ export const createPlayer = async (
   sex: number,
 ): Promise<Player> => {
   try {
-    const player = await prisma.player.create({
+    const player = await prisma.players.create({
       data: {
         name,
         account_id,
@@ -39,7 +39,7 @@ export const createPlayer = async (
 
 export const deletePlayer = async (characterId: number): Promise<Player> => {
   try {
-    const player = await prisma.player.delete({
+    const player = await prisma.players.delete({
       where: {
         id: characterId,
       },
@@ -51,9 +51,9 @@ export const deletePlayer = async (characterId: number): Promise<Player> => {
   }
 };
 
-export const getPlayers = async (args: Prisma.playerFindManyArgs) => {
+export const getPlayers = async (args: Prisma.playersFindManyArgs) => {
   try {
-    const players = await prisma.player.findMany(args);
+    const players = await prisma.players.findMany(args);
     return players;
   } catch (err) {
     return null;

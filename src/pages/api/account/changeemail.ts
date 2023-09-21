@@ -17,7 +17,7 @@ const post = withSessionRoute(
     let result: Prisma.BatchPayload | undefined;
 
     try {
-      result = await prisma.account.updateMany({
+      result = await prisma.accounts.updateMany({
         where: { id: user.id, password: await sha1Encrypt(password) },
         data: {
           email,
@@ -33,7 +33,7 @@ const post = withSessionRoute(
     }
 
     res.json({ success: true, message: 'Succesfully changed email.' });
-  }
+  },
 );
 
 export default apiHandler({

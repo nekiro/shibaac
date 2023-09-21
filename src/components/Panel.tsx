@@ -1,9 +1,24 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import Loader from './Loader';
 import { Flex, Box, Text, Grid } from '@chakra-ui/react';
 import { TimeIcon } from '@chakra-ui/icons';
+import { formatDate } from '../lib/';
 
-const Panel = ({ header, date, identifier, children, isLoading }) => {
+interface PanelProps {
+  header?: string;
+  date?: string | null;
+  identifier?: string | null;
+  children?: ReactNode;
+  isLoading?: boolean;
+}
+
+const Panel: React.FC<PanelProps> = ({
+  header = 'Loading...',
+  date = null,
+  identifier = null,
+  children,
+  isLoading = false,
+}) => {
   return (
     <Flex
       key={identifier}
@@ -18,11 +33,11 @@ const Panel = ({ header, date, identifier, children, isLoading }) => {
     >
       <Flex bg="#f5f5f5" border="1px" borderColor="#ddd" borderRadius="md">
         <Grid margin="10px" width="100%" templateColumns="1fr auto">
-          <Text colSpan={1}>{header}</Text>
+          <Text>{header}</Text>
           {date && (
-            <Box>
-              <Text colSpan={2} align="right">
-                <TimeIcon /> {date}
+            <Box display="flex" justifyContent="flex-end">
+              <Text display="flex" alignItems="center">
+                <TimeIcon mr={2} /> {formatDate(date)}
               </Text>
             </Box>
           )}
@@ -31,13 +46,6 @@ const Panel = ({ header, date, identifier, children, isLoading }) => {
       <Box padding="10px">{isLoading ? <Loader /> : children}</Box>
     </Flex>
   );
-};
-
-Panel.defaultProps = {
-  header: 'Loading...',
-  date: null,
-  identifier: null,
-  isLoading: false,
 };
 
 export default Panel;

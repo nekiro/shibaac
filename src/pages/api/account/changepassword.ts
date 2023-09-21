@@ -22,7 +22,7 @@ const post = withSessionRoute(
       });
     }
 
-    const result = await prisma.account.updateMany({
+    const result = await prisma.accounts.updateMany({
       where: {
         id: user.id,
         password: await sha1Encrypt(password),
@@ -38,7 +38,7 @@ const post = withSessionRoute(
     }
 
     res.json({ success: true, message: 'Succesfully changed password.' });
-  }
+  },
 );
 
 export default apiHandler({

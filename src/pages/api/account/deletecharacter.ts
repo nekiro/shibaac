@@ -6,7 +6,7 @@ import { deleteCharacterSchema } from '../../../schemas/DeleteCharacter';
 import apiHandler from '../../../middleware/apiHandler';
 import * as playerService from '../../../services/playerService';
 import * as accountService from '../../../services/accountService';
-import { player } from '@prisma/client';
+import { players } from '@prisma/client';
 
 const post = withSessionRoute(
   async (req: NextApiRequest, res: NextApiResponse) => {
@@ -22,7 +22,7 @@ const post = withSessionRoute(
         id: user.id,
         password: await sha1Encrypt(password),
       },
-      { players: { select: { name: true, id: true } } }
+      { players: { select: { name: true, id: true } } },
     );
 
     if (!account) {
@@ -32,7 +32,7 @@ const post = withSessionRoute(
       });
     }
 
-    const character = account.players.find((p: player) => p.name === name);
+    const character = account.players.find((p: players) => p.name === name);
     if (!character) {
       return res.status(404).json({
         success: false,
@@ -52,7 +52,7 @@ const post = withSessionRoute(
         .status(500)
         .json({ success: false, message: "Couldn't delete character" });
     }
-  }
+  },
 );
 
 export default apiHandler({

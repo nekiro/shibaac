@@ -7,16 +7,16 @@ import apiHandler from '../../../middleware/apiHandler';
 const get = async (req: NextApiRequest, res: NextApiResponse) => {
   const { name } = req.query;
 
-  const player = await prisma.player.findFirst({
+  const player = await prisma.players.findFirst({
     where: { name: String(name) },
     select: {
-      account: {
+      accounts: {
         select: {
           premium_ends_at: true,
           players: { select: { name: true, level: true, vocation: true } },
         },
       },
-      player_death: true,
+      player_deaths: true,
       name: true,
       sex: true,
       vocation: true,

@@ -1,0 +1,20 @@
+version: '3.9'
+
+services:
+  database:
+    image: mysql:5.7
+    container_name: database_otserv
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - mysqldata:/data/mysql
+      # - ./db.sql:/docker-entrypoint-initdb.d/db.sql
+
+volumes:
+  mysqldata:
+    driver: local

@@ -1,16 +1,22 @@
 import Link from 'next/link';
 import React from 'react';
+import { useRouter } from 'next/router';
 
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { Menu, MenuButton, MenuList, MenuItem, Button } from '@chakra-ui/react';
 
 const DropdownButton = ({ hasMenu, text, href, list }) => {
+  const router = useRouter();
+  const isActive = hasMenu
+    ? list.some((item) => router.asPath.startsWith(item.url))
+    : router.asPath === href;
+
   if (hasMenu) {
     return (
       <Menu>
         <MenuButton
           color="white"
-          bg="transparent"
+          bg={isActive ? '#c3a6d9)' : 'transparent'}
           as={Button}
           pt="25px"
           pb="25px"
@@ -29,6 +35,7 @@ const DropdownButton = ({ hasMenu, text, href, list }) => {
                 borderRadius="sm"
                 _hover={{ bgColor: 'violet.50' }}
                 _focus={{ bgColor: 'violet.50' }}
+                backgroundColor={item.isActive ? '#c3a6d9)' : null}
               >
                 {item.text}
               </MenuItem>
@@ -42,7 +49,7 @@ const DropdownButton = ({ hasMenu, text, href, list }) => {
       <Link href={href} passHref>
         <Button
           color="white"
-          bg="transparent"
+          bg={isActive ? '#c3a6d9' : 'transparent'}
           pt="25px"
           pb="25px"
           fontWeight="normal"
@@ -60,6 +67,7 @@ const DropdownButton = ({ hasMenu, text, href, list }) => {
 
 DropdownButton.defaultProps = {
   hasMenu: false,
+  isActive: false,
 };
 
 export default DropdownButton;

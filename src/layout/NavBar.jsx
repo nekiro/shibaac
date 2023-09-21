@@ -23,14 +23,23 @@ const navigationItems = [
   { text: 'Home', href: '/' },
   {
     hasMenu: true,
-    menuItems: [{ text: 'Highscores', url: '/highscores' }],
+    menuItems: [
+      { text: 'Highscores', url: '/community/highscores' },
+      { text: 'Guilds', url: '/community/guilds' },
+      { text: 'Houses', url: '/community/houses' },
+    ],
     text: 'Community',
   },
   {
     hasMenu: true,
-    menuItems: [{ text: 'Server Information', url: '/serverinfo' }],
+    menuItems: [
+      { text: 'Server Information', url: '/serverinfo' },
+      { text: 'Downloads', url: '/downloads' },
+    ],
     text: 'Library',
   },
+  { text: 'Donate', href: '/donate' },
+  { text: 'Shopping', href: '/shop' },
 ];
 
 const MobileNavigation = ({ user }) => {
@@ -156,7 +165,7 @@ const NavBar = () => {
     },
     {
       fallback: 'md',
-    }
+    },
   );
 
   return <NavComponent user={user} />;

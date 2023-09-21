@@ -5,11 +5,20 @@ import { fetchApi } from '../lib/request';
 
 export default function Index() {
   const [news, setNews] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchNews = useCallback(async () => {
-    const response = await fetchApi('GET', '/api/news');
-    if (response.success) {
-      setNews(response.news);
+    try {
+      setIsLoading(true);
+      const response = await fetchApi('GET', '/api/news');
+
+      if (response.success) {
+        setNews(response.data);
+      }
+    } catch (error) {
+      console.error('Houve um problema', error);
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
@@ -18,7 +27,7 @@ export default function Index() {
   }, [fetchNews]);
 
   if (!news) {
-    return <Panel isLoading={true}></Panel>;
+    return <Panel isLoading={isLoading}></Panel>;
   }
 
   // TODO: paginate?
@@ -26,7 +35,7 @@ export default function Index() {
   return (
     <>
       {news.map((post) => (
-        <Panel key={post.title} header={post.title} date={post.date}>
+        <Panel key={post.title} header={post.title} date={post.createdAt}>
           <div dangerouslySetInnerHTML={{ __html: sanitize(post.content) }} />
         </Panel>
       ))}
