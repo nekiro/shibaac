@@ -4,6 +4,8 @@ import mercadopago from '../../../lib/mercadopagoConfig';
 
 const prisma = new PrismaClient();
 
+const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -62,9 +64,9 @@ export default async function handler(
         },
         external_reference: req.body.external_reference,
         back_urls: {
-          success: 'https://www.your-site.com/success', // substitua pela sua URL de sucesso
-          failure: 'https://www.your-site.com/failure', // substitua pela sua URL de falha
-          pending: 'https://www.your-site.com/pending', // substitua pela sua URL de pendência
+          success: `${baseUrl}/shop/success`,
+          failure: `${baseUrl}/shop/failure`,
+          pending: `${baseUrl}/shop/pending`,
         },
         auto_return: 'approved',
       };
