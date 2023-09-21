@@ -9,7 +9,7 @@ import {
   Flex,
   Text,
   Button,
-  Image,
+  Image as ChakraImage,
   Tabs,
   TabList,
   Tab,
@@ -17,6 +17,7 @@ import {
   TabPanel,
   useToast,
 } from '@chakra-ui/react';
+import Image from 'next/image';
 
 interface Product {
   id: number;
@@ -204,7 +205,7 @@ export default function Shopping({ user }: any) {
                         borderRadius="md"
                         m={2}
                       >
-                        <Image
+                        <ChakraImage
                           src={product.image}
                           alt={product.name}
                           boxSize="100px"
@@ -303,7 +304,7 @@ export default function Shopping({ user }: any) {
                   .map((product) => (
                     <li key={product.id} style={{ marginBottom: '20px' }}>
                       <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <img
+                        <Image
                           src={product.image}
                           alt={product.name}
                           style={{

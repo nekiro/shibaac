@@ -1,9 +1,11 @@
 import { PrismaClient } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { withSessionRoute } from '../../../lib/session';
+
 const prisma = new PrismaClient();
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === 'GET') {
+const getHouse = withSessionRoute(
+  async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       const id = parseInt(req.query.id, 10);
 
@@ -11,12 +13,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         where: { id },
       });
       res.status(200).json(house);
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ error: error.message });
     }
-  }
+  },
+);
 
-  if (req.method === 'POST') {
+const postBid = withSessionRoute(
+  async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       const { bid, houseId, characterId } = req.body;
 
@@ -49,8 +53,21 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         success: true,
         args: { data: updatedHouse },
       });
-    } catch (error) {
+    } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
+  },
+);
+
+const handleRequest = async (req: NextApiRequest, res: NextApiResponse) => {
+  switch (req.method) {
+    case 'GET':
+      return getHouse(req, res);
+    case 'POST':
+      return postBid(req, res);
+    default:
+      return res.status(405).json({ message: 'Method not allowed' });
   }
 };
+
+export default handleRequest;

@@ -2,12 +2,13 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import path from 'path';
 import fs from 'fs';
 import { uploadGuildLogo } from '../../../../middleware/multer';
+import { withSessionRoute } from '../../../../lib/session';
 import prisma from '../../../../prisma';
 
 export const config = { api: { bodyParser: false } };
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === 'PATCH') {
+const patch = withSessionRoute(
+  async (req: NextApiRequest, res: NextApiResponse) => {
     const { guildId } = req.query;
 
     uploadGuildLogo(req as any, res as any, async (err) => {
@@ -72,7 +73,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
       });
     });
-  } else {
-    res.status(405).json({ error: 'Método não permitido' });
+  },
+);
+
+const handleRequest = async (req: NextApiRequest, res: NextApiResponse) => {
+  switch (req.method) {
+    case 'PATCH':
+      return patch(req, res);
+    default:
+      return res.status(405).json({ message: 'Method not allowed' });
   }
 };
+
+export default handleRequest;

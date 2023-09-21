@@ -40,7 +40,10 @@ const post = withSessionRoute(
   },
 );
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handleTwoFactorVerification = async (
+  req: NextApiRequest,
+  res: NextApiResponse,
+) => {
   switch (req.method) {
     case 'POST':
       return post(req, res);
@@ -48,3 +51,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(405).json({ message: 'Method not allowed' });
   }
 };
+
+export default handleTwoFactorVerification;

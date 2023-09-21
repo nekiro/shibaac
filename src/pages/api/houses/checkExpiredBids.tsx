@@ -13,7 +13,7 @@ cron.schedule('*/1 * * * *', async () => {
           lt: Math.floor(new Date().getTime() / 1000),
         },
         highest_bidder: {
-          not: null,
+          gt: 0,
         },
       },
     });
@@ -23,7 +23,7 @@ cron.schedule('*/1 * * * *', async () => {
         where: { id: house.id },
         data: {
           owner: house.highest_bidder,
-          highest_bidder: null,
+          highest_bidder: 0,
           bid: 0,
           bid_end: 0,
         },

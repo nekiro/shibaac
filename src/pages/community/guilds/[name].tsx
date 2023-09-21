@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { vocationIdToName, RankGuild } from '../../../lib';
 import { withSessionSsr } from '../../../lib/session';
 import { CgUserRemove } from 'react-icons/cg';
+import Image from 'next/image';
 
 import {
   Box,
@@ -507,36 +508,44 @@ export default function Guild({ user }: any) {
                   <Panel header="Settings Guild">
                     <div style={{ marginBottom: '20px' }}>
                       <h2>Logo of Guild</h2>
-                      <img
-                        src={
-                          guild.logoUrl
-                            ? `${baseUrl}/${guild.logoUrl}`
-                            : `/images/guild-logo-default.gif`
-                        }
-                        alt={`${guild.name} logo`}
+                      <div
                         style={{
+                          position: 'relative',
                           width: '100px',
                           height: '100px',
-                          objectFit: 'cover',
-                          marginBottom: '20px',
                         }}
-                      />
+                      >
+                        <Image
+                          src={
+                            guild.logoUrl
+                              ? `${baseUrl}/${guild.logoUrl}`
+                              : `/images/guild-logo-default.gif`
+                          }
+                          alt={`${guild.name} logo`}
+                          layout="fill"
+                          objectFit="cover"
+                        />
+                      </div>
                     </div>
 
                     <div style={{ marginBottom: '20px' }}>
                       <h2>Update Logo</h2>
                       <input type="file" onChange={handleFileChange} />
                       {previewUrl && (
-                        <div style={{ marginTop: '20px' }}>
+                        <div
+                          style={{
+                            marginTop: '20px',
+                            position: 'relative',
+                            width: '100px',
+                            height: '100px',
+                          }}
+                        >
                           <h3>Preview</h3>
-                          <img
+                          <Image
                             src={previewUrl}
                             alt="Preview"
-                            style={{
-                              width: '100px',
-                              height: '100px',
-                              objectFit: 'cover',
-                            }}
+                            layout="fill"
+                            objectFit="cover"
                           />
                         </div>
                       )}

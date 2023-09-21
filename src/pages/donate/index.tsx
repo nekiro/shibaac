@@ -7,15 +7,16 @@ import { fetchApi } from '../../lib/request';
 import { loadStripe } from '@stripe/stripe-js';
 import { withSessionSsr } from '../../lib/session';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
+import Image from 'next/image';
 
 import {
   Grid,
   useToast,
   Box,
   Text,
-  Image,
   Button,
   Heading,
+  Image as ChakraImage,
 } from '@chakra-ui/react';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!);
@@ -63,9 +64,9 @@ export default function BuyCoins({ user }: any) {
   ];
 
   const paymentMethods: PaymentMethod[] = [
-    { id: 1, name: 'Stripe', image: 'images/stripe_br.png' },
-    { id: 2, name: 'PicPay', image: 'images/picpay.png' },
-    { id: 3, name: 'MercadoPago', image: 'images/mercadopago.png' },
+    { id: 1, name: 'Stripe', image: '/images/stripe_br.png' },
+    { id: 2, name: 'PicPay', image: '/images/picpay.png' },
+    { id: 3, name: 'MercadoPago', image: '/images/mercadopago.png' },
   ];
 
   const fetchData = useCallback(async () => {
@@ -109,7 +110,7 @@ export default function BuyCoins({ user }: any) {
     };
 
     fetchMercadoPagoMethods();
-  }, []);
+  }, [toast]);
 
   const handleCardClick = (pkg: Package) => {
     setSelectedCard(pkg);
@@ -312,7 +313,7 @@ export default function BuyCoins({ user }: any) {
                 }
                 onClick={() => handleCardClick(pkg)}
               >
-                <Image
+                <ChakraImage
                   src={pkg.image}
                   alt={`${pkg.coins} Coins`}
                   w="128px"
@@ -352,16 +353,22 @@ export default function BuyCoins({ user }: any) {
                   }}
                   onClick={() => handlePaymentMethodClick(method)}
                 >
-                  <img
-                    src={method.image}
-                    alt={method.name}
+                  <div
                     style={{
+                      position: 'relative',
                       width: '172px',
                       height: '172px',
                       margin: '0 auto 10px',
-                      objectFit: 'cover',
                     }}
-                  />
+                  >
+                    <Image
+                      src={method.image}
+                      alt={method.name}
+                      width={172}
+                      height={172}
+                      objectFit="cover"
+                    />
+                  </div>
                   <p>{method.name}</p>
                 </div>
               ))}

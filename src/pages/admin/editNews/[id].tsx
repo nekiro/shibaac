@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import Panel from 'src/components/Panel';
-import Head from 'src/layout/Head';
-import { fetchApi } from 'src/util/request';
-import { withSessionSsr } from 'src/util/session';
-import Button from 'src/components/Button';
-import { CKEditorComponent } from 'src/components/Editor';
+import Panel from '../../../components/Panel';
+import Head from '../../../layout/Head';
+import { fetchApi } from '../../../lib/request';
+import { withSessionSsr } from '../../../lib/session';
+import Button from '../../../components/Button';
+import { CKEditorComponent } from '../../../components/Editor';
 
 function EditNews() {
   const router = useRouter();

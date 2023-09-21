@@ -156,7 +156,25 @@ export default function Lost() {
 
     if (step === 2) {
       let requestBody = {};
+
       if (selectedOption === '1') {
+        if (
+          !emailRef.current?.value ||
+          !characterNameRef.current?.value ||
+          !accountNameRef.current?.value
+        ) {
+          toast({
+            position: 'top',
+            title: 'Error.',
+            description:
+              'Please fill out all required fields for this recovery option.',
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+          });
+          return;
+        }
+
         requestBody = {
           email: emailRef.current?.value,
           characterName: characterNameRef.current?.value,
@@ -164,11 +182,39 @@ export default function Lost() {
           type: selectedOption,
         };
       } else if (selectedOption === '2') {
+        if (!recoveryKeyRef.current?.value) {
+          toast({
+            position: 'top',
+            title: 'Error.',
+            description: 'Please enter your recovery key for this option.',
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+          });
+          return;
+        }
+
         requestBody = {
           recoveryKey: recoveryKeyRef.current?.value,
           type: selectedOption,
         };
       } else if (selectedOption === '3') {
+        if (
+          !recoveryKeyRef.current?.value ||
+          !accountOrEmailRef.current?.value
+        ) {
+          toast({
+            position: 'top',
+            title: 'Error.',
+            description:
+              'Please fill out all required fields for this recovery option.',
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+          });
+          return;
+        }
+
         requestBody = {
           recoveryKey: recoveryKeyRef.current?.value,
           accountOrEmail: accountOrEmailRef.current?.value,
@@ -233,7 +279,7 @@ export default function Lost() {
       setStep((prevStep) => prevStep - 1);
       setProgress((prevProgress) => prevProgress - 33.33);
     }
-  }, [step]);
+  }, [step, selectedOption, toast]);
 
   const refs = {
     emailRef,

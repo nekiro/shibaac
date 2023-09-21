@@ -86,7 +86,6 @@ export type FormButton = {
 
 export default function Guilds({ user }: any) {
   const [guilds, setGuilds] = useState<any>([]);
-  const [filter, setFilter] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [response, setResponse] = useState<ApiResponse | null>(null);
   const [info, setInfo] = useState<Account | null>(null);
@@ -122,11 +121,11 @@ export default function Guilds({ user }: any) {
     } catch (error) {
       console.error('Failed to fetch guilds:', error);
     }
-  }, [filter]);
+  }, []);
 
   useEffect(() => {
     fetchGuilds();
-  }, [fetchGuilds, filter]);
+  }, [fetchGuilds]);
 
   const onSubmit = async (
     values: FormValues,
