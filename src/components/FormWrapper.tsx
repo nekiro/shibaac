@@ -34,7 +34,7 @@ type FormWrapperProps = {
   validationSchema: {};
   onSubmit: (
     values: unknown,
-    formikHelpers: FormikHelpers<object>
+    formikHelpers: FormikHelpers<object>,
   ) => void | Promise<void>;
   fields: FormField[];
   buttons: FormButton[];

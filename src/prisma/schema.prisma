@@ -23,14 +23,15 @@ model accounts {
   id              Int     @id @default(autoincrement())
   name            String  @unique(map: "name") @db.VarChar(32)
   password        String  @db.Char(40)
+  rec_key         String? @unique()
   secret          String? @db.Char(16)
   type            Int     @default(1)
   coins           Int     @default(0)
   premium_ends_at Int     @default(0) @db.UnsignedInt
   email           String  @unique() @db.VarChar(255)
   creation        Int     @default(0)
-  twoFASecret     String? // Chave secreta para 2FA
-  twoFAEnabled    Boolean // Flag para indicar se 2FA está habilitado
+  twoFASecret     String?
+  twoFAEnabled    Boolean
 
   account_bans account_bans?
   players      players[]

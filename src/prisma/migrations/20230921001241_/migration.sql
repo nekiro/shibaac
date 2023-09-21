@@ -15,6 +15,7 @@ CREATE TABLE `accounts` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(32) NOT NULL,
     `password` CHAR(40) NOT NULL,
+    `rkey` VARCHAR(191) NOT NULL,
     `secret` CHAR(16) NULL,
     `type` INTEGER NOT NULL DEFAULT 1,
     `coins` INTEGER NOT NULL DEFAULT 0,
