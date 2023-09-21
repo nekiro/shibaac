@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import path from 'path';
 import fs from 'fs';
-import { uploadGuildLogo } from 'src/middleware/multer';
-import prisma from 'src/database/instance';
+import { uploadGuildLogo } from '../../../../middleware/multer';
+import prisma from '../../../../prisma';
 
 export const config = { api: { bodyParser: false } };
 
@@ -42,10 +42,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         'tmp',
         'uploads',
         'guilds',
-        file.filename
+        file.filename,
       );
-      console.log('Old file path:', file.path);
-      console.log('New file path:', newFilePath);
 
       fs.rename(file.path, newFilePath, async (err) => {
         if (err) {

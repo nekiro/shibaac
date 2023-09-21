@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import prisma from 'src/database/instance';
+import prisma from '../../../../prisma';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
@@ -20,7 +20,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         data: {
           player_id: invite.player_id,
           guild_id: invite.guild_id,
-          nick: player_name,
+          nick: String(player_name),
           rank_id: 3,
         },
       });

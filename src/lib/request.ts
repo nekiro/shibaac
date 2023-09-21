@@ -28,9 +28,6 @@ export const fetchApi = async <T = void>(
     method,
     headers: {
       ...options?.headers,
-      ...(method !== 'GET' && options
-        ? { 'Content-Type': 'application/json' }
-        : {}),
     },
   };
 
@@ -43,8 +40,14 @@ export const fetchApi = async <T = void>(
     urlWithParams = `${url}?${params}`;
   }
 
-  if (method !== 'GET' && options) {
-    _options.headers = { 'Content-Type': 'application/json' };
+  if (options?.multipart) {
+    // Only assign the FormData object to the body
+    _options.body = options.data as FormData;
+  } else if (method !== 'GET' && options?.data) {
+    _options.headers = {
+      ..._options.headers,
+      'Content-Type': 'application/json',
+    };
     _options.body = JSON.stringify(options.data);
   }
 
@@ -65,6 +68,6 @@ export const fetchApi = async <T = void>(
   return {
     message: data.message,
     success: data.success,
-    ...(data.args ? data.args : []),
+    ...(data.args ? data.args : {}),
   } as FetchResult & T;
 };

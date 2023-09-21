@@ -203,8 +203,6 @@ export default function Guild({ user }: any) {
   };
 
   const handleDeleteInvite = async (inviteId: number) => {
-    console.log('inviteId', inviteId);
-
     try {
       const response = await fetchApi(
         'DELETE',
@@ -271,14 +269,14 @@ export default function Guild({ user }: any) {
 
       if (response.success) {
         setResponse({
-          message: 'Invite deleted successfully',
+          message: response.message,
           success: true,
           data: {},
         });
 
         toast({
           position: 'top',
-          title: 'Player deleted successfuly!',
+          title: response.message,
           status: 'success',
           duration: 9000,
           isClosable: true,
@@ -288,16 +286,16 @@ export default function Guild({ user }: any) {
         fetchGuildData();
       }
     } catch (error) {
+      console.error('Failed to delete invite:', error);
       toast({
         position: 'top',
-        title: 'Player deleted successfuly!',
+        title: 'Internal server error',
         status: 'success',
         duration: 9000,
         isClosable: true,
       });
-      console.error('Failed to delete invite:', error);
       setResponse({
-        message: 'Failed to delete invite',
+        message: 'Internal server erro',
         success: false,
         data: {},
       });
@@ -468,8 +466,8 @@ export default function Guild({ user }: any) {
                                   : 'N/A',
                               },
                               {
-                                element: (
-                                  <td>
+                                text: (
+                                  <>
                                     {user.id === guild.ownerid &&
                                     user.id !== member.player_id ? (
                                       <CgUserRemove
@@ -483,17 +481,18 @@ export default function Guild({ user }: any) {
                                     ) : (
                                       user.id === member.player_id &&
                                       user.id !== guild.ownerid && (
-                                        <Button
+                                        <ChakraButton
                                           onClick={() =>
                                             handleLeaveGuild(member.player_id)
                                           }
                                           type="button"
-                                          btnType="danger"
-                                          value="Leave Guild"
-                                        />
+                                          colorScheme="red"
+                                        >
+                                          Leave Guild
+                                        </ChakraButton>
                                       )
                                     )}
-                                  </td>
+                                  </>
                                 ),
                               },
                             ])
@@ -550,7 +549,13 @@ export default function Guild({ user }: any) {
                       )}
                     </div>
 
-                    <button onClick={handleUpload}>Upload Logo</button>
+                    <ChakraButton
+                      colorScheme="purple"
+                      size="sm"
+                      onClick={handleUpload}
+                    >
+                      Upload Logo
+                    </ChakraButton>
                   </Panel>
                 )}
               </TabPanel>
@@ -584,7 +589,7 @@ export default function Guild({ user }: any) {
                     { text: new Date(invite.date).toLocaleString() },
                     {
                       text: (
-                        <td>
+                        <>
                           {user.id === guild.ownerid ? (
                             <ChakraButton
                               onClick={() =>
@@ -606,7 +611,7 @@ export default function Guild({ user }: any) {
                               Aceitar
                             </ChakraButton>
                           ) : null}
-                        </td>
+                        </>
                       ),
                     },
                   ])
