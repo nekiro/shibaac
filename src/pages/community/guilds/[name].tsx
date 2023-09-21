@@ -7,7 +7,6 @@ import StrippedTable from '../../../components/StrippedTable';
 import Link from 'next/link';
 import { vocationIdToName, RankGuild } from '../../../lib';
 import { withSessionSsr } from '../../../lib/session';
-import Button from '../../../components/Button';
 import { CgUserRemove } from 'react-icons/cg';
 
 import {
@@ -22,6 +21,7 @@ import {
   useToast,
   VStack,
 } from '@chakra-ui/react';
+import Head from 'next/head';
 
 export type FormButton = {
   type?: 'submit' | 'button' | 'reset';
@@ -116,6 +116,7 @@ export default function Guild({ user }: any) {
   const router = useRouter();
   const { name } = router.query;
   const [guild, setGuild] = useState<Guild | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [guildInvites, setGuildInvites] = useState<GuildInvite[]>([]);
   const [response, setResponse] = useState<ApiResponse | null>(null);
   const [activeTab, setActiveTab] = useState('members');
@@ -127,6 +128,8 @@ export default function Guild({ user }: any) {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const fetchGuildData = useCallback(async () => {
+    setIsLoading(true);
+
     if (name) {
       try {
         const response = await fetchApi(
@@ -137,6 +140,8 @@ export default function Guild({ user }: any) {
         setGuild(response.data);
       } catch (error) {
         console.error('Failed to fetch guild data:', error);
+      } finally {
+        setIsLoading(false);
       }
     }
   }, [name]);
@@ -420,14 +425,8 @@ export default function Guild({ user }: any) {
     setActiveTab(index === 0 ? 'members' : 'settings');
   };
 
-  if (!guild) {
-    return <div>Loading...</div>;
-  }
-
-  return !guild ? (
-    <Text>Loading...</Text>
-  ) : (
-    <Panel>
+  return (
+    <Panel header="Guild Page">
       <VStack spacing={4} align="start">
         <Box borderWidth={1} borderRadius="lg" p={4} width="full">
           <Tabs
@@ -452,7 +451,7 @@ export default function Guild({ user }: any) {
                         { text: 'Ações' },
                       ]}
                       body={
-                        guild.guild_membership &&
+                        guild?.guild_membership &&
                         guild.guild_membership.length > 0
                           ? guild.guild_membership.map((member, index) => [
                               { text: RankGuild[member.rank_id] },
@@ -626,7 +625,7 @@ export default function Guild({ user }: any) {
             }
           />
 
-          {user.id === guild.ownerid ? (
+          {user.id === guild?.ownerid ? (
             <FormWrapper
               validationSchema={''}
               onSubmit={onSubmit}
