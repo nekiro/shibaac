@@ -10,16 +10,16 @@ describe('createPlayer', () => {
       sex: 1,
     };
 
-    prismaMock.player.create.mockResolvedValue(mockedPlayer as any);
+    prismaMock.players.create.mockResolvedValue(mockedPlayer as any);
 
     await playerService.createPlayer(
       mockedPlayer.name,
       mockedPlayer.account_id,
       mockedPlayer.vocation,
-      mockedPlayer.sex
+      mockedPlayer.sex,
     );
 
-    expect(prismaMock.player.create).toBeCalledWith({
+    expect(prismaMock.players.create).toBeCalledWith({
       data: {
         name: mockedPlayer.name,
         account_id: mockedPlayer.account_id,
@@ -34,7 +34,7 @@ describe('createPlayer', () => {
       name: 'foo',
     };
 
-    prismaMock.player.create.mockResolvedValue(mockedPlayer as any);
+    prismaMock.players.create.mockResolvedValue(mockedPlayer as any);
 
     const result = await playerService.createPlayer('foo', 1, 0, 1);
 
@@ -42,7 +42,7 @@ describe('createPlayer', () => {
   });
 
   test('should return null when exception is thrown', async () => {
-    prismaMock.player.create.mockRejectedValue(new Error());
+    prismaMock.players.create.mockRejectedValue(new Error());
 
     const result = await playerService.createPlayer('foo', 1, 1, 1);
 

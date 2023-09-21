@@ -5,11 +5,11 @@ describe('findPlayerByName', () => {
   test('should call prisma.findFirst with supplied argument', async () => {
     const mockedPlayerName = 'foo';
 
-    prismaMock.player.create.mockResolvedValue({} as any);
+    prismaMock.players.create.mockResolvedValue({} as any);
 
     await playerService.findPlayerByName(mockedPlayerName);
 
-    expect(prismaMock.player.findFirst).toBeCalledWith({
+    expect(prismaMock.players.findFirst).toBeCalledWith({
       where: { name: mockedPlayerName },
     });
   });
@@ -19,7 +19,7 @@ describe('findPlayerByName', () => {
       name: 'foo',
     };
 
-    prismaMock.player.findFirst.mockResolvedValue(mockedPlayer as any);
+    prismaMock.players.findFirst.mockResolvedValue(mockedPlayer as any);
 
     const result = await playerService.findPlayerByName(mockedPlayer.name);
 
@@ -27,7 +27,7 @@ describe('findPlayerByName', () => {
   });
 
   test('should return null when exception is thrown', async () => {
-    prismaMock.player.findFirst.mockRejectedValue(new Error());
+    prismaMock.players.findFirst.mockRejectedValue(new Error());
 
     const result = await playerService.findPlayerByName('foo');
 

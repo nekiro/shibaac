@@ -1,7 +1,5 @@
 import { sha1Encrypt } from '../../../lib/crypt';
 import { withSessionRoute } from '../../../lib/session';
-import { validate } from '../../../middleware/validation';
-import { loginSchema } from '../../../schemas/Login';
 import { NextApiRequest, NextApiResponse } from 'next';
 import apiHandler from '../../../middleware/apiHandler';
 import * as accountService from '../../../services/accountService';

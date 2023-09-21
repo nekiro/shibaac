@@ -10,15 +10,15 @@ describe('createAccount', () => {
       email: 'foo@bar.com',
     };
 
-    prismaMock.account.create.mockResolvedValue(mockedAccount as any);
+    prismaMock.accounts.create.mockResolvedValue(mockedAccount as any);
 
     await accountService.createAccount(
       mockedAccount.name,
       mockedAccount.password,
-      mockedAccount.email
+      mockedAccount.email,
     );
 
-    expect(prismaMock.account.create).toBeCalledWith({
+    expect(prismaMock.accounts.create).toBeCalledWith({
       data: {
         name: mockedAccount.name,
         password: await sha1Encrypt(mockedAccount.password),
@@ -32,24 +32,24 @@ describe('createAccount', () => {
       name: 'foo',
     };
 
-    prismaMock.account.create.mockResolvedValue(mockedAccount as any);
+    prismaMock.accounts.create.mockResolvedValue(mockedAccount as any);
 
     const result = await accountService.createAccount(
       'foo',
       'bar',
-      'foo@bar.com'
+      'foo@bar.com',
     );
 
     expect(result).toBe(mockedAccount);
   });
 
   test('should return null when exception is thrown', async () => {
-    prismaMock.account.create.mockRejectedValue(new Error());
+    prismaMock.accounts.create.mockRejectedValue(new Error());
 
     const result = await accountService.createAccount(
       'foo',
       'bar',
-      'foo@bar.com'
+      'foo@bar.com',
     );
 
     expect(result).toBe(null);

@@ -7,11 +7,11 @@ describe('deletePlayer', () => {
       id: 1,
     };
 
-    prismaMock.player.delete.mockResolvedValue(mockedPlayer as any);
+    prismaMock.players.delete.mockResolvedValue(mockedPlayer as any);
 
     await playerService.deletePlayer(mockedPlayer.id);
 
-    expect(prismaMock.player.delete).toBeCalledWith({
+    expect(prismaMock.players.delete).toBeCalledWith({
       where: {
         id: mockedPlayer.id,
       },
@@ -23,7 +23,7 @@ describe('deletePlayer', () => {
       id: 1,
     };
 
-    prismaMock.player.delete.mockResolvedValue(mockedPlayer as any);
+    prismaMock.players.delete.mockResolvedValue(mockedPlayer as any);
 
     const result = await playerService.deletePlayer(mockedPlayer.id);
 
@@ -31,7 +31,7 @@ describe('deletePlayer', () => {
   });
 
   test('should return null when exception is thrown', async () => {
-    prismaMock.player.delete.mockRejectedValue(new Error());
+    prismaMock.players.delete.mockRejectedValue(new Error());
 
     const result = await playerService.deletePlayer(1);
 

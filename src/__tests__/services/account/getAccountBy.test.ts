@@ -10,11 +10,11 @@ describe('getAccountBy', () => {
       name: 'foo',
     };
 
-    prismaMock.account.findFirst.mockResolvedValue({} as any);
+    prismaMock.accounts.findFirst.mockResolvedValue({} as any);
 
     await accountService.getAccountBy(mockedWhere, mockedSelect);
 
-    expect(prismaMock.account.findFirst).toBeCalledWith({
+    expect(prismaMock.accounts.findFirst).toBeCalledWith({
       where: mockedWhere,
       select: mockedSelect,
     });
@@ -25,7 +25,7 @@ describe('getAccountBy', () => {
       name: 'foo',
     };
 
-    prismaMock.account.findFirst.mockResolvedValue(mockedAccount as any);
+    prismaMock.accounts.findFirst.mockResolvedValue(mockedAccount as any);
 
     const result = await accountService.getAccountBy({}, {});
 
@@ -40,7 +40,7 @@ describe('getAccountBy', () => {
       name: 'foo',
     };
 
-    prismaMock.account.findFirst.mockRejectedValue(new Error());
+    prismaMock.accounts.findFirst.mockRejectedValue(new Error());
 
     const result = await accountService.getAccountBy(mockedWhere, mockedSelect);
 

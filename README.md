@@ -45,3 +45,7 @@ This project aims to provide a fully featured, secure and fast AAC (Automatic Ac
 - use typescript where possible
 - db migrations
 - tests
+- maybe production ready dockerfile
+- war system guild page
+- war system list
+- history donate with Account management
