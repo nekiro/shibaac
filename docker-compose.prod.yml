@@ -21,7 +21,9 @@ services:
       - backend
 
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: next_app
     ports:
       - '3000:3000'
@@ -30,8 +32,11 @@ services:
         condition: service_healthy
     environment:
       DATABASE_URL: 'mysql://root:${MYSQL_ROOT_PASSWORD}@database:3306/${MYSQL_DATABASE}'
+      CHOKIDAR_USEPOLLING: 'true'
     networks:
       - backend
+    volumes:
+      - .:/usr/app/
 
 networks:
   backend:

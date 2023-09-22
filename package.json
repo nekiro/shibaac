@@ -2,14 +2,16 @@
   "name": "shibaac",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3000 -H 0.0.0.0",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "test": "jest --verbose",
     "coverage": "jest --coverage",
     "migrations:run": "npx prisma migrate dev",
-    "create:seeds": "npx prisma db seed"
+    "create:seeds": "npx prisma db seed",
+    "compose-build:dev": "docker compose -f docker-compose.dev.yml build",
+    "compose-build:prod": "docker compose -f docker-compose.prod.yml build"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} src/prisma/seed.ts",
@@ -28,6 +30,7 @@
     "@types/multer": "^1.4.7",
     "@types/nodemailer": "^6.4.10",
     "@types/qrcode": "^1.5.2",
+    "chokidar": "^3.5.3",
     "dotenv": "^16.0.1",
     "fast-xml-parser": "^4.0.8",
     "formik": "^2.2.9",

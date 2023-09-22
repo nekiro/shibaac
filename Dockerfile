@@ -1,10 +1,19 @@
-FROM node
+# Base Image
+FROM node as base
 
 WORKDIR /usr/app/
 COPY package.json ./
 RUN npm install
 
-# Copiar todo o conteúdo do diretório do projeto para o container
+# Seção de desenvolvimento
+FROM base as development
+ENV NODE_ENV=development
+COPY . .
+# CMD ["npm", "run", "dev"]
+
+# Seção de produção
+FROM base as production
+ENV NODE_ENV=production
 COPY . .
 
 # Inspeção manual para verificar os conteúdos do diretório src/prisma/
@@ -15,5 +24,5 @@ RUN npx prisma generate
 
 EXPOSE 3000
 
-# Execute as migrações, seeds e então a aplicação
-CMD ["sh", "-c", "npm run migrations:run && npm run create:seeds && npm run dev"]
+# Use entrypoint.sh as the CMD
+CMD ["sh", "/usr/app/entrypoint.sh"]
