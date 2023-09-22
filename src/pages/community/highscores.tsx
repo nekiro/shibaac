@@ -11,8 +11,8 @@ import {
   Heading,
   Text,
 } from '@chakra-ui/react';
-
 import { PlayerData } from '../../shared/interfaces/PlayerData';
+import { vocationIdToName } from '../../lib';
 
 export default function Highscores() {
   const [highscores, setHighscores] = useState<PlayerData[]>([]);
@@ -82,11 +82,6 @@ export default function Highscores() {
     return category ? category.label : categoryValue;
   };
 
-  const getVocationLabel = (vocationValue) => {
-    const vocation = vocations.find((voc) => voc.value === vocationValue);
-    return vocation ? vocation.label : vocationValue;
-  };
-
   const handleCategoryChange = (categoryValue) => {
     setFilter((prevFilter) => ({
       ...prevFilter,
@@ -109,7 +104,7 @@ export default function Highscores() {
           <Heading as="h2" size="lg" mb={2}>
             Rankings for {getCategoryLabel(filter.category)}
           </Heading>
-          <Text mb={2}>Vocation: {getVocationLabel(filter.vocation)}</Text>
+          <Text mb={2}>Vocation: {vocationIdToName[filter.vocation]}</Text>
           <Flex justify="center" mb={4}>
             <ButtonGroup variant="outline" spacing={2}>
               {categories.map((category, index) => (
@@ -155,7 +150,7 @@ export default function Highscores() {
               ? highscores.map((player, index) => [
                   { text: `${index + 1}` },
                   { text: player.name, href: `/character/${player.name}` },
-                  { text: getVocationLabel(player.vocation) },
+                  { text: vocationIdToName[player.vocation] },
                   { text: '' /*World info*/ },
                   { text: player.level },
                   { text: '' /*Points info*/ },
