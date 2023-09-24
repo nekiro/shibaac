@@ -2,10 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../../prisma';
 import apiHandler from '../../../middleware/apiHandler';
 
-export const get = async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+const get = async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const {
       vocation = 'all',

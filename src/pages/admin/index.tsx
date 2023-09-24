@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { fetchApi } from '../../lib/request';
 import Head from '../../layout/Head';
 import Panel from '../../components/Panel';
+import StrippedTable from '../../components/StrippedTable';
 import { withSessionSsr } from '../../lib/session';
 import {
   Button,
@@ -13,8 +14,8 @@ import {
   Th,
   Td,
   Link as ChakraLink,
-  VStack,
   HStack,
+  Box,
 } from '@chakra-ui/react';
 
 interface INewsList {
@@ -29,6 +30,39 @@ interface INewsList {
 
 function AdminPanel() {
   const [newsList, setNewsList] = useState<INewsList[]>([]);
+  const [totalAccounts, setTotalAccounts] = useState<number>(0);
+  const [totalPlayers, setTotalPlayers] = useState<number>(0);
+  const [totalGuilds, setTotalGuilds] = useState<number>(0);
+  const [totalHouses, setTotalHouses] = useState<number>(0);
+  const [lastLogins, setLastLogins] = useState<any[]>([]);
+  const [topCoins, setTopCoins] = useState<any[]>([]);
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const [accounts, players, guilds, houses, logins, coins] =
+          await Promise.all([
+            fetchApi('GET', '/api/admin/totalAccounts'),
+            fetchApi('GET', '/api/admin/totalPlayers'),
+            fetchApi('GET', '/api/admin/totalGuilds'),
+            fetchApi('GET', '/api/admin/totalHouses'),
+            fetchApi('GET', '/api/admin/last10Logins'),
+            fetchApi('GET', '/api/admin/top10Coins'),
+          ]);
+
+        setTotalAccounts(accounts.accounts);
+        setTotalPlayers(players.players);
+        setTotalGuilds(guilds.guilds);
+        setTotalHouses(houses.houses);
+        setLastLogins(logins.logins);
+        setTopCoins(coins.coins);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetchStats();
+  }, []);
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -57,6 +91,49 @@ function AdminPanel() {
     <>
       <Head title="Admin Panel" />
       <Panel header="Admin Panel">
+        <Box mb={5}>
+          <Box>
+            <strong>Total Accounts:</strong> {totalAccounts}
+          </Box>
+          <Box>
+            <strong>Total Players:</strong> {totalPlayers}
+          </Box>
+          <Box>
+            <strong>Total Guilds:</strong> {totalGuilds}
+          </Box>
+          <Box>
+            <strong>Total Houses:</strong> {totalHouses}
+          </Box>
+        </Box>
+
+        <Panel header="Last 10 Logins">
+          {lastLogins.map((login, index) => (
+            <div key={index}>{login.name}</div>
+          ))}
+        </Panel>
+
+        <Panel header="Top 10 Most Coins">
+          <StrippedTable
+            head={[{ text: '#' }, { text: 'Name' }, { text: 'Coins' }]}
+            body={
+              topCoins && topCoins.length > 0
+                ? topCoins.map((account, index) => [
+                    { text: `${index + 1}` },
+                    { text: account.players[0]?.name },
+                    { text: `${account.coins} Coins` },
+                  ])
+                : [
+                    [
+                      {
+                        text: 'There is no data to show',
+                        colspan: 6,
+                      },
+                    ],
+                  ]
+            }
+          />
+        </Panel>
+
         <Link href="/admin/createnews" passHref>
           <ChakraLink>
             <Button colorScheme="purple" mb={3}>
