@@ -10,9 +10,12 @@ import {
   Flex,
   Heading,
   Text,
+  Image,
+  useBreakpointValue,
 } from '@chakra-ui/react';
+
 import { PlayerData } from '../../shared/interfaces/PlayerData';
-import { vocationIdToName } from '../../lib';
+import { vocationIdToName, getOutfitImageUrl } from '../../lib';
 
 export default function Highscores() {
   const [highscores, setHighscores] = useState<PlayerData[]>([]);
@@ -21,6 +24,12 @@ export default function Highscores() {
     category: 'level',
     vocation: 'all',
   });
+
+  const buttonSize = useBreakpointValue({ base: 'xs', md: 'md' });
+  const headingSize = useBreakpointValue({ base: 'md', md: 'lg' });
+  const textSize = useBreakpointValue({ base: 'sm', md: 'md' });
+  const imageHeight = useBreakpointValue({ base: '40px', md: '64px' });
+  const imageWidth = useBreakpointValue({ base: '40px', md: '64px' });
 
   useEffect(() => {
     const fetchHighscores = async () => {
@@ -101,47 +110,61 @@ export default function Highscores() {
       <Head title="Highscores" />
       <Panel header={`Rankings for ${getCategoryLabel(filter.category)}`}>
         <Box textAlign="center" mb={4}>
-          <Heading as="h2" size="lg" mb={2}>
+          <Heading as="h2" size={headingSize} mb={2}>
             Rankings for {getCategoryLabel(filter.category)}
           </Heading>
-          <Text mb={2}>Vocation: {vocationIdToName[filter.vocation]}</Text>
-          <Flex justify="center" mb={4}>
-            <ButtonGroup variant="outline" spacing={2}>
-              {categories.map((category, index) => (
-                <Button
-                  key={index}
-                  onClick={() => handleCategoryChange(category.value)}
-                  colorScheme={
-                    filter.category === category.value ? 'purple' : 'gray'
-                  }
-                >
-                  {category.label}
-                </Button>
-              ))}
-            </ButtonGroup>
+          <Text mb={2} fontSize={textSize}>
+            Vocation: {vocationIdToName[filter.vocation]}
+          </Text>
+          <Flex
+            direction={{ base: 'column', md: 'row' }}
+            justify="center"
+            mb={4}
+            wrap="wrap"
+          >
+            {categories.map((category, index) => (
+              <Button
+                key={index}
+                size={buttonSize}
+                onClick={() => handleCategoryChange(category.value)}
+                colorScheme={
+                  filter.category === category.value ? 'purple' : 'gray'
+                }
+                mb={{ base: 2, md: 0 }}
+                mr={{ base: 0, md: 2 }}
+              >
+                {category.label}
+              </Button>
+            ))}
           </Flex>
-          <Flex justify="center" mb={4}>
-            <ButtonGroup variant="outline" spacing={2}>
-              {vocations.map((vocation, index) => (
-                <Button
-                  key={index}
-                  onClick={() => handleVocationChange(vocation.value)}
-                  colorScheme={
-                    filter.vocation === vocation.value ? 'purple' : 'gray'
-                  }
-                >
-                  {vocation.label}
-                </Button>
-              ))}
-            </ButtonGroup>
+          <Flex
+            direction={{ base: 'column', md: 'row' }}
+            justify="center"
+            mb={4}
+            wrap="wrap"
+          >
+            {vocations.map((vocation, index) => (
+              <Button
+                size={buttonSize}
+                key={index}
+                onClick={() => handleVocationChange(vocation.value)}
+                colorScheme={
+                  filter.vocation === vocation.value ? 'purple' : 'gray'
+                }
+                mb={{ base: 2, md: 0 }}
+                mr={{ base: 0, md: 2 }}
+              >
+                {vocation.label}
+              </Button>
+            ))}
           </Flex>
         </Box>
         <StrippedTable
           head={[
             { text: 'Rank' },
+            { text: 'Outfit' },
             { text: 'Name' },
             { text: 'Vocation' },
-            { text: 'World' },
             { text: 'Level' },
             { text: 'Points' },
           ]}
@@ -149,11 +172,28 @@ export default function Highscores() {
             highscores && highscores.length > 0
               ? highscores.map((player, index) => [
                   { text: `${index + 1}` },
+                  {
+                    text: (
+                      <Flex
+                        height={imageHeight}
+                        width={imageWidth}
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        <Image
+                          src={getOutfitImageUrl(player)}
+                          alt={`${player.name}'s Outfit`}
+                          height={imageHeight}
+                          width={imageWidth}
+                          objectFit="contain"
+                        />
+                      </Flex>
+                    ),
+                  },
                   { text: player.name, href: `/character/${player.name}` },
                   { text: vocationIdToName[player.vocation] },
-                  { text: '' /*World info*/ },
                   { text: player.level },
-                  { text: '' /*Points info*/ },
+                  { text: player.experience },
                 ])
               : [
                   [

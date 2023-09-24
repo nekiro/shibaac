@@ -72,3 +72,9 @@ export const RankGuild = [
   'Vice-Leader', // 2
   'Member', // 3
 ];
+
+export const getOutfitImageUrl = (player) => {
+  const baseOutfitURL =
+    'https://outfit-images.ots.me/idleOutfits1092/outfit.php';
+  return `${baseOutfitURL}?id=${player.looktype}&addons=${player.lookaddons}&head=${player.lookhead}&body=${player.lookbody}&legs=${player.lookmountlegs}&feet=${player.lookmountfeet}&mount=0&direction=3`;
+};
