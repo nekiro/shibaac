@@ -64,9 +64,9 @@ export default async function handler(
         },
         external_reference: req.body.external_reference,
         back_urls: {
-          success: `${baseUrl}/shop/success`,
-          failure: `${baseUrl}/shop/failure`,
-          pending: `${baseUrl}/shop/pending`,
+          success: `${baseUrl}/donate/success`,
+          failure: `${baseUrl}/donate/failure`,
+          pending: `${baseUrl}/donate/pending`,
         },
         auto_return: 'approved',
       };

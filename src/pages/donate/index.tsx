@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Panel from '../../components/Panel';
 import Head from '../../layout/Head';
-
+import Image from 'next/image';
+import { useRouter } from 'next/router';
 import StrippedTable from '../../components/StrippedTable';
 import { fetchApi } from '../../lib/request';
 import { loadStripe } from '@stripe/stripe-js';
 import { withSessionSsr } from '../../lib/session';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
-import Image from 'next/image';
+import { PayPalButtons } from '@paypal/react-paypal-js';
 
 import {
   Grid,
@@ -54,6 +55,7 @@ export default function BuyCoins({ user }: any) {
   const [email, setEmail] = useState('');
 
   const toast = useToast();
+  const router = useRouter();
 
   const packages: Package[] = [
     { id: 1, image: 'images/coins.png', coins: 50, price: 0.5 },
@@ -67,6 +69,7 @@ export default function BuyCoins({ user }: any) {
     { id: 1, name: 'Stripe', image: '/images/stripe_br.png' },
     { id: 2, name: 'PicPay', image: '/images/picpay.png' },
     { id: 3, name: 'MercadoPago', image: '/images/mercadopago.png' },
+    { id: 4, name: 'PayPal', image: '/images/paypal.png' },
   ];
 
   const fetchData = useCallback(async () => {
@@ -109,7 +112,9 @@ export default function BuyCoins({ user }: any) {
       }
     };
 
-    fetchMercadoPagoMethods();
+    if (process.env.MERCADO_PAGO_ACCESS_TOKEN) {
+      fetchMercadoPagoMethods();
+    }
   }, [toast]);
 
   const handleCardClick = (pkg: Package) => {
@@ -120,6 +125,10 @@ export default function BuyCoins({ user }: any) {
     if (method.name === 'PicPay' && !isPicPayAvailable) {
       alert('PicPay está indisponível no momento.');
       return;
+    }
+
+    if (method.name === 'PayPal') {
+      // lógica para lidar com o checkout PayPal
     }
 
     setSelectedPaymentMethod(method);
@@ -242,6 +251,47 @@ export default function BuyCoins({ user }: any) {
     event: React.ChangeEvent<HTMLSelectElement>,
   ) => {
     setPaymentTypeMethod(event.target.value);
+  };
+
+  const handleCreateOrder = async () => {
+    try {
+      const response = await fetch('/api/checkout/paypal', {
+        method: 'POST',
+        body: JSON.stringify({
+          data: {
+            price: selectedCard.price,
+            coins: selectedCard.coins,
+            accountId: user.id,
+          },
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const responseBody = await response.json();
+
+      return responseBody.id;
+    } catch (error) {
+      console.error('Erro ao criar a ordem no backend:', error);
+    }
+  };
+
+  const handleApprove = async (data: any, actions: any) => {
+    try {
+      const details = await actions.order.capture();
+      console.log('Transação concluída:', details.status);
+
+      if (details.status === 'COMPLETED') {
+        router.push('/donate/success');
+      }
+    } catch (error) {
+      console.error('Erro ao capturar pagamento:', error);
+    }
+  };
+
+  const handleError = (err: any) => {
+    console.error('Erro PayPal:', err);
   };
 
   return (
@@ -428,14 +478,23 @@ export default function BuyCoins({ user }: any) {
               <Button type="button" colorScheme="red" onClick={() => {}} mr={2}>
                 Voltar
               </Button>
-              <Button
-                type="button"
-                colorScheme="purple"
-                onClick={handleCheckout}
-                ml={2}
-              >
-                Fazer Pagamento
-              </Button>
+
+              {selectedPaymentMethod.name === 'PayPal' ? (
+                <PayPalButtons
+                  createOrder={handleCreateOrder}
+                  onApprove={handleApprove}
+                  onError={handleError}
+                />
+              ) : (
+                <Button
+                  type="button"
+                  colorScheme="purple"
+                  onClick={handleCheckout}
+                  ml={2}
+                >
+                  Fazer Pagamento
+                </Button>
+              )}
             </Box>
           </>
         )}
