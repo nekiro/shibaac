@@ -185,17 +185,18 @@ export default function Highscores() {
                   {
                     text: (
                       <Flex
-                        height={imageHeight}
-                        width={imageWidth}
+                        height="50px"
+                        width="50px"
                         alignItems="center"
                         justifyContent="center"
                       >
                         <Image
                           src={getOutfitImageUrl(player)}
                           alt={`${player.name}'s Outfit`}
-                          height={imageHeight}
-                          width={imageWidth}
+                          height="64px"
+                          width="64px"
                           objectFit="contain"
+                          transform="translate(-14px, -14px)"
                         />
                       </Flex>
                     ),
