@@ -2,17 +2,20 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Panel from '../../components/Panel';
 import Head from '../../layout/Head';
 import StrippedTable from '../../components/StrippedTable';
-import FormWrapper from '../../components/FormWrapper';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import { withSessionSsr } from '../../lib/session';
 import { fetchApi } from '../../lib/request';
 import Link from 'next/link';
-import { ButtonType, ButtonColorType } from '../../components/Button';
 
 import {
   Box,
   Flex,
-  Button,
-  Link as ChakraLink,
+  Input,
+  FormControl,
+  FormLabel,
+  Select,
+  Text,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -20,6 +23,7 @@ import {
   ModalCloseButton,
   ModalBody,
   Avatar,
+  Button,
 } from '@chakra-ui/react';
 
 type Button = {
@@ -55,10 +59,6 @@ type Field = {
   options?: Option[];
 };
 
-interface FormValues {
-  [key: string]: string;
-}
-
 type ApiResponse = {
   message: string;
   success: boolean;
@@ -76,13 +76,6 @@ interface Account {
   name: string;
   players: Player[];
 }
-
-export type FormButton = {
-  type?: ButtonType;
-  btnType: any;
-  value: string;
-  href?: string;
-};
 
 export default function Guilds({ user }: any) {
   const [guilds, setGuilds] = useState<any>([]);
@@ -127,30 +120,38 @@ export default function Guilds({ user }: any) {
     fetchGuilds();
   }, [fetchGuilds]);
 
-  const onSubmit = async (
-    values: FormValues,
-    { resetForm }: { resetForm: () => void },
-  ) => {
-    const leaderOption = fields[0].options?.find(
-      (option) => option.value === Number(values.leader),
-    );
+  const formik = useFormik({
+    initialValues: {
+      leader: '',
+      guild_name: '',
+    },
+    validationSchema: Yup.object({
+      leader: Yup.string().required('Required'),
+      guild_name: Yup.string()
+        .required('Required')
+        .max(100, 'Must be 100 characters or less'),
+    }),
+    onSubmit: async (values) => {
+      const leaderOption = fields[0].options?.find(
+        (option) => option.value === Number(values.leader),
+      );
 
-    const response = await fetchApi('POST', '/api/community/guilds', {
-      data: {
-        leader_id: leaderOption ? leaderOption.value : null,
-        leader_name: leaderOption ? leaderOption.label : null,
-        guild_name: values.guild_name,
-      },
-    });
+      const response = await fetchApi('POST', '/api/community/guilds', {
+        data: {
+          leader_id: leaderOption ? leaderOption.value : null,
+          leader_name: leaderOption ? leaderOption.label : null,
+          guild_name: values.guild_name,
+        },
+      });
 
-    setResponse(response.data);
-    resetForm();
+      setResponse(response.data);
 
-    if (response.success) {
-      closeModal();
-      fetchGuilds();
-    }
-  };
+      if (response.success) {
+        closeModal();
+        fetchGuilds();
+      }
+    },
+  });
 
   const handleCreateGuild = () => {
     setIsModalOpen(true);
@@ -183,10 +184,6 @@ export default function Guilds({ user }: any) {
       label: { text: 'Guild Name', size: 3 },
       size: 9,
     },
-  ];
-
-  const buttons: FormButton[] = [
-    { type: 'submit', btnType: 'primary', value: 'Submit' },
   ];
 
   if (!guilds) {
@@ -273,14 +270,64 @@ export default function Guilds({ user }: any) {
             <ModalHeader>Create guild</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              <FormWrapper
-                validationSchema={''}
-                onSubmit={onSubmit}
-                fields={fields}
-                buttons={buttons}
-                response={response}
-              />
+              <form onSubmit={formik.handleSubmit}>
+                {fields.map((field) => {
+                  switch (field.type) {
+                    case 'text':
+                      return (
+                        <FormControl
+                          key={field.name}
+                          isInvalid={
+                            formik.errors[field.name] &&
+                            formik.touched[field.name]
+                          }
+                        >
+                          <FormLabel>{field.label.text}</FormLabel>
+                          <Input
+                            placeholder={field.placeholder || ''}
+                            name={field.name}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values[field.name]}
+                          />
+                          <span>{formik.errors[field.name]}</span>
+                        </FormControl>
+                      );
+                    case 'select':
+                      return (
+                        <FormControl
+                          key={field.name}
+                          isInvalid={
+                            formik.errors[field.name] &&
+                            formik.touched[field.name]
+                          }
+                        >
+                          <FormLabel>{field.label.text}</FormLabel>
+                          <Select
+                            placeholder={field.placeholder || ''}
+                            name={field.name}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values[field.name]}
+                          >
+                            {field.options?.map((option) => (
+                              <option key={option.value} value={option.value}>
+                                {option.text}
+                              </option>
+                            ))}
+                          </Select>
+                          <span>{formik.errors[field.name]}</span>
+                        </FormControl>
+                      );
+                    default:
+                      return null;
+                  }
+                })}
+              </form>
             </ModalBody>
+            <Button mt={4} size="sm" colorScheme="purple" type="submit">
+              <i className="fa fa-lock"></i> Create Guild
+            </Button>
           </ModalContent>
         </Modal>
       )}
