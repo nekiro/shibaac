@@ -35,8 +35,8 @@ const post = withSessionRoute(
           },
         ],
         mode: 'payment',
-        success_url: `${req.headers.origin}/success`,
-        cancel_url: `${req.headers.origin}/cancel`,
+        success_url: `${req.headers.origin}/donate/success`,
+        cancel_url: `${req.headers.origin}/donate/failure`,
       });
 
       res.status(200).json({ success: true, data: session });
