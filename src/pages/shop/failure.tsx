@@ -10,7 +10,7 @@ export default function Failure() {
           Payment Failed
         </Heading>
         <Text fontSize="lg" textAlign="center">
-          We're sorry, but your transaction failed. Please try again or contact
+          We re sorry, but your transaction failed. Please try again or contact
           our support for assistance.
         </Text>
       </Box>

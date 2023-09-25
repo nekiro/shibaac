@@ -272,14 +272,15 @@ export default function Lost() {
         isClosable: true,
       });
     }
-  }, [step, selectedOption]);
+  }, [toast, step, selectedOption]);
 
   const prev = useCallback(() => {
     if (step > 1) {
       setStep((prevStep) => prevStep - 1);
       setProgress((prevProgress) => prevProgress - 33.33);
     }
-  }, [step, selectedOption, toast]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step, toast]);
 
   const refs = {
     emailRef,

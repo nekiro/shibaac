@@ -10,7 +10,7 @@ export default function Pending() {
           Payment Pending
         </Heading>
         <Text fontSize="lg" textAlign="center">
-          Your payment is currently pending. We will notify you once it's
+          Your payment is currently pending. We will notify you once its
           confirmed.
         </Text>
       </Box>
