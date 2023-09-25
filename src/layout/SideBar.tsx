@@ -3,7 +3,7 @@ import Panel from '../components/Panel';
 import Label from '../components/Label';
 import { fetchApi } from '../lib/request';
 import Link from '../components/Link';
-import { Box, LayoutProps } from '@chakra-ui/react';
+import { Box, LayoutProps, Button } from '@chakra-ui/react';
 import StripedTable from '../components/StrippedTable';
 import { type ProtocolStatusCache } from '../cache/protocolStatus';
 import { players } from '.prisma/client';
@@ -18,7 +18,7 @@ const SideBar = (props: LayoutProps) => {
       setIsLoading(true);
 
       const [players, status] = await Promise.all([
-        fetchApi<{ players: player[] }>('GET', `/api/player/top5`),
+        fetchApi<{ players: players[] }>('GET', `/api/player/top5`),
         fetchApi<{ status: ProtocolStatusCache }>('GET', `/api/status`),
       ]);
 
@@ -34,30 +34,48 @@ const SideBar = (props: LayoutProps) => {
 
   return (
     <Box minWidth="15em" {...props}>
+      <Panel header="Information" isLoading={isLoading}>
+        <StripedTable
+          head={[]}
+          body={[
+            [{ text: 'IP' }, { text: 'ipdoservidor.com' }],
+            [{ text: 'Cliente' }, { text: '10.70 - 10.74' }],
+            [{ text: 'Tipo' }, { text: 'RPG/PVP' }],
+          ]}
+        />
+        <Button width="100%" colorScheme="purple" onClick={() => {}}>
+          Download Client
+        </Button>
+      </Panel>
+
       <Panel header="Server Status" isLoading={isLoading}>
-        <table className="table table-condensed table-content table-striped">
-          <tbody>
-            <tr>
-              <td>
-                {serverStatus?.online ? (
+        <StripedTable
+          head={[]}
+          body={[
+            [
+              {
+                text: serverStatus?.online ? (
                   <Label colorScheme="green">ONLINE</Label>
                 ) : (
                   <Label colorScheme="red">OFFLINE</Label>
-                )}
-              </td>
-            </tr>
-            <tr>
-              <td>
-                {serverStatus && (
+                ),
+              },
+            ],
+            [
+              {
+                text: serverStatus
+                  ? `${serverStatus.onlineCount} players online`
+                  : '',
+                component: serverStatus && (
                   <Link
                     href="/online"
                     text={`${serverStatus.onlineCount} players online`}
                   />
-                )}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                ),
+              },
+            ],
+          ]}
+        />
       </Panel>
 
       <Panel header="Top 5 Level" isLoading={isLoading}>
