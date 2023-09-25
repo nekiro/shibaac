@@ -28,7 +28,7 @@ export default function Character() {
 
       const townResponse = await fetchApi(
         'GET',
-        `/api/town/${state.player.town_id}`
+        `/api/town/${state.player.town_id}`,
       );
 
       if (townResponse.success) {

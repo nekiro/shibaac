@@ -32,8 +32,6 @@ export default function Highscores() {
   const buttonSize = useBreakpointValue({ base: 'xs', md: 'md' });
   const headingSize = useBreakpointValue({ base: 'md', md: 'lg' });
   const textSize = useBreakpointValue({ base: 'sm', md: 'md' });
-  const imageHeight = useBreakpointValue({ base: '40px', md: '64px' });
-  const imageWidth = useBreakpointValue({ base: '40px', md: '64px' });
 
   useEffect(() => {
     const fetchHighscores = async () => {
@@ -62,7 +60,7 @@ export default function Highscores() {
     };
 
     fetchHighscores();
-  }, [filter, page]); // Added page to the effect dependencies
+  }, [filter, page]);
 
   if (!highscores) {
     return (
@@ -124,7 +122,7 @@ export default function Highscores() {
             Rankings for {getCategoryLabel(filter.category)}
           </Heading>
           <Text mb={2} fontSize={textSize}>
-            Vocation: {vocationIdToName[filter.vocation]}
+            {vocationIdToName[filter.vocation]}
           </Text>
           <Flex
             direction={{ base: 'column', md: 'row' }}
@@ -140,7 +138,7 @@ export default function Highscores() {
                 colorScheme={
                   filter.category === category.value ? 'purple' : 'gray'
                 }
-                mb={{ base: 2, md: 0 }}
+                mb={{ base: 2, md: 2 }}
                 mr={{ base: 0, md: 2 }}
               >
                 {category.label}
@@ -218,28 +216,31 @@ export default function Highscores() {
         />
 
         {highscores.length > 0 ? (
-          <>
-            <Box>
+          <Flex
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            mt={4}
+          >
+            <Box mb={2}>
               <span>
                 {page * perPage - perPage + 1} de {totalCount} registros
               </span>
             </Box>
             {perPage >= totalCount ? null : (
-              <Box>
-                <Box
-                  className="dataTables_paginate paging_full_numbers"
-                  id="datatable_paginate"
-                >
-                  <Pagination
-                    totalCountOfRegisters={totalCount}
-                    currentPage={page}
-                    onPageChange={setPage}
-                    registersPerPage={perPage}
-                  />
-                </Box>
+              <Box
+                className="dataTables_paginate paging_full_numbers"
+                id="datatable_paginate"
+              >
+                <Pagination
+                  totalCountOfRegisters={totalCount}
+                  currentPage={page}
+                  onPageChange={setPage}
+                  registersPerPage={perPage}
+                />
               </Box>
             )}
-          </>
+          </Flex>
         ) : null}
       </Panel>
     </>
