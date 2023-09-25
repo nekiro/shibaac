@@ -8,16 +8,25 @@ import Label from '../components/Label';
 
 export default function Online() {
   const [state, setState] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchData = useCallback(async () => {
-    const players = await fetchApi('GET', `/api/player/online`);
-    const status = await fetchApi('GET', `/api/status`);
+    try {
+      setIsLoading(true);
 
-    if (players.success && status.success) {
-      setState({
-        players: players.players,
-        status: status.status,
-      });
+      const players = await fetchApi('GET', `/api/player/online`);
+      const status = await fetchApi('GET', `/api/status`);
+
+      if (players.success && status.success) {
+        setState({
+          players: players.players,
+          status: status.status,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
@@ -26,7 +35,7 @@ export default function Online() {
   }, [fetchData]);
 
   if (!state) {
-    return <Panel header="Online List" isLoading={true} />;
+    return <Panel header="Online List" isLoading={isLoading} />;
   }
 
   return (
