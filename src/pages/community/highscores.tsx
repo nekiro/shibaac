@@ -6,7 +6,6 @@ import StrippedTable from '../../components/StrippedTable';
 import {
   Box,
   Button,
-  ButtonGroup,
   Flex,
   Heading,
   Text,
@@ -16,6 +15,7 @@ import {
 
 import { PlayerData } from '../../shared/interfaces/PlayerData';
 import { vocationIdToName, getOutfitImageUrl } from '../../lib';
+import { Pagination } from '../../components/Pagination';
 
 export default function Highscores() {
   const [highscores, setHighscores] = useState<PlayerData[]>([]);
@@ -24,6 +24,10 @@ export default function Highscores() {
     category: 'level',
     vocation: 'all',
   });
+
+  const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [perPage, setPerPage] = useState(10);
 
   const buttonSize = useBreakpointValue({ base: 'xs', md: 'md' });
   const headingSize = useBreakpointValue({ base: 'md', md: 'lg' });
@@ -37,12 +41,16 @@ export default function Highscores() {
         setIsLoading(true);
 
         const response = await fetchApi('GET', '/api/community/highscores', {
-          params: { vocation: filter.vocation, category: filter.category },
-          headers: { page: 1 },
+          params: {
+            vocation: filter.vocation,
+            category: filter.category,
+            page,
+          },
         });
 
         if (response.success) {
           setHighscores(response.data);
+          setTotalCount(response.xTotalCount);
         } else {
           setHighscores([]);
         }
@@ -54,7 +62,7 @@ export default function Highscores() {
     };
 
     fetchHighscores();
-  }, [filter]);
+  }, [filter, page]); // Added page to the effect dependencies
 
   if (!highscores) {
     return (
@@ -92,6 +100,7 @@ export default function Highscores() {
   };
 
   const handleCategoryChange = (categoryValue) => {
+    setPage(1);
     setFilter((prevFilter) => ({
       ...prevFilter,
       category: categoryValue,
@@ -99,6 +108,7 @@ export default function Highscores() {
   };
 
   const handleVocationChange = (vocationValue) => {
+    setPage(1);
     setFilter((prevFilter) => ({
       ...prevFilter,
       vocation: vocationValue,
@@ -205,6 +215,31 @@ export default function Highscores() {
                 ]
           }
         />
+
+        {highscores.length > 0 ? (
+          <>
+            <Box>
+              <span>
+                {page * perPage - perPage + 1} de {totalCount} registros
+              </span>
+            </Box>
+            {perPage >= totalCount ? null : (
+              <Box>
+                <Box
+                  className="dataTables_paginate paging_full_numbers"
+                  id="datatable_paginate"
+                >
+                  <Pagination
+                    totalCountOfRegisters={totalCount}
+                    currentPage={page}
+                    onPageChange={setPage}
+                    registersPerPage={perPage}
+                  />
+                </Box>
+              </Box>
+            )}
+          </>
+        ) : null}
       </Panel>
     </>
   );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pagination as PaginationStrap } from 'reactstrap';
+import { Box, Button, Flex } from '@chakra-ui/react';
 import { PaginationItem } from './PaginationItem';
 
 const siblingsCount = 1;
@@ -9,7 +9,7 @@ function generatePagesArray(from, to) {
     .map((_, index) => {
       return from + index + 1;
     })
-    .filter(page => page > 0);
+    .filter((page) => page > 0);
 }
 
 export function Pagination({
@@ -29,52 +29,57 @@ export function Pagination({
     currentPage < lastPage
       ? generatePagesArray(
           currentPage,
-          Math.min(currentPage + siblingsCount, lastPage)
+          Math.min(currentPage + siblingsCount, lastPage),
         )
       : [];
+
   return (
-    <>
-      <nav aria-label="pagination-nav">
-        <PaginationStrap className="pagination">
-          {currentPage > 1 + siblingsCount && (
-            <>
-              <PaginationItem onPageChange={onPageChange} number={1} />
-              {currentPage > 2 + siblingsCount && <span>...</span>}
-            </>
-          )}
+    <Box as="nav" aria-label="pagination-nav">
+      <Flex as="ul" className="pagination">
+        {currentPage > 1 + siblingsCount && (
+          <>
+            <Button as="li" onClick={() => onPageChange(1)} m="1">
+              1
+            </Button>
+            {currentPage > 2 + siblingsCount && (
+              <Box as="li" m="1">
+                <PaginationItem />
+              </Box>
+            )}
+          </>
+        )}
 
-          {previousPages.length > 0 &&
-            previousPages.map(page => (
-              <PaginationItem
-                onPageChange={onPageChange}
-                key={page}
-                number={page}
-              />
-            ))}
+        {previousPages.length > 0 &&
+          previousPages.map((page) => (
+            <Button as="li" key={page} onClick={() => onPageChange(page)} m="1">
+              {page}
+            </Button>
+          ))}
 
-          <PaginationItem
-            onPageChange={onPageChange}
-            number={currentPage}
-            isCurrent
-          />
+        <Button as="li" m="1" bgColor="purple.500" color="white">
+          {currentPage}
+        </Button>
 
-          {nextPages.length > 0 &&
-            nextPages.map(page => (
-              <PaginationItem
-                onPageChange={onPageChange}
-                key={page}
-                number={page}
-              />
-            ))}
+        {nextPages.length > 0 &&
+          nextPages.map((page) => (
+            <Button as="li" key={page} onClick={() => onPageChange(page)} m="1">
+              {page}
+            </Button>
+          ))}
 
-          {currentPage + siblingsCount < lastPage && (
-            <>
-              {currentPage + 1 + siblingsCount < lastPage && <span>...</span>}
-              <PaginationItem onPageChange={onPageChange} number={lastPage} />
-            </>
-          )}
-        </PaginationStrap>
-      </nav>
-    </>
+        {currentPage + siblingsCount < lastPage && (
+          <>
+            {currentPage + 1 + siblingsCount < lastPage && (
+              <Box as="li" m="1">
+                <PaginationItem />
+              </Box>
+            )}
+            <Button as="li" onClick={() => onPageChange(lastPage)} m="1">
+              {lastPage}
+            </Button>
+          </>
+        )}
+      </Flex>
+    </Box>
   );
 }

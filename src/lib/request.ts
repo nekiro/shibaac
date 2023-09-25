@@ -17,6 +17,8 @@ export type ResponseData = {
   message: string;
   success: boolean;
   args?: any;
+  headers: any;
+  xTotalCount?: number;
 };
 
 export const fetchApi = async <T = void>(
@@ -58,6 +60,12 @@ export const fetchApi = async <T = void>(
 
   const data = (await response.json()) as ResponseData;
 
+  const xTotalCount = response.headers.get('X-Total-Count');
+
+  if (xTotalCount) {
+    data.xTotalCount = parseInt(xTotalCount, 10);
+  }
+
   if (data.yupError) {
     return {
       message: data.yupError.toString(),
@@ -69,5 +77,6 @@ export const fetchApi = async <T = void>(
     message: data.message,
     success: data.success,
     ...(data.args ? data.args : {}),
+    xTotalCount: data.xTotalCount,
   } as FetchResult & T;
 };
