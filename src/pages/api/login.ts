@@ -1,4 +1,5 @@
-// pages/api/login.ts
+const { SERVER_NAME, SERVER_ADDRESS, SERVER_PORT, PVP_TYPE, FREE_PREMIUM } =
+  process.env;
 
 import { NextApiRequest, NextApiResponse } from 'next';
 import { createHash } from 'crypto';
@@ -64,7 +65,7 @@ export default async function handler(
 
 async function handleCacheInfo() {
   const playersonline = await prisma.players_online.count({
-    where: { player: { group_id: { lt: groupToName[4] } } },
+    where: { players: { group_id: { lt: 4 } } },
   });
   return {
     playersonline,
@@ -128,7 +129,7 @@ async function handleLogin(params: LoginParams) {
   });
 
   const serverPort = parseInt(SERVER_PORT) ?? 7172;
-  const pvptype = ['pvp', 'no-pvp', 'pvp-enforced'].indexOf(PVP_TYPE);
+  const pvptype = ['pvp', 'no-pvp', 'pvp-enforced'].indexOf(String(PVP_TYPE));
   const now = Math.trunc(Date.now() / 1000);
 
   return {
@@ -164,25 +165,23 @@ async function handleLogin(params: LoginParams) {
           restrictedstore: false,
         },
       ],
-      characters: account.players.map(
-        (player): LoginCharacter => ({
-          worldid: 0,
-          name: player.name,
-          ismale: player.sex === PlayerSex.Male,
-          tutorial: player.istutorial,
-          level: player.level,
-          vocation: vocationString(player.vocation),
-          outfitid: player.looktype,
-          headcolor: player.lookhead,
-          torsocolor: player.lookbody,
-          legscolor: player.looklegs,
-          detailcolor: player.lookfeet,
-          addonsflags: player.lookaddons,
-          ishidden: player.settings?.hidden ? 1 : 0,
-          ismaincharacter: player.is_main,
-          dailyrewardstate: player.isreward ? 1 : 0,
-        }),
-      ),
+      characters: account.players.map((player): any => ({
+        worldid: 0,
+        name: player.name,
+        ismale: player.sex,
+        tutorial: player.istutorial,
+        level: player.level,
+        vocation: vocationString(player.vocation),
+        outfitid: player.looktype,
+        headcolor: player.lookhead,
+        torsocolor: player.lookbody,
+        legscolor: player.looklegs,
+        detailcolor: player.lookfeet,
+        addonsflags: player.lookaddons,
+        ishidden: player.settings?.hidden ? 1 : 0,
+        ismaincharacter: player.is_main,
+        dailyrewardstate: player.isreward ? 1 : 0,
+      })),
     },
   };
 }
