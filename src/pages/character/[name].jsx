@@ -1,15 +1,64 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import Panel from 'src/components/Panel';
-import { fetchApi } from 'src/lib/request';
+import Panel from '../../components/Panel';
+import { fetchApi } from '../../lib/request';
 import {
   timestampToDate,
   vocationIdToName,
   groupToName,
   secondsToTime,
-} from 'src/lib';
+} from '../../lib';
 import { useRouter } from 'next/router';
-import StrippedTable from 'src/components/StrippedTable';
-import Label from 'src/components/Label';
+import StrippedTable from '../../components/StrippedTable';
+import Label from '../../components/Label';
+import { Timeline } from '../../components/Timeline';
+import { Box, VStack, HStack, Circle, Text, Flex } from '@chakra-ui/react';
+
+const player_deaths = [
+  {
+    player_id: 1,
+    time: 1694755956,
+    level: 5,
+    killed_by: 'Orc Warrior',
+    is_player: false,
+    mostdamage_by: 'Dragon',
+    mostdamage_is_player: false,
+    unjustified: true,
+    mostdamage_unjustified: true,
+  },
+  {
+    player_id: 1,
+    time: 1695155956,
+    level: 10,
+    killed_by: 'Player123',
+    is_player: true,
+    mostdamage_by: 'Player456',
+    mostdamage_is_player: true,
+    unjustified: false,
+    mostdamage_unjustified: false,
+  },
+  {
+    player_id: 1,
+    time: 1693755956,
+    level: 10,
+    killed_by: 'Player123',
+    is_player: true,
+    mostdamage_by: 'Player456',
+    mostdamage_is_player: true,
+    unjustified: false,
+    mostdamage_unjustified: false,
+  },
+  {
+    player_id: 1,
+    time: 1695745956,
+    level: 10,
+    killed_by: 'Player123',
+    is_player: true,
+    mostdamage_by: 'Player456',
+    mostdamage_is_player: true,
+    unjustified: false,
+    mostdamage_unjustified: false,
+  },
+];
 
 export default function Character() {
   const router = useRouter();
@@ -139,16 +188,18 @@ export default function Character() {
         />
       </Panel>
 
-      {state.player.player_deaths.length > 0 && (
-        <Panel header="Deaths">
-          <StrippedTable
-            head={[{ text: 'Date' }, { text: 'Message' }]}
-            body={state.player.playerDeaths.map((death) => [
-              { text: timestampToDate(death.time) },
-              { text: `Died at level ${death.level} by ${death.killed_by}` },
-            ])}
-          />
-        </Panel>
+      {player_deaths.length > 0 && (
+        <Box>
+          <Panel header="Deaths">
+            <Timeline
+              items={player_deaths.map((death) => ({
+                date: death.time,
+                text: `Died at level ${death.level} by ${death.killed_by}`,
+                killedByPlayer: death.is_player,
+              }))}
+            />
+          </Panel>
+        </Box>
       )}
 
       {/* <span className="label label-danger">Deleted</span>  */}
