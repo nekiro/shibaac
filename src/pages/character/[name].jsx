@@ -11,7 +11,7 @@ import { useRouter } from 'next/router';
 import StrippedTable from '../../components/StrippedTable';
 import Label from '../../components/Label';
 import { Timeline } from '../../components/Timeline';
-import { Box, VStack, HStack, Circle, Text, Flex } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 
 const player_deaths = [
   {
