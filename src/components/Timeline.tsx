@@ -57,7 +57,7 @@ function TimelineItem({ date, text, deathType }) {
 
   return (
     <Flex w="100%" alignItems="center" justifyContent="space-between">
-      <Text flex="1" textAlign="right" pr={2} fontWeight="bold">
+      <Text flex="1" textAlign="right" pr={2} fontStyle="italic">
         {formattedDate}
       </Text>
       <Box position="relative" zIndex="1">
