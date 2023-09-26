@@ -194,8 +194,15 @@ export default function Character() {
             <Timeline
               items={player_deaths.map((death) => ({
                 date: death.time,
-                text: `Died at level ${death.level} by ${death.killed_by}`,
+                text: `${
+                  death.is_player ? 'Fragged a player' : 'Died'
+                } at level ${death.level}.`,
                 killedByPlayer: death.is_player,
+                killer: {
+                  killed_by: death.killed_by,
+                  mostdamage_by: death.mostdamage_by,
+                  unjustified: death.unjustified,
+                },
               }))}
             />
           </Panel>

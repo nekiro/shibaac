@@ -1,5 +1,14 @@
 import React from 'react';
-import { Box, VStack, Circle, Text, Flex, Icon } from '@chakra-ui/react';
+import {
+  Box,
+  VStack,
+  Circle,
+  Text,
+  Flex,
+  Icon,
+  Badge,
+  Avatar,
+} from '@chakra-ui/react';
 import { BiGhost, BiTargetLock } from 'react-icons/bi';
 import { differenceInDays, formatDistanceToNow } from 'date-fns';
 
@@ -38,6 +47,7 @@ export function Timeline({ items }) {
             date={item.date}
             text={item.text}
             deathType={item.killedByPlayer}
+            killer={item.killer}
           />
         ))}
       </VStack>
@@ -45,7 +55,7 @@ export function Timeline({ items }) {
   );
 }
 
-function TimelineItem({ date, text, deathType }) {
+function TimelineItem({ date, text, deathType, killer }) {
   let formattedDate = timestampToDaysAgo(date);
 
   let DeathIcon;
@@ -54,6 +64,8 @@ function TimelineItem({ date, text, deathType }) {
   } else {
     DeathIcon = BiGhost;
   }
+
+  console.log('killer', killer);
 
   return (
     <Flex w="100%" alignItems="center" justifyContent="space-between">
@@ -71,9 +83,16 @@ function TimelineItem({ date, text, deathType }) {
           <Icon as={DeathIcon} color="white" fontSize={20} />
         </Circle>
       </Box>
-      <Text flex="1" pl={2}>
-        {text}
-      </Text>
+      <Flex flex="1" pl={2} direction="column">
+        <Text>
+          {text} {deathType && <Badge colorScheme="red">unjustified</Badge>}
+        </Text>
+
+        <Flex alignItems="center" mt={2}>
+          <Avatar size="sm" src={killer.avatar} />
+          <Text ml={2}>{killer.killed_by} (Lvl 81, Paladin)</Text>
+        </Flex>
+      </Flex>
     </Flex>
   );
 }
