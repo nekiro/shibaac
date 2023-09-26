@@ -33,12 +33,13 @@ model accounts {
   twoFASecret     String?
   twoFAEnabled    Boolean
 
-  account_bans account_bans?
-  players      players[]
-  resetToken   String?       @unique
-  purchases    purchases[]
-  aac_news     aac_news[]
-  shop_orders  shop_orders[]
+  account_bans     account_bans?
+  players          players[]
+  resetToken       String?            @unique
+  purchases        purchases[]
+  aac_news         aac_news[]
+  shop_orders      shop_orders[]
+  account_sessions account_sessions[]
 }
 
 model players {
@@ -280,6 +281,19 @@ model shop_orders {
   accountId Int
 
   account accounts @relation(fields: [accountId], references: [id])
+}
+
+model boosted_creature {
+  boostname  String @db.Text
+  date       String @id
+  raceid     String
+  looktype   Int    @default(136)
+  lookfeet   Int    @default(0)
+  looklegs   Int    @default(0)
+  lookhead   Int    @default(0)
+  lookbody   Int    @default(0)
+  lookaddons Int    @default(0)
+  lookmount  Int?   @default(0)
 }
 
 model player_inboxitems {

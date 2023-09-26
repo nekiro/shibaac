@@ -49,3 +49,9 @@ This project aims to provide a fully featured, secure and fast AAC (Automatic Ac
 - war system guild page
 - war system list
 - history donate with Account management
+- recent deaths
+- kill statistics
+- power gamers
+- world map
+- char bazaar
+- server save countdown
