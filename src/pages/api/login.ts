@@ -1,340 +1,188 @@
+// pages/api/login.ts
+
 import { NextApiRequest, NextApiResponse } from 'next';
-import { PrismaClient } from '@prisma/client';
-import crypto from 'crypto';
-import base32 from 'base32';
-import notp from 'notp';
+import { createHash } from 'crypto';
+import parseDuration from 'parse-duration';
+import { groupToName, vocationIdToName } from '../../lib';
+import prisma from '../../prisma';
+import * as accountService from '../../services/accountService';
+import { sha1Encrypt } from '../../lib/crypt';
+import speakeasy from 'speakeasy';
 
-const prisma = new PrismaClient();
+interface LoginParams {
+  type: 'login';
+  name: string;
+  password: string;
+  twoFAToken?: string;
+}
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const SESSION_DURATION =
+  parseDuration(process.env.GAME_SESSION_EXPIRATION_TIME ?? '1d') ?? 3600 * 24;
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
   if (req.method !== 'POST') {
-    return res.status(405).end();
+    return res.status(405).json({ message: 'Method not allowed.' });
   }
+
+  const params = req.body;
 
   try {
-    const message = JSON.parse(req.body);
-    await parseMessage(res, message);
-  } catch (e) {
-    return res.status(500).end();
+    switch (params.type) {
+      case 'news':
+        res.json({});
+        break;
+
+      case 'cacheinfo':
+        const cacheInfo = await handleCacheInfo();
+        res.json(cacheInfo);
+        break;
+
+      case 'boostedcreature':
+        const boostedCreatureInfo = await handleBoostedCreature();
+        res.json(boostedCreatureInfo);
+        break;
+
+      case 'eventschedule':
+        res.json({});
+        break;
+
+      case 'login':
+        const loginResponse = await handleLogin(params);
+        res.json(loginResponse);
+        break;
+
+      default:
+        throw new Error(`Unknown login type: ${params.type}`);
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-};
-
-interface Player {
-  name: string;
-  level: number;
-  sex: number;
-  vocation: number;
-  looktype: number;
-  lookhead: number;
-  lookbody: number;
-  looklegs: number;
-  lookfeet: number;
-  lookaddons: number;
-  lastlogin?: Date;
-  isreward?: number;
-  cast_viewers?: number;
-  hidden?: number;
 }
 
-interface World {
-  id: number;
-  name: string;
+async function handleCacheInfo() {
+  const playersonline = await prisma.players_online.count({
+    where: { player: { group_id: { lt: groupToName[4] } } },
+  });
+  return {
+    playersonline,
+    twitchstreams: 0,
+    twitchviewer: 0,
+    gamingyoutubestreams: 0,
+    gamingyoutubeviewer: 0,
+  };
 }
 
-type Vocation =
-  | 'None'
-  | 'Sorcerer'
-  | 'Druid'
-  | 'Paladin'
-  | 'Knight'
-  | 'Master Sorcerer'
-  | 'Elder Druid'
-  | 'Royal Paladin'
-  | 'Elite Knight';
+async function handleBoostedCreature() {
+  const boostedCreature = await prisma.boosted_creature.findFirstOrThrow({
+    select: { raceid: true },
+  });
+  // const boostedBoss = await prisma.boostedBoss.findFirstOrThrow({
+  //   select: { raceid: true },
+  // });
+  return {
+    boostedcreature: true,
+    creatureraceid: Number(boostedCreature.raceid),
+    bossraceid: 0,
+  };
+}
 
-const vocations: Vocation[] = [
-  'None',
-  'Sorcerer',
-  'Druid',
-  'Paladin',
-  'Knight',
-  'Master Sorcerer',
-  'Elder Druid',
-  'Royal Paladin',
-  'Elite Knight',
-];
+async function handleLogin(params: LoginParams) {
+  const { name, password, type, twoFAToken } = params;
 
-const state = {
-  boosted: 0,
-  online: 0,
-  worlds: [
-    {
-      id: 0,
-      name: 'Rekteria',
-      ip: '51.75.55.7',
-      port: 7172,
-      location: 'ALL',
-      pvptype: 'pvp',
+  const account = await accountService.getAccountBy(
+    { name, password: await sha1Encrypt(password) },
+    { id: true, name: true, twoFAEnabled: true, twoFASecret: true },
+  );
+
+  if (!account) {
+    return { success: false, message: 'Wrong credentials.' };
+  }
+
+  if (account.twoFAEnabled) {
+    console.log('Secret:', account.twoFASecret);
+    console.log('Token:', twoFAToken);
+    const verified = speakeasy.totp.verify({
+      secret: String(account.twoFASecret),
+      encoding: 'base32',
+      token: twoFAToken,
+      window: 2,
+    });
+
+    if (!verified) {
+      return { success: false, message: 'Wrong 2FA token.' };
+    }
+  }
+
+  let sessionKey: string = crypto.randomUUID();
+  const hashedSessionId = createHash('sha1').update(sessionKey).digest('hex');
+
+  await prisma.accounts_sessions.create({
+    data: {
+      id: hashedSessionId,
+      account_id: account.id,
+      expires: Math.trunc((Date.now() + SESSION_DURATION) / 1000),
     },
-  ],
-  castWorlds: [],
-} as any;
+  });
 
-const queries = {
-  casts: async () => {
-    return [];
-  },
+  const serverPort = parseInt(SERVER_PORT) ?? 7172;
+  const pvptype = ['pvp', 'no-pvp', 'pvp-enforced'].indexOf(PVP_TYPE);
+  const now = Math.trunc(Date.now() / 1000);
 
-  boosted: async () => {
-    return await prisma.boosted_creature.findMany();
-  },
-
-  online: async () => {
-    const onlinePlayers = await prisma.players_online.count();
-    return onlinePlayers;
-  },
-
-  account: async (name, password) => {
-    return [];
-  },
-
-  players: async (account_id) => {
-    return await prisma.players.findMany({
-      where: { account_id: account_id },
-      select: {
-        name: true,
-        level: true,
-        sex: true,
-        vocation: true,
-        looktype: true,
-        lookhead: true,
-        lookbody: true,
-        looklegs: true,
-        lookfeet: true,
-        lookaddons: true,
-      },
-    });
-  },
-
-  session: async () => {
-    return [];
-  },
-};
-
-const validate = (secret, token) => {
-  const key = base32.decode(secret).toString('ascii');
-  const compare = notp.totp.gen(key);
-  return compare === token && notp.totp.verify(token, key);
-};
-
-async function queryDb(query: string, args?: any[]): Promise<any> {}
-
-async function parseMessage(res, message) {
-  const { type } = message;
-  const sendResponse = (data) => res.end(JSON.stringify(data));
-
-  switch (type) {
-    case 'boostedcreature':
-      return sendResponse({
-        raceid: state.boosted,
-      });
-    case 'cacheinfo':
-      return sendResponse({
-        playersonline: state.online,
-        twitchstreams: 0,
-        twitchviewer: 130,
-        gamingyoutubestreams: 0,
-        gamingyoutubeviewer: 0,
-      });
-    case 'login':
-      const hash = crypto.createHash('sha1');
-      hash.update(message.password);
-      return parseLogin(res, {
-        accountname: message.email,
-        token: message.token,
-        sessionarg: message.password,
-        password: hash.digest('hex'),
-        stayloggedin: message.stayloggedin,
-      });
-
-    default:
-      return res.end();
-  }
-}
-
-async function parseLogin(res, credentials) {
-  const { accountname, password, token, stayloggedin, sessionarg } =
-    credentials;
-  let castPassword = '';
-  const castsessionkey = `${accountname}\n${sessionarg}`;
-  const casts = await queryDb(queries.casts);
-
-  const sendError = (code, data) =>
-    res.end(
-      JSON.stringify({
-        errorCode: code,
-        errorMessage: data,
-      }),
-    );
-
-  // Missing credentials
-  if (!accountname || !password) {
-    return sendError(3, 'Account name or password is incorrect.');
-  }
-
-  // Cast Login
-  if (accountname === 'cast') {
-    if (casts.length < 1) {
-      return sendError(3, 'Currently there are no active casts on Rekteria.');
-    }
-    if (password !== 'cast') {
-      castPassword == password;
-    }
-
-    const response = JSON.stringify({
-      session: {
-        sessionkey: castsessionkey,
-        lastlogintime: 0,
-        ispremium: true,
-        premiumuntil: 0,
-        status: 'active',
-        returnernotification: false,
-        showrewardnews: false,
-        isreturner: true,
-        fpstracking: false,
-        optiontracking: false,
-      },
-      playdata: {
-        characters: await casts.map((player, index) => {
-          let obj = {
-            id: index,
-            name: `Viewers: ${player.cast_viewers}`,
-            ip: '51.75.55.7',
-            port: 7172,
-            location: 'ALL',
-            pvptype: 'pvp',
-          };
-          state.castWorlds.push(obj);
-          return {
-            worldid: index,
-            name: player.name,
-            level: player.level,
-            vocation: vocations[player.vocation],
-            ismale: player.sex === 1,
-            ishidden: player.hidden === 1,
-            tutorial: false,
-            outfitid: player.looktype,
-            headcolor: player.lookhead,
-            torsocolor: player.lookbody,
-            legscolor: player.looklegs,
-            detailcolor: player.lookfeet,
-            addonsflags: player.lookaddons,
-          };
-        }),
-        worlds: state.castWorlds.map((world: any) => ({
-          id: world.id,
-          name: world.name,
-          externaladdress: world.ip,
-          externalport: world.port,
-          externaladdressprotected: world.ip,
-          externaladdressunprotected: world.ip,
-          externalportprotected: world.port,
-          externalportunprotected: world.port,
+  return {
+    session: {
+      sessionkey: sessionKey,
+      lastlogintime: '0', // TODO: implement last login
+      ispremium: FREE_PREMIUM === 'true' ? true : account.lastday > now,
+      premiumuntil: account.lastday,
+      status: 'active',
+      returnernotification: false,
+      showrewardnews: true,
+      isreturner: true,
+      fpstracking: false,
+      optiontracking: false,
+      emailcoderequest: false,
+    },
+    playdata: {
+      // TODO: multiple worlds
+      worlds: [
+        {
+          id: 0,
+          name: SERVER_NAME,
+          externaladdress: SERVER_ADDRESS,
+          externalport: serverPort,
+          externaladdressprotected: SERVER_ADDRESS,
+          externalportprotected: serverPort,
+          externaladdressunprotected: SERVER_ADDRESS,
+          externalportunprotected: serverPort,
           previewstate: 0,
-          location: world.location,
+          location: 'USA',
           anticheatprotection: false,
-          pvptype: world.pvptype,
-          istournamentworld: false,
+          pvptype,
           restrictedstore: false,
-          currenttournamentphase: 2,
-        })),
-      },
-    });
-
-    res.writeHead(200, {
-      'Content-Type': 'application/json',
-      'Content-Length': Buffer.byteLength(response),
-    });
-
-    res.end(response);
-  } else {
-    try {
-      // Lookup account with credentials
-      const account = await queryDb(queries.account, [accountname, password]);
-      if (!account || account.length === 0) {
-        return sendError(3, 'Account name or password is incorrect.');
-      }
-
-      // Two-factor authentication
-      const { id, authsecret } = account[0];
-      if (authsecret && (!token || !validate(authsecret, token))) {
-        return sendError(6, 'Two-factor token required for authentication.');
-      }
-
-      const d = new Date();
-      const sessionkey = `${accountname}\n${sessionarg}\n123123123\n${Math.floor(
-        d.getTime() / 30,
-      )}`;
-      const players = await queryDb(queries.players, [id]);
-
-      // Login response
-      const response = JSON.stringify({
-        session: {
-          sessionkey: sessionkey,
-          lastlogintime: 0,
-          ispremium: true,
-          premiumuntil: 0,
-          status: 'active',
-          returnernotification: false,
-          showrewardnews: false,
-          isreturner: true,
-          fpstracking: false,
-          optiontracking: false,
         },
-        playdata: {
-          worlds: state.worlds.map((world) => ({
-            id: 0,
-            name: world.name,
-            externaladdress: world.ip,
-            externalport: world.port,
-            externaladdressprotected: world.ip,
-            externaladdressunprotected: world.ip,
-            externalportprotected: world.port,
-            externalportunprotected: world.port,
-            previewstate: 0,
-            location: world.location,
-            anticheatprotection: false,
-            pvptype: world.pvptype,
-            istournamentworld: false,
-            restrictedstore: false,
-            currenttournamentphase: 2,
-          })),
-          characters: players.map((player) => ({
-            worldid: 0,
-            name: player.name,
-            level: player.level,
-            vocation: vocations[player.vocation],
-            ismale: player.sex === 1,
-            ishidden: player.hidden === 1,
-            tutorial: false,
-            outfitid: player.looktype,
-            headcolor: player.lookhead,
-            torsocolor: player.lookbody,
-            legscolor: player.looklegs,
-            detailcolor: player.lookfeet,
-            addonsflags: player.lookaddons,
-          })),
-        },
-      });
-
-      res.writeHead(200, {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(response),
-      });
-
-      res.end(response);
-    } catch (error) {
-      return res.end();
-    }
-  }
+      ],
+      characters: account.players.map(
+        (player): LoginCharacter => ({
+          worldid: 0,
+          name: player.name,
+          ismale: player.sex === PlayerSex.Male,
+          tutorial: player.istutorial,
+          level: player.level,
+          vocation: vocationString(player.vocation),
+          outfitid: player.looktype,
+          headcolor: player.lookhead,
+          torsocolor: player.lookbody,
+          legscolor: player.looklegs,
+          detailcolor: player.lookfeet,
+          addonsflags: player.lookaddons,
+          ishidden: player.settings?.hidden ? 1 : 0,
+          ismaincharacter: player.is_main,
+          dailyrewardstate: player.isreward ? 1 : 0,
+        }),
+      ),
+    },
+  };
 }

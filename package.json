@@ -50,6 +50,7 @@
     "node-cron": "^3.0.2",
     "nodemailer": "^6.9.5",
     "notp": "^2.0.3",
+    "parse-duration": "^1.1.0",
     "promise-socket": "^7.0.0",
     "qrcode": "^1.5.3",
     "react": "18.2.0",
