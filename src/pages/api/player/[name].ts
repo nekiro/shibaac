@@ -2,8 +2,6 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../../prisma';
 import apiHandler from '../../../middleware/apiHandler';
 
-// TODO: this route should include info only on request, not always
-
 const get = async (req: NextApiRequest, res: NextApiResponse) => {
   const { name } = req.query;
 
@@ -15,7 +13,10 @@ const get = async (req: NextApiRequest, res: NextApiResponse) => {
           players: { select: { name: true, level: true, vocation: true } },
         },
       },
-      player_deaths: true,
+      player_deaths: {
+        take: 7,
+        orderBy: { time: 'desc' },
+      },
       name: true,
       sex: true,
       vocation: true,
@@ -27,7 +28,33 @@ const get = async (req: NextApiRequest, res: NextApiResponse) => {
   });
 
   if (player) {
-    res.json({ success: true, args: { player } });
+    const deathsWithDetails: any[] = [];
+
+    for (let death of player.player_deaths) {
+      const killer = await prisma.players.findFirst({
+        where: { name: death.killed_by },
+        select: { level: true, vocation: true },
+      });
+
+      if (killer) {
+        deathsWithDetails.push({
+          ...death,
+          killerDetails: {
+            level: killer.level,
+            vocation: killer.vocation,
+          },
+        });
+      } else {
+        deathsWithDetails.push(death);
+      }
+    }
+
+    const playerWithDetails = {
+      ...player,
+      player_deaths: deathsWithDetails,
+    };
+
+    res.json({ success: true, args: { player: playerWithDetails } });
   } else {
     res.status(404).json({ success: false, message: 'Not found.' });
   }

@@ -13,53 +13,6 @@ import Label from '../../components/Label';
 import { Timeline } from '../../components/Timeline';
 import { Box } from '@chakra-ui/react';
 
-const player_deaths = [
-  {
-    player_id: 1,
-    time: 1694755956,
-    level: 5,
-    killed_by: 'Orc Warrior',
-    is_player: false,
-    mostdamage_by: 'Dragon',
-    mostdamage_is_player: false,
-    unjustified: true,
-    mostdamage_unjustified: true,
-  },
-  {
-    player_id: 1,
-    time: 1695155956,
-    level: 10,
-    killed_by: 'Player123',
-    is_player: true,
-    mostdamage_by: 'Player456',
-    mostdamage_is_player: true,
-    unjustified: false,
-    mostdamage_unjustified: false,
-  },
-  {
-    player_id: 1,
-    time: 1693755956,
-    level: 10,
-    killed_by: 'Player123',
-    is_player: true,
-    mostdamage_by: 'Player456',
-    mostdamage_is_player: true,
-    unjustified: false,
-    mostdamage_unjustified: false,
-  },
-  {
-    player_id: 1,
-    time: 1695745956,
-    level: 10,
-    killed_by: 'Player123',
-    is_player: true,
-    mostdamage_by: 'Player456',
-    mostdamage_is_player: true,
-    unjustified: false,
-    mostdamage_unjustified: false,
-  },
-];
-
 export default function Character() {
   const router = useRouter();
   const { name } = router.query;
@@ -75,14 +28,14 @@ export default function Character() {
     if (response.success) {
       state.player = response.player;
 
-      const townResponse = await fetchApi(
-        'GET',
-        `/api/town/${state.player.town_id}`,
-      );
+      // const townResponse = await fetchApi(
+      //   'GET',
+      //   `/api/town/${state.player.town_id}`,
+      // );
 
-      if (townResponse.success) {
-        state.town = townResponse.town;
-      }
+      // if (townResponse.success) {
+      //   state.town = townResponse.town;
+      // }
     }
 
     setState(state);
@@ -188,11 +141,11 @@ export default function Character() {
         />
       </Panel>
 
-      {player_deaths.length > 0 && (
+      {state.player.player_deaths.length > 0 && (
         <Box>
           <Panel header="Deaths">
             <Timeline
-              items={player_deaths.map((death) => ({
+              items={state.player.player_deaths.map((death) => ({
                 date: death.time,
                 text: `${
                   death.is_player ? 'Fragged a player' : 'Died'

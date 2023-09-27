@@ -6,6 +6,18 @@ import FormWrapper from 'src/components/FormWrapper';
 import { createCharacterSchema } from 'src/schemas/CreateCharacter';
 import { Select, Text } from '@chakra-ui/react';
 
+const startLocation = process.env.NEXT_PUBLIC_START_ON_ROOK;
+
+const vocationsOptions =
+  startLocation === 'rookguard'
+    ? [{ value: '0', text: 'None' }]
+    : [
+        { value: '1', text: 'Sorcerer' },
+        { value: '2', text: 'Druid' },
+        { value: '3', text: 'Paladin' },
+        { value: '4', text: 'Knight' },
+      ];
+
 const fields = [
   {
     type: 'text',
@@ -19,22 +31,7 @@ const fields = [
     name: 'vocation',
     label: { text: 'Vocation', size: 3 },
     size: 9,
-    options: [
-      { value: '1', text: 'Sorcerer' },
-      { value: '2', text: 'Druid' },
-      { value: '3', text: 'Paladin' },
-      { value: '4', text: 'Knight' },
-    ],
-  },
-  {
-    as: Select,
-    name: 'sex',
-    label: { text: 'Sex', size: 3 },
-    size: 9,
-    options: [
-      { value: '0', text: 'Female' },
-      { value: '1', text: 'Male' },
-    ],
+    options: vocationsOptions,
   },
 ];
 
@@ -45,7 +42,7 @@ const buttons = [
 
 const initialValues = {
   name: '',
-  vocation: '1',
+  vocation: startLocation === 'rookguard' ? '0' : '1',
   sex: '0',
 };
 

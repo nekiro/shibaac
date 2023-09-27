@@ -9,6 +9,7 @@ import { dev } from './config';
 
 export type User = {
   id: number;
+  type: number;
 };
 
 declare module 'iron-session' {
@@ -32,11 +33,11 @@ export const withSessionRoute = (handler: NextApiHandler) => {
 };
 
 export function withSessionSsr<
-  P extends { [key: string]: unknown } = { [key: string]: unknown }
+  P extends { [key: string]: unknown } = { [key: string]: unknown },
 >(
   handler: (
-    context: GetServerSidePropsContext
-  ) => GetServerSidePropsResult<P> | Promise<GetServerSidePropsResult<P>>
+    context: GetServerSidePropsContext,
+  ) => GetServerSidePropsResult<P> | Promise<GetServerSidePropsResult<P>>,
 ) {
   return withIronSessionSsr(handler, sessionOptions);
 }

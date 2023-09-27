@@ -117,6 +117,15 @@ export const getServerSideProps = withSessionSsr(async function ({ req }) {
     };
   }
 
+  if (user.type < Number(process.env.NEXT_PUBLIC_PERMISSION_ADMINPANEL)) {
+    return {
+      redirect: {
+        destination: '/account',
+        permanent: false,
+      },
+    };
+  }
+
   return {
     props: { user },
   };

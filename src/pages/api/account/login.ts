@@ -12,7 +12,13 @@ export const post = withSessionRoute(
     try {
       const account = await accountService.getAccountBy(
         { name, password: await sha1Encrypt(password) },
-        { id: true, name: true, twoFAEnabled: true, twoFASecret: true },
+        {
+          id: true,
+          name: true,
+          twoFAEnabled: true,
+          twoFASecret: true,
+          type: true,
+        },
       );
 
       if (!account) {

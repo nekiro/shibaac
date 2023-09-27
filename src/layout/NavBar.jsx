@@ -12,7 +12,6 @@ import {
   MenuGroup,
   IconButton,
   Link,
-  Icon,
 } from '@chakra-ui/react';
 import DropdownButton from '../components/DropdownButton';
 import TextInput from '../components/TextInput';
@@ -96,7 +95,6 @@ const MobileNavigation = ({ user }) => {
           hasMenu={true}
           list={[
             { text: 'Account Management', url: '/account' },
-            { text: 'Admin Panel', url: '/admin' },
             { text: 'Sign out', url: '/account/logout' },
           ]}
         />
@@ -152,7 +150,6 @@ const DesktopNavigation = ({ user }) => {
           hasMenu={true}
           list={[
             { text: 'Account Management', url: '/account' },
-            { text: 'Admin Panel', url: '/admin' },
             { text: 'Sign out', url: '/account/logout' },
           ]}
         />
