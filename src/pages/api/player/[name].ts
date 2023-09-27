@@ -10,7 +10,7 @@ const get = async (req: NextApiRequest, res: NextApiResponse) => {
   const player = await prisma.players.findFirst({
     where: { name: String(name) },
     select: {
-      account: {
+      accounts: {
         select: {
           players: { select: { name: true, level: true, vocation: true } },
         },
