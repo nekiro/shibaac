@@ -762,3 +762,17 @@ model player_preydata {
   data      Bytes   @db.Blob
   player    players @relation(fields: [player_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
+
+model player_autoloot {
+  id            Int    @id @default(autoincrement())
+  player_id     Int    @map("player_id")
+  autoloot_list Bytes? @db.Blob
+}
+
+model player_autoloot_persist {
+  player_guid Int
+  cont_id     Int
+  item_id     Int
+
+  @@id([player_guid, cont_id, item_id])
+}
