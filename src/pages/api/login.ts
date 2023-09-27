@@ -2,11 +2,10 @@ const { SERVER_NAME, SERVER_ADDRESS, SERVER_PORT, PVP_TYPE, FREE_PREMIUM } =
   process.env;
 
 import { NextApiRequest, NextApiResponse } from 'next';
-import { createHash } from 'crypto';
+import crypto, { createHash } from 'crypto';
 import parseDuration from 'parse-duration';
-import { groupToName, vocationIdToName } from '../../lib';
+import { vocationIdToName } from '../../lib';
 import prisma from '../../prisma';
-import * as accountService from '../../services/accountService';
 import { sha1Encrypt } from '../../lib/crypt';
 import speakeasy from 'speakeasy';
 
@@ -64,11 +63,11 @@ export default async function handler(
 }
 
 async function handleCacheInfo() {
-  const playersonline = await prisma.players_online.count({
-    where: { players: { group_id: { lt: 4 } } },
+  const playersOnline = await prisma.players_online.count({
+    where: { player: { group_id: { lt: 4 } } },
   });
   return {
-    playersonline,
+    playersOnline,
     twitchstreams: 0,
     twitchviewer: 0,
     gamingyoutubestreams: 0,
@@ -93,18 +92,21 @@ async function handleBoostedCreature() {
 async function handleLogin(params: LoginParams) {
   const { name, password, type, twoFAToken } = params;
 
-  const account = await accountService.getAccountBy(
-    { name, password: await sha1Encrypt(password) },
-    { id: true, name: true, twoFAEnabled: true, twoFASecret: true },
-  );
+  const account = await prisma.accounts.findFirst({
+    where: {
+      name,
+      password: await sha1Encrypt(password),
+    },
+    include: {
+      players: true,
+    },
+  });
 
   if (!account) {
     return { success: false, message: 'Wrong credentials.' };
   }
 
   if (account.twoFAEnabled) {
-    console.log('Secret:', account.twoFASecret);
-    console.log('Token:', twoFAToken);
     const verified = speakeasy.totp.verify({
       secret: String(account.twoFASecret),
       encoding: 'base32',
@@ -120,7 +122,7 @@ async function handleLogin(params: LoginParams) {
   let sessionKey: string = crypto.randomUUID();
   const hashedSessionId = createHash('sha1').update(sessionKey).digest('hex');
 
-  await prisma.accounts_sessions.create({
+  await prisma.account_sessions.create({
     data: {
       id: hashedSessionId,
       account_id: account.id,
@@ -147,7 +149,6 @@ async function handleLogin(params: LoginParams) {
       emailcoderequest: false,
     },
     playdata: {
-      // TODO: multiple worlds
       worlds: [
         {
           id: 0,
@@ -159,13 +160,13 @@ async function handleLogin(params: LoginParams) {
           externaladdressunprotected: SERVER_ADDRESS,
           externalportunprotected: serverPort,
           previewstate: 0,
-          location: 'USA',
+          location: 'BRA',
           anticheatprotection: false,
           pvptype,
           restrictedstore: false,
         },
       ],
-      characters: account.players.map((player): any => ({
+      characters: account.players.map((player: any) => ({
         worldid: 0,
         name: player.name,
         ismale: player.sex,
@@ -178,7 +179,6 @@ async function handleLogin(params: LoginParams) {
         legscolor: player.looklegs,
         detailcolor: player.lookfeet,
         addonsflags: player.lookaddons,
-        ishidden: player.settings?.hidden ? 1 : 0,
         ismaincharacter: player.is_main,
         dailyrewardstate: player.isreward ? 1 : 0,
       })),

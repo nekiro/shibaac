@@ -22,7 +22,7 @@ model account_ban_history {
 }
 
 model account_bans {
-  account_id Int      @id
+  account_id Int      @id @db.UnsignedInt
   reason     String   @db.VarChar(255)
   banned_at  BigInt
   expires_at BigInt
@@ -140,21 +140,20 @@ model global_storage {
 
 model guild_wars {
   id             Int             @id @default(autoincrement())
-  guild1         Int             @default(0)
-  guild2         Int             @default(0)
+  guild1Id       Int
+  guild2Id       Int
   name1          String          @db.VarChar(255)
   name2          String          @db.VarChar(255)
   status         Int             @default(0) @db.TinyInt
   started        BigInt          @default(0)
   ended          BigInt          @default(0)
   guildwar_kills guildwar_kills?
-  guilds         guilds?         @relation(fields: [guildsId], references: [id])
-  guildsId       Int?
-  guilds         guilds?         @relation(fields: [guildsId], references: [id])
-  guildsId       Int?
 
-  @@index([guild1], map: "guild1")
-  @@index([guild2], map: "guild2")
+  guild1 guilds @relation("guild1", fields: [guild1Id], references: [id])
+  guild2 guilds @relation("guild2", fields: [guild2Id], references: [id])
+
+  @@index([guild1Id], name: "idx_guild1")
+  @@index([guild2Id], name: "idx_guild2")
 }
 
 model guildwar_kills {
@@ -324,7 +323,7 @@ model aac_news {
   title      String   @db.VarChar(255)
   content    String   @db.VarChar(255)
   createdAt  DateTime @default(now())
-  authorId   Int
+  authorId   Int      @db.UnsignedInt
   author     accounts @relation(fields: [authorId], references: [id])
   playerNick String?  @db.VarChar(255)
   imageUrl   String?  @db.VarChar(255)
@@ -338,7 +337,7 @@ model guilds {
   id               Int                @id @default(autoincrement())
   level            Int                @default(1)
   name             String             @unique
-  ownerid          Int
+  ownerid          Int                @unique
   creationdata     DateTime
   motd             String             @default("")
   residence        Int                @default(0)
@@ -371,7 +370,7 @@ model guild_invites {
 }
 
 model guild_membership {
-  player_id Int
+  player_id Int         @unique
   guild_id  Int
   rank_id   Int
   nick      String      @default("")
@@ -718,7 +717,7 @@ model player_wheeldata {
 
 model purchases {
   id            Int      @id @default(autoincrement())
-  accountId     Int
+  accountId     Int      @db.UnsignedInt
   createdAt     DateTime @default(now())
   amount        Float
   status        String
@@ -734,7 +733,7 @@ model shop_orders {
   count     Int
   coins     Int
   createdAt DateTime @default(now())
-  accountId Int
+  accountId Int @db.UnsignedInt
 
   account accounts @relation(fields: [accountId], references: [id])
 }

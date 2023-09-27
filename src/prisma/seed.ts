@@ -27,6 +27,7 @@ async function main() {
         account_id: createdAccount.id,
         vocation: 0,
         sex: 1,
+        conditions: Buffer.from(''),
       },
     });
   }
