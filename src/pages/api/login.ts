@@ -1,5 +1,11 @@
-const { SERVER_NAME, SERVER_ADDRESS, SERVER_PORT, PVP_TYPE, FREE_PREMIUM } =
-  process.env;
+const {
+  SERVER_NAME,
+  SERVER_ADDRESS,
+  SERVER_PORT,
+  PVP_TYPE,
+  FREE_PREMIUM,
+  DEPRECATED_USE_SHA1_PASSWORDS,
+} = process.env;
 
 import { NextApiRequest, NextApiResponse } from 'next';
 import crypto, { createHash } from 'crypto';
@@ -62,6 +68,12 @@ export default async function handler(
   }
 }
 
+function isValidEmail(email: string) {
+  // Expressão regular para validar um e-mail
+  var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+  return regex.test(email);
+}
+
 async function handleCacheInfo() {
   const playersOnline = await prisma.players_online.count({
     where: { player: { group_id: { lt: 4 } } },
@@ -89,12 +101,12 @@ async function handleBoostedCreature() {
   };
 }
 
-async function handleLogin(params: LoginParams) {
-  const { name, password, type, twoFAToken } = params;
+async function handleLogin(params: any) {
+  const { accountname, email, password, token } = params;
 
   const account = await prisma.accounts.findFirst({
     where: {
-      name,
+      name: accountname,
       password: await sha1Encrypt(password),
     },
     include: {
@@ -106,29 +118,45 @@ async function handleLogin(params: LoginParams) {
     return { success: false, message: 'Wrong credentials.' };
   }
 
-  if (account.twoFAEnabled) {
-    const verified = speakeasy.totp.verify({
+  if (account.twoFASecret && !token) {
+    return {
+      success: false,
+      message: 'Two-factor token required for authentication',
+    };
+  }
+
+  if (
+    account.twoFASecret &&
+    token &&
+    !speakeasy.totp.verify({
       secret: String(account.twoFASecret),
       encoding: 'base32',
-      token: twoFAToken,
+      token: token,
       window: 2,
-    });
-
-    if (!verified) {
-      return { success: false, message: 'Wrong 2FA token.' };
-    }
+    })
+  ) {
+    return {
+      errorCode: 6,
+      errorMessage: 'Two-factor token is not correct.',
+    };
   }
 
   let sessionKey: string = crypto.randomUUID();
   const hashedSessionId = createHash('sha1').update(sessionKey).digest('hex');
 
-  await prisma.account_sessions.create({
-    data: {
-      id: hashedSessionId,
-      account_id: account.id,
-      expires: Math.trunc((Date.now() + SESSION_DURATION) / 1000),
-    },
-  });
+  const isEmailOrAccountName = email;
+
+  if (DEPRECATED_USE_SHA1_PASSWORDS) {
+    sessionKey = `${isEmailOrAccountName ? email : accountname}\n${password}`;
+  } else {
+    await prisma..create({
+      data: {
+        id: hashedSessionId,
+        account_id: account.id,
+        expires: Math.trunc((Date.now() + SESSION_DURATION) / 1000),
+      },
+    });
+  }
 
   const serverPort = parseInt(SERVER_PORT) ?? 7172;
   const pvptype = ['pvp', 'no-pvp', 'pvp-enforced'].indexOf(String(PVP_TYPE));

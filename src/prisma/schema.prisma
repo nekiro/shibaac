@@ -66,6 +66,7 @@ model accounts {
   rec_key            String? @unique()
   twoFASecret        String?
   twoFAEnabled       Boolean @default(false)
+  tournamentBalance  Int     @default(0)
 
   account_bans        account_bans?
   players             players[]
@@ -273,6 +274,11 @@ model players {
   boss_points                                       Int                    @default(0)
   is_main                                           Boolean                @default(false)
   pronoun                                           Int                    @default(0)
+  bonusrerollcount                                  BigInt                 @default(0)
+  quick_loot_fallback                               Int                    @default(0)
+  onlinepoint                                       Int                    @default(0)
+  onlinepointtrie                                   Int                    @default(0)
+  rewardTokens                                      Int                    @default(0)
   account_ban_history                               account_ban_history[]
   account_bans                                      account_bans[]
   account_viplist                                   account_viplist[]
@@ -298,11 +304,11 @@ model players {
   account                                           accounts               @relation(fields: [account_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "players_account_fk")
   online                                            players_online?
   aac_news                                          aac_news[]
+  player_preydata                                   player_preydata[]
 
   @@index([deletion], map: "deletion")
   @@index([account_id], map: "account_id")
   @@index([vocation], map: "vocation")
-  @@map("players")
 }
 
 model player_deaths {
@@ -733,7 +739,7 @@ model shop_orders {
   count     Int
   coins     Int
   createdAt DateTime @default(now())
-  accountId Int @db.UnsignedInt
+  accountId Int      @db.UnsignedInt
 
   account accounts @relation(fields: [accountId], references: [id])
 }
@@ -749,4 +755,10 @@ model boosted_creature {
   lookbody   Int    @default(0)
   lookaddons Int    @default(0)
   lookmount  Int?   @default(0)
+}
+
+model player_preydata {
+  player_id Int     @id @map("player_id")
+  data      Bytes   @db.Blob
+  player    players @relation(fields: [player_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
