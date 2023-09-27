@@ -3,9 +3,7 @@ import { withSessionRoute } from '../../../lib/session';
 import Stripe from 'stripe';
 
 if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error(
-    'STRIPE_SECRET_KEY is not defined in the environment variables',
-  );
+  throw new Error('Stripe Secret key not initialized.');
 }
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
@@ -25,9 +23,9 @@ const post = withSessionRoute(
         line_items: [
           {
             price_data: {
-              currency: 'brl', // TODO MAKE A SETTINGS TO CHANGE THIS CURRENCY
+              currency: process.env.NEXT_PUBLIC_CURRENCY || 'BRL',
               product_data: {
-                name: 'Your Product Name', // TODO MAKE A SETTINGS TO CHANGE THIS NAME
+                name: process.env.NEXT_PUBLIC_PRODUCT_NAME || 'Tibia Coins',
               },
               unit_amount: req.body.price * 100,
             },

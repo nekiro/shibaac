@@ -34,8 +34,8 @@ export const updateCache = async () => {
   try {
     const socket = new PromiseSocket(new net.Socket());
     await socket.connect(
-      parseInt(process.env.SERVER_PORT as string),
-      process.env.SERVER_ADDRESS as string,
+      parseInt(process.env.NEXT_PUBLIC_SERVER_PORT as string),
+      process.env.NEXT_PUBLIC_SERVER_ADDRESS as string,
     );
 
     await socket.write(

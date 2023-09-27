@@ -19,6 +19,11 @@ import TextInput from '../components/TextInput';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { useBreakpointValue } from '@chakra-ui/react';
 
+const shopItem = {
+  text: 'Shopping',
+  href: '/shop',
+};
+
 const navigationItems = [
   { text: 'Home', href: '/' },
   {
@@ -40,8 +45,11 @@ const navigationItems = [
     text: 'Library',
   },
   { text: 'Donate', href: '/donate' },
-  { text: 'Shopping', href: '/shop' },
 ];
+
+if (process.env.NEXT_PUBLIC_SHOP_ENABLED === 'true') {
+  navigationItems.push(shopItem);
+}
 
 const MobileNavigation = ({ user }) => {
   return (

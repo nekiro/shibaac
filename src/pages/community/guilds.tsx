@@ -15,7 +15,6 @@ import {
   FormControl,
   FormLabel,
   Select,
-  Text,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -24,6 +23,7 @@ import {
   ModalBody,
   Avatar,
   Button,
+  useToast,
 } from '@chakra-ui/react';
 
 type Button = {
@@ -83,6 +83,7 @@ export default function Guilds({ user }: any) {
   const [response, setResponse] = useState<ApiResponse | null>(null);
   const [info, setInfo] = useState<Account | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const toast = useToast();
 
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -149,6 +150,15 @@ export default function Guilds({ user }: any) {
       if (response.success) {
         closeModal();
         fetchGuilds();
+      } else {
+        toast({
+          position: 'top',
+          title: 'Error.',
+          description: response.message,
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        });
       }
     },
   });
@@ -286,7 +296,14 @@ export default function Guilds({ user }: any) {
                           <Input
                             placeholder={field.placeholder || ''}
                             name={field.name}
-                            onChange={formik.handleChange}
+                            onChange={(e) => {
+                              formik.handleChange(e);
+                              console.log(
+                                'Field updated:',
+                                e.target.name,
+                                e.target.value,
+                              );
+                            }}
                             onBlur={formik.handleBlur}
                             value={formik.values[field.name]}
                           />
@@ -323,11 +340,17 @@ export default function Guilds({ user }: any) {
                       return null;
                   }
                 })}
+                <Button
+                  width="100%"
+                  mt={4}
+                  size="sm"
+                  colorScheme="purple"
+                  type="submit"
+                >
+                  <i className="fa fa-lock"></i> Create Guild
+                </Button>
               </form>
             </ModalBody>
-            <Button mt={4} size="sm" colorScheme="purple" type="submit">
-              <i className="fa fa-lock"></i> Create Guild
-            </Button>
           </ModalContent>
         </Modal>
       )}

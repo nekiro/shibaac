@@ -13,6 +13,8 @@ const SideBar = (props: LayoutProps) => {
   const [topPlayers, setTopPlayers] = useState<players[]>();
   const [isLoading, setIsLoading] = useState(false);
 
+  const downloadURL = process.env.NEXT_PUBLIC_CLIENT_DOWNLOAD_URL;
+
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
@@ -38,12 +40,19 @@ const SideBar = (props: LayoutProps) => {
         <StripedTable
           head={[]}
           body={[
-            [{ text: 'IP' }, { text: 'ipdoservidor.com' }],
-            [{ text: 'Cliente' }, { text: '10.70 - 10.74' }],
+            [{ text: 'IP' }, { text: process.env.NEXT_PUBLIC_SERVER_ADDRESS }],
+            [
+              { text: 'Cliente' },
+              { text: process.env.NEXT_PUBLIC_CLIENT_VERSION },
+            ],
             [{ text: 'Tipo' }, { text: 'RPG/PVP' }],
           ]}
         />
-        <Button width="100%" colorScheme="purple" onClick={() => {}}>
+        <Button
+          width="100%"
+          colorScheme="purple"
+          onClick={() => window.open(downloadURL, '_blank')}
+        >
           Download Client
         </Button>
       </Panel>
