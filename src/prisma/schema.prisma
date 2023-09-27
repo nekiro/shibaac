@@ -290,7 +290,7 @@ model players {
   ip_bans                                           ip_bans[]
   market_history                                    market_history[]
   market_offers                                     market_offers[]
-  deaths                                            player_deaths[]
+  player_deaths                                     player_deaths[]
   depotitems                                        player_depotitems[]
   hirelings                                         player_hirelings[]
   inboxitems                                        player_inboxitems[]
