@@ -665,10 +665,12 @@ model store_history {
   mode        Int      @default(0) @db.SmallInt
   description String   @db.VarChar(3500)
   coin_type   Boolean  @default(false)
-  coin_amount Int
+  coin_amount Int      @default(0)
   time        BigInt   @db.UnsignedBigInt
   timestamp   Int      @default(0)
   coins       Int      @default(0)
+  coinMode    Int      @default(0)
+  cust        Int      @default(0)
   accounts    accounts @relation(fields: [account_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "store_history_account_fk")
 
   @@index([account_id], map: "account_id")
