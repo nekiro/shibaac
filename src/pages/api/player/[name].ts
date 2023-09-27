@@ -12,7 +12,6 @@ const get = async (req: NextApiRequest, res: NextApiResponse) => {
     select: {
       accounts: {
         select: {
-          premium_ends_at: true,
           players: { select: { name: true, level: true, vocation: true } },
         },
       },
