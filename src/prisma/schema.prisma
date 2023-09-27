@@ -31,15 +31,14 @@ model accounts {
   email           String  @unique() @db.VarChar(255)
   creation        Int     @default(0)
   twoFASecret     String?
-  twoFAEnabled    Boolean
+  twoFAEnabled    Boolean @default(false)
 
-  account_bans     account_bans?
-  players          players[]
-  resetToken       String?            @unique
-  purchases        purchases[]
-  aac_news         aac_news[]
-  shop_orders      shop_orders[]
-  account_sessions account_sessions[]
+  account_bans account_bans?
+  players      players[]
+  resetToken   String?       @unique
+  purchases    purchases[]
+  aac_news     aac_news[]
+  shop_orders  shop_orders[]
 }
 
 model players {
@@ -293,11 +292,4 @@ model boosted_creature {
   lookbody   Int    @default(0)
   lookaddons Int    @default(0)
   lookmount  Int?   @default(0)
-}
-
-model account_sessions {
-  id         Int      @id @default(autoincrement())
-  account_id Int      @db.UnsignedInt
-  expires    BigInt   @db.UnsignedBigInt
-  account    accounts @relation(fields: [account_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
