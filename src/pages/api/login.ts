@@ -171,7 +171,7 @@ async function handleLogin(params: LoginParams) {
         ismale: player.sex,
         tutorial: player.istutorial,
         level: player.level,
-        vocation: vocationString(player.vocation),
+        vocation: vocationIdToName[player.vocation],
         outfitid: player.looktype,
         headcolor: player.lookhead,
         torsocolor: player.lookbody,
