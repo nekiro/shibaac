@@ -8,9 +8,11 @@ import {
   Icon,
   Badge,
   Avatar,
+  Image,
 } from '@chakra-ui/react';
 import { BiGhost, BiTargetLock } from 'react-icons/bi';
 import { differenceInDays, formatDistanceToNow } from 'date-fns';
+import { vocationIdToName, getOutfitImageUrl } from '../lib';
 
 export function timestampToDaysAgo(timestamp) {
   const date = new Date(timestamp * 1000);
@@ -58,6 +60,17 @@ export function Timeline({ items }) {
 function TimelineItem({ date, text, deathType, killer }) {
   let formattedDate = timestampToDaysAgo(date);
 
+  const monsterImageUrl = 'https://www.tibiawiki.com.br/images/1/19/Hydra.gif';
+
+  const player = {
+    lookaddons: killer.lookaddons,
+    lookbody: killer.lookbody,
+    lookfeet: killer.lookfeet,
+    lookhead: killer.lookhead,
+    looklegs: killer.looklegs,
+    looktype: killer.looktype,
+  };
+
   let DeathIcon;
   if (deathType) {
     DeathIcon = BiTargetLock;
@@ -65,14 +78,12 @@ function TimelineItem({ date, text, deathType, killer }) {
     DeathIcon = BiGhost;
   }
 
-  console.log('killer', killer);
-
   return (
-    <Flex w="100%" alignItems="center" justifyContent="space-between">
+    <Flex w="100%" justifyContent="space-between" alignItems="center">
       <Text flex="1" textAlign="right" pr={2} fontStyle="italic">
         {formattedDate}
       </Text>
-      <Box position="relative" zIndex="1">
+      <Box position="relative" zIndex="1" alignSelf="flex-start">
         <Circle
           size="34px"
           bg="purple.300"
@@ -84,13 +95,48 @@ function TimelineItem({ date, text, deathType, killer }) {
         </Circle>
       </Box>
       <Flex flex="1" pl={2} direction="column">
-        <Text>
+        <Text mb="10px">
           {text} {deathType && <Badge colorScheme="red">unjustified</Badge>}
         </Text>
-
-        <Flex alignItems="center" mt={2}>
-          <Avatar size="sm" src={killer.avatar} />
-          <Text ml={2}>{killer.killed_by} (Lvl 81, Paladin)</Text>
+        <Flex alignItems="center">
+          {' '}
+          <Box
+            border="3px solid #9261b8"
+            borderRadius="50%"
+            display="inline-flex"
+            alignItems="center"
+            justifyContent="center"
+            width="68px"
+            height="68px"
+          >
+            <Circle size="64px" bg="#b794f4" position="relative">
+              <Image
+                src={
+                  killer.isMonster ? monsterImageUrl : getOutfitImageUrl(player)
+                }
+                alt={`${killer.name}'s Outfit`}
+                height="68px"
+                width="68px"
+                objectFit="contain"
+                position="absolute"
+                top="50%"
+                left="50%"
+                transform={
+                  killer.isMonster
+                    ? 'translate(-50%, -50%)'
+                    : 'translate(-50%, -50%) translate(-14px, -14px)'
+                }
+                zIndex="1"
+              />
+            </Circle>
+          </Box>
+          <Text display="flex" ml="16px">
+            <Text color="#b794f4" mr="8px">
+              {killer.killed_by}
+            </Text>
+            {!killer.isMonster &&
+              ` ${killer.level} ${vocationIdToName[killer.vocation]}`}
+          </Text>
         </Flex>
       </Flex>
     </Flex>

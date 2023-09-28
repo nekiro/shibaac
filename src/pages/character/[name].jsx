@@ -155,6 +155,15 @@ export default function Character() {
                   killed_by: death.killed_by,
                   mostdamage_by: death.mostdamage_by,
                   unjustified: death.unjustified,
+                  level: death.killerDetails.level,
+                  vocation: death.killerDetails.vocation,
+                  isMonster: death.killerDetails.isMonster,
+                  lookaddons: death.killerDetails.lookaddons,
+                  lookbody: death.killerDetails.lookbody,
+                  lookfeet: death.killerDetails.lookfeet,
+                  lookhead: death.killerDetails.lookhead,
+                  looklegs: death.killerDetails.looklegs,
+                  looktype: death.killerDetails.looktype,
                 },
               }))}
             />

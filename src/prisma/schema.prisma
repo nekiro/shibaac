@@ -312,7 +312,8 @@ model players {
 }
 
 model player_deaths {
-  player_id              Int     @id
+  id                     Int     @id @default(autoincrement())
+  player_id              Int
   time                   BigInt  @default(0)
   level                  Int     @default(1)
   killed_by              String  @db.VarChar(255)

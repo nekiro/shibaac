@@ -31,21 +31,46 @@ const get = async (req: NextApiRequest, res: NextApiResponse) => {
     const deathsWithDetails: any[] = [];
 
     for (let death of player.player_deaths) {
-      const killer = await prisma.players.findFirst({
-        where: { name: death.killed_by },
-        select: { level: true, vocation: true },
-      });
+      if (death.is_player) {
+        const killer = await prisma.players.findFirst({
+          where: { name: death.killed_by },
+          select: {
+            level: true,
+            vocation: true,
+            lookbody: true,
+            lookfeet: true,
+            lookhead: true,
+            looklegs: true,
+            looktype: true,
+            lookaddons: true,
+          },
+        });
 
-      if (killer) {
+        if (killer) {
+          deathsWithDetails.push({
+            ...death,
+            killerDetails: {
+              level: killer.level,
+              vocation: killer.vocation,
+              lookbody: killer.lookbody,
+              lookfeet: killer.lookfeet,
+              lookhead: killer.lookhead,
+              looklegs: killer.looklegs,
+              looktype: killer.looktype,
+              lookaddons: killer.lookaddons,
+            },
+          });
+        } else {
+          deathsWithDetails.push(death);
+        }
+      } else {
         deathsWithDetails.push({
           ...death,
           killerDetails: {
-            level: killer.level,
-            vocation: killer.vocation,
+            name: death.killed_by,
+            isMonster: true,
           },
         });
-      } else {
-        deathsWithDetails.push(death);
       }
     }
 

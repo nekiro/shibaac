@@ -35,6 +35,10 @@ export const createPlayer = async (
         manamax: 0,
         cap: 400,
         soul: 100,
+        town_id: 1,
+        posx: 461,
+        posy: 1021,
+        posz: 7,
       },
     });
 
