@@ -23,8 +23,9 @@ import {
   Text,
   Wrap,
 } from '@chakra-ui/react';
-import { vocationIdToName } from '../../lib';
+import { vocationIdToName, timestampToDate } from '../../lib';
 import { Toggle } from '../../components/Toggle';
+import { SettingsIcon } from '@chakra-ui/icons';
 
 export default function Account({ user }) {
   const [info, setInfo] = useState(null);
@@ -109,6 +110,52 @@ export default function Account({ user }) {
               ],
               //{ name: 'Last Login', value: '11/02/2021' },
               [{ text: 'Shop Coins' }, { text: info.coins }],
+              info.type >= Number(process.env.NEXT_PUBLIC_PERMISSION_ADMINPANEL)
+                ? [
+                    { text: 'Admin Panel' },
+                    {
+                      text: (
+                        <Box
+                          position="relative"
+                          display="flex"
+                          alignItems="center"
+                        >
+                          <SettingsIcon
+                            w={10}
+                            h={10}
+                            color="white"
+                            bg="gray.700"
+                            borderRadius="full"
+                            p={3}
+                            boxShadow="md"
+                            _hover={{
+                              bg: 'gray.600',
+                              transform: 'scale(1.05)',
+                            }}
+                            cursor="pointer"
+                            onClick={() => {
+                              // Redirect to the admin panel
+                              window.location.href = '/admin';
+                            }}
+                          />
+                        </Box>
+                      ),
+                    },
+                  ]
+                : [],
+              [
+                { text: 'Enable 2FA:' },
+                {
+                  text: (
+                    <Box display="flex" alignItems="center">
+                      <Toggle
+                        isToggled={is2FAEnabled}
+                        onToggle={handleToggle}
+                      />
+                    </Box>
+                  ),
+                },
+              ],
             ]}
           >
             {/* '.(!$rec_key ? '
@@ -121,6 +168,11 @@ export default function Account({ user }) {
                 ' : '').' */}
             {/* </td> */}
           </StripedTable>
+          {console.log(
+            'NEXT_PUBLIC_PERMISSION_ADMINPANEL',
+            process.env.NEXT_PUBLIC_PERMISSION_ADMINPANEL,
+          )}
+          {console.log('info', info.type)}
         </Panel>
 
         <Panel header="Actions">
@@ -154,10 +206,6 @@ export default function Account({ user }) {
             />
             {isLoading && <Spinner />}
 
-            <Box display="flex" alignItems="center">
-              <Text mr={4}>Enable 2FA:</Text>
-              <Toggle isToggled={is2FAEnabled} onToggle={handleToggle} />
-            </Box>
             {is2FAEnabled && qrCodeDataURL && (
               <Modal isOpen={isOpenModal} onClose={() => setIsOpenModal(false)}>
                 <ModalOverlay />

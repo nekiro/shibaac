@@ -185,10 +185,20 @@ function AdminPanel() {
 }
 export const getServerSideProps = withSessionSsr(async function ({ req }) {
   const { user } = req.session;
+
   if (!user) {
     return {
       redirect: {
         destination: '/account/login',
+        permanent: false,
+      },
+    };
+  }
+
+  if (user.type < Number(process.env.NEXT_PUBLIC_PERMISSION_ADMINPANEL)) {
+    return {
+      redirect: {
+        destination: '/account',
         permanent: false,
       },
     };

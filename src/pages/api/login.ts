@@ -1,10 +1,10 @@
 const {
-  SERVER_NAME,
-  SERVER_ADDRESS,
-  SERVER_PORT,
-  PVP_TYPE,
-  FREE_PREMIUM,
-  DEPRECATED_USE_SHA1_PASSWORDS,
+  NEXT_PUBLIC_SERVER_NAME,
+  NEXT_PUBLIC_SERVER_ADDRESS,
+  NEXT_PUBLIC_SERVER_PORT,
+  NEXT_PUBLIC_PVP_TYPE,
+  NEXT_PUBLIC_FREE_PREMIUM,
+  NEXT_PUBLIC_DEPRECATED_USE_SHA1_PASSWORDS,
 } = process.env;
 
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -15,15 +15,9 @@ import prisma from '../../prisma';
 import { sha1Encrypt } from '../../lib/crypt';
 import speakeasy from 'speakeasy';
 
-interface LoginParams {
-  type: 'login';
-  name: string;
-  password: string;
-  twoFAToken?: string;
-}
-
 const SESSION_DURATION =
-  parseDuration(process.env.GAME_SESSION_EXPIRATION_TIME ?? '1d') ?? 3600 * 24;
+  parseDuration(process.env.NEXT_PUBLIC_GAME_SESSION_EXPIRATION_TIME ?? '1d') ??
+  3600 * 24;
 
 export default async function handler(
   req: NextApiRequest,
@@ -69,17 +63,15 @@ export default async function handler(
 }
 
 function isValidEmail(email: string) {
-  // Expressão regular para validar um e-mail
   var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
   return regex.test(email);
 }
 
 async function handleCacheInfo() {
-  const playersOnline = await prisma.players_online.count({
-    where: { player: { group_id: { lt: 4 } } },
-  });
+  const playersOnline = await prisma.players_online.count();
+
   return {
-    playersOnline,
+    playersonline: playersOnline,
     twitchstreams: 0,
     twitchviewer: 0,
     gamingyoutubestreams: 0,
@@ -88,15 +80,19 @@ async function handleCacheInfo() {
 }
 
 async function handleBoostedCreature() {
-  const boostedCreature = await prisma.boosted_creature.findFirstOrThrow({
-    select: { raceid: true },
+  const boostedCreature = await prisma.server_config.findFirst({
+    where: {
+      config: 'boost_monster',
+    },
   });
-  // const boostedBoss = await prisma.boostedBoss.findFirstOrThrow({
-  //   select: { raceid: true },
-  // });
+
+  if (!boostedCreature) {
+    throw new Error('Boosted creature config not found.');
+  }
+
   return {
     boostedcreature: true,
-    creatureraceid: Number(boostedCreature.raceid),
+    raceid: Number(boostedCreature.value),
     bossraceid: 0,
   };
 }
@@ -144,12 +140,12 @@ async function handleLogin(params: any) {
   let sessionKey: string = crypto.randomUUID();
   const hashedSessionId = createHash('sha1').update(sessionKey).digest('hex');
 
-  const isEmailOrAccountName = email;
+  const isEmailOrAccountName = isValidEmail(email);
 
-  if (DEPRECATED_USE_SHA1_PASSWORDS) {
+  if (NEXT_PUBLIC_DEPRECATED_USE_SHA1_PASSWORDS) {
     sessionKey = `${isEmailOrAccountName ? email : accountname}\n${password}`;
   } else {
-    await prisma..create({
+    await prisma.account_sessions.create({
       data: {
         id: hashedSessionId,
         account_id: account.id,
@@ -158,15 +154,18 @@ async function handleLogin(params: any) {
     });
   }
 
-  const serverPort = parseInt(SERVER_PORT) ?? 7172;
-  const pvptype = ['pvp', 'no-pvp', 'pvp-enforced'].indexOf(String(PVP_TYPE));
+  const serverPort = parseInt(NEXT_PUBLIC_SERVER_PORT) ?? 7172;
+  const pvptype = ['pvp', 'no-pvp', 'pvp-enforced'].indexOf(
+    String(NEXT_PUBLIC_PVP_TYPE),
+  );
   const now = Math.trunc(Date.now() / 1000);
 
   return {
     session: {
       sessionkey: sessionKey,
       lastlogintime: '0', // TODO: implement last login
-      ispremium: FREE_PREMIUM === 'true' ? true : account.lastday > now,
+      ispremium:
+        NEXT_PUBLIC_FREE_PREMIUM === 'true' ? true : account.lastday > now,
       premiumuntil: account.lastday,
       status: 'active',
       returnernotification: false,
@@ -180,12 +179,12 @@ async function handleLogin(params: any) {
       worlds: [
         {
           id: 0,
-          name: SERVER_NAME,
-          externaladdress: SERVER_ADDRESS,
+          name: NEXT_PUBLIC_SERVER_NAME,
+          externaladdress: NEXT_PUBLIC_SERVER_ADDRESS,
           externalport: serverPort,
-          externaladdressprotected: SERVER_ADDRESS,
+          externaladdressprotected: NEXT_PUBLIC_SERVER_ADDRESS,
           externalportprotected: serverPort,
-          externaladdressunprotected: SERVER_ADDRESS,
+          externaladdressunprotected: NEXT_PUBLIC_SERVER_ADDRESS,
           externalportunprotected: serverPort,
           previewstate: 0,
           location: 'BRA',

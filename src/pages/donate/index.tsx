@@ -20,7 +20,11 @@ import {
   Image as ChakraImage,
 } from '@chakra-ui/react';
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!);
+let stripePromise;
+
+if (process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY) {
+  stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!);
+}
 
 interface Package {
   id: number;
@@ -180,7 +184,14 @@ export default function BuyCoins({ user }: any) {
     const stripe = await stripePromise;
 
     if (!stripe) {
-      throw new Error("Stripe hasn't been initialized yet.");
+      return toast({
+        position: 'top',
+        title: 'Erro',
+        description: 'Stripe hasnt been initialized yet.',
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
     }
 
     try {

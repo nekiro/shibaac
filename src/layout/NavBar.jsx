@@ -12,12 +12,16 @@ import {
   MenuGroup,
   IconButton,
   Link,
-  Icon,
 } from '@chakra-ui/react';
 import DropdownButton from '../components/DropdownButton';
 import TextInput from '../components/TextInput';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { useBreakpointValue } from '@chakra-ui/react';
+
+const shopItem = {
+  text: 'Shopping',
+  href: '/shop',
+};
 
 const navigationItems = [
   { text: 'Home', href: '/' },
@@ -40,8 +44,11 @@ const navigationItems = [
     text: 'Library',
   },
   { text: 'Donate', href: '/donate' },
-  { text: 'Shopping', href: '/shop' },
 ];
+
+if (process.env.NEXT_PUBLIC_SHOP_ENABLED === 'true') {
+  navigationItems.push(shopItem);
+}
 
 const MobileNavigation = ({ user }) => {
   return (
@@ -88,7 +95,6 @@ const MobileNavigation = ({ user }) => {
           hasMenu={true}
           list={[
             { text: 'Account Management', url: '/account' },
-            { text: 'Admin Panel', url: '/admin' },
             { text: 'Sign out', url: '/account/logout' },
           ]}
         />
@@ -144,7 +150,6 @@ const DesktopNavigation = ({ user }) => {
           hasMenu={true}
           list={[
             { text: 'Account Management', url: '/account' },
-            { text: 'Admin Panel', url: '/admin' },
             { text: 'Sign out', url: '/account/logout' },
           ]}
         />

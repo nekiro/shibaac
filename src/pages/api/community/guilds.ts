@@ -39,15 +39,41 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method == 'POST') {
     const { leader_id, leader_name, guild_name } = req.body;
+    const requiredLevel = parseInt(
+      process.env.NEXT_PUBLIC_MIN_GUILD_LEVEL_CREATE || '8',
+    );
 
     if (!leader_id || !leader_name || !guild_name) {
       return res.status(400).json({
         success: false,
-        error: 'Leader ID and guild name are required',
+        message: 'Leader ID and guild name are required',
       });
     }
 
     try {
+      const player = await prisma.players.findUnique({
+        where: {
+          id: leader_id,
+        },
+        select: {
+          level: true,
+        },
+      });
+
+      if (!player) {
+        return res.status(400).json({
+          success: false,
+          message: 'Player not found',
+        });
+      }
+
+      if (player.level < requiredLevel) {
+        return res.status(400).json({
+          success: false,
+          message: `Player's level must be at least ${requiredLevel} to create a guild.`,
+        });
+      }
+
       const newGuild = await prisma.guilds.create({
         data: {
           name: guild_name,

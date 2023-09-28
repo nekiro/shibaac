@@ -28,6 +28,17 @@ export const createPlayer = async (
         account_id,
         vocation,
         sex,
+        conditions: Buffer.from(''),
+        health: 150,
+        healthmax: 150,
+        mana: 0,
+        manamax: 0,
+        cap: 400,
+        soul: 100,
+        town_id: 1,
+        posx: 461,
+        posy: 1021,
+        posz: 7,
       },
     });
 
