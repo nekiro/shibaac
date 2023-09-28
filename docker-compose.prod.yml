@@ -1,0 +1,46 @@
+version: '3.9'
+
+services:
+  frontend:
+    container_name: frontend
+    build: 
+      context: .
+      target: dev
+    ports:
+      - 3000:3000
+    depends_on:
+      - database
+    env_file: .env
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+
+  database:
+    image: mysql:8.0.32
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: true
+      MYSQL_DATABASE: shibaac
+    volumes:
+      - mysql-data:/data/mysql
+      # - ./db.sql:/docker-entrypoint-initdb.d/db.sql
+    restart: unless-stopped
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin
+    ports:
+      - 8080:80
+    environment:
+      PMA_HOST: database
+      MYSQL_USERNAME: root
+      MYSQL_ROOT_PASSWORD: ""
+      UPLOAD_LIMIT: 300M
+    depends_on:
+      - database
+    restart: unless-stopped
+
+volumes:
+  mysql-data:
+  aac-data:
