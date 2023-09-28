@@ -305,6 +305,7 @@ model players {
   online                                            players_online?
   aac_news                                          aac_news[]
   player_preydata                                   player_preydata[]
+  bazarListings                                     bazarListings?
 
   @@index([deletion], map: "deletion")
   @@index([account_id], map: "account_id")
@@ -776,4 +777,29 @@ model player_autoloot_persist {
   item_id     Int
 
   @@id([player_guid, cont_id, item_id])
+}
+
+model bazarListings {
+  id             Int     @id @default(autoincrement())
+  playerId       Int     @unique
+  name           String
+  level          Int
+  vocation       Int
+  characterPage  String
+  highlight      Boolean
+  country        String
+  world          Int
+  pvpType        String
+  battlEyeStatus String
+  remainingTime  String
+  endingAt       String
+  coins          Int
+  equipedItems   Json?
+  skills         Json
+  quests         Json?
+  charms         Json?
+
+  player players @relation(fields: [playerId], references: [id])
+
+  @@index([playerId], name: "idx_bazarListings_playerId")
 }

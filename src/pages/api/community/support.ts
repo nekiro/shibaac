@@ -1,5 +1,5 @@
-import prisma from '../../../prisma';
 import { NextApiRequest, NextApiResponse } from 'next';
+import prisma from '../../../prisma';
 import apiHandler from '../../../middleware/apiHandler';
 
 const get = async (req: NextApiRequest, res: NextApiResponse) => {

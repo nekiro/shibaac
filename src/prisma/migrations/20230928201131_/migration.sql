@@ -285,6 +285,7 @@ CREATE TABLE `players` (
 
 -- CreateTable
 CREATE TABLE `player_deaths` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
     `player_id` INTEGER NOT NULL,
     `time` BIGINT NOT NULL DEFAULT 0,
     `level` INTEGER NOT NULL DEFAULT 1,
@@ -295,7 +296,7 @@ CREATE TABLE `player_deaths` (
     `unjustified` BOOLEAN NOT NULL DEFAULT false,
     `mostdamage_unjustified` BOOLEAN NOT NULL DEFAULT false,
 
-    PRIMARY KEY (`player_id`)
+    PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -675,8 +676,6 @@ CREATE TABLE `store_history` (
     `time` BIGINT UNSIGNED NOT NULL,
     `timestamp` INTEGER NOT NULL DEFAULT 0,
     `coins` INTEGER NOT NULL DEFAULT 0,
-    `coinMode` INTEGER NOT NULL DEFAULT 0,
-    `cust` INTEGER NOT NULL DEFAULT 0,
 
     INDEX `account_id`(`account_id`),
     PRIMARY KEY (`id`)

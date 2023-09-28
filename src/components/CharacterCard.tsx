@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+
 import {
   Box,
   Flex,
@@ -6,16 +7,18 @@ import {
   Image,
   Text,
   VStack,
-  Badge,
   Icon,
-  Button,
-  Circle,
+  Checkbox,
   Divider,
   Heading,
   Progress,
   Square,
+  Collapse,
+  Button,
+  Tooltip,
 } from '@chakra-ui/react';
 import { getItemImageUrl } from '../lib';
+import { ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons';
 
 interface CharacterData {
   id: string;
@@ -43,6 +46,8 @@ interface Props {
 }
 
 const CharacterCard: React.FC<Props> = ({ characterData }) => {
+  const [showDetails, setShowDetails] = useState(false);
+
   const {
     name,
     level,
@@ -132,7 +137,7 @@ const CharacterCard: React.FC<Props> = ({ characterData }) => {
           </Text>
         </VStack>
 
-        <Button>Fav</Button>
+        <Button>Buy</Button>
       </Flex>
 
       <Divider my="3" />
@@ -210,7 +215,7 @@ const CharacterCard: React.FC<Props> = ({ characterData }) => {
         </VStack>
         <VStack spacing={4} align="start">
           {['Club', 'Sword', 'Axe', 'Shielding'].map((skillName) => {
-            const color = getSkillColor(characterData.skills[skillName]);
+            const color = getSkillColor(skills[skillName]);
             return (
               <Box key={skillName} w="100%">
                 <Flex align="center">
@@ -230,7 +235,7 @@ const CharacterCard: React.FC<Props> = ({ characterData }) => {
                       fontSize="sm"
                       color={`${color}.800`}
                     >
-                      {characterData.skills[skillName]}
+                      {skills[skillName]}
                     </Text>
                   </Square>
                   <Text fontWeight="semibold" fontSize="sm">
@@ -251,9 +256,94 @@ const CharacterCard: React.FC<Props> = ({ characterData }) => {
 
       <Divider my="3" />
 
-      <Flex wrap="wrap" justifyContent="space-between">
-        {`${charms.total}/${charms.max}`}
-      </Flex>
+      <Box position="relative">
+        <Heading color="violet.400">Extras</Heading>
+        <Divider my="3" />
+        <Box
+          position="absolute"
+          top="10px"
+          right="10px"
+          cursor="pointer"
+          onClick={() => setShowDetails(!showDetails)}
+        >
+          {showDetails ? <ChevronUpIcon /> : <ChevronDownIcon />}
+        </Box>
+
+        <Collapse in={showDetails} animateOpacity>
+          <Grid templateColumns="repeat(2, 1fr)" gap={4} mt="15">
+            <VStack spacing={4} align="start">
+              {['imbuements', 'charms', 'quests'].map((itemName) => (
+                <Box key={itemName} w="100%">
+                  <Flex align="center" justify="space-between">
+                    <Text fontWeight="semibold" fontSize="sm">
+                      {itemName.charAt(0).toUpperCase() + itemName.slice(1)}
+                    </Text>
+
+                    {itemName === 'quests' ? (
+                      <Tooltip
+                        label={characterData.quests.completedQuests.join(', ')}
+                        fontSize="xs"
+                        placement="top"
+                        maxW="300px"
+                        overflowWrap="break-word"
+                        bg="violet.700"
+                        color="white"
+                        p={2}
+                        borderRadius="md"
+                        border="1px solid"
+                        borderColor="violet.600"
+                        shadow="lg"
+                      >
+                        <Text fontSize="sm">
+                          {characterData.quests.total}/
+                          {characterData.quests.max}
+                        </Text>
+                      </Tooltip>
+                    ) : (
+                      <Text fontSize="sm">
+                        {characterData[itemName].total}/
+                        {characterData[itemName].max}
+                      </Text>
+                    )}
+                  </Flex>
+                </Box>
+              ))}
+              <Box w="100%">
+                <Flex align="center" justify="space-between">
+                  <Text fontWeight="semibold" fontSize="sm">
+                    Boss Points
+                  </Text>
+                  <Text fontSize="sm">{characterData.bossPoints}</Text>
+                </Flex>
+              </Box>
+            </VStack>
+            <VStack spacing={4} align="start">
+              {characterData.extras.map((extra, index) => (
+                <Checkbox
+                  key={index}
+                  isChecked={true}
+                  isReadOnly
+                  size="lg"
+                  colorScheme="purple"
+                  fontSize="md"
+                  fontWeight="medium"
+                  borderColor="violet.600"
+                  borderRadius="md"
+                  px={2}
+                  py={1}
+                  _checked={{
+                    bg: 'violet.200',
+                    borderColor: 'violet.500',
+                    color: 'violet.800',
+                  }}
+                >
+                  {extra}
+                </Checkbox>
+              ))}
+            </VStack>
+          </Grid>
+        </Collapse>
+      </Box>
     </Box>
   );
 };

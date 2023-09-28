@@ -7,6 +7,7 @@ import * as Yup from 'yup';
 import { withSessionSsr } from '../../lib/session';
 import { fetchApi } from '../../lib/request';
 import Link from 'next/link';
+import { Field } from '../../shared/types/Fields';
 
 import {
   Box,
@@ -39,24 +40,6 @@ type Button = {
     | 'dark';
   href?: string;
   value: string;
-};
-
-type Option = {
-  label: string;
-  value: string | number;
-  text: string;
-};
-
-type Field = {
-  type: string;
-  name: string;
-  placeholder?: string;
-  label: {
-    text: string;
-    size: number;
-  };
-  size: number;
-  options?: Option[];
 };
 
 type ApiResponse = {

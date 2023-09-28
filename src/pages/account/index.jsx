@@ -20,7 +20,6 @@ import {
   ModalHeader,
   ModalOverlay,
   Spinner,
-  Text,
   Wrap,
 } from '@chakra-ui/react';
 import { vocationIdToName, timestampToDate } from '../../lib';
