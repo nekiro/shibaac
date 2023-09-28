@@ -68,11 +68,10 @@ function isValidEmail(email: string) {
 }
 
 async function handleCacheInfo() {
-  const playersOnline = await prisma.players_online.count({
-    where: { player: { group_id: { lt: 4 } } },
-  });
+  const playersOnline = await prisma.players_online.count();
+
   return {
-    playersOnline,
+    playersonline: playersOnline,
     twitchstreams: 0,
     twitchviewer: 0,
     gamingyoutubestreams: 0,
@@ -84,13 +83,14 @@ async function handleBoostedCreature() {
   const boostedCreature = await prisma.boosted_creature.findFirstOrThrow({
     select: { raceid: true },
   });
-  // const boostedBoss = await prisma.boostedBoss.findFirstOrThrow({
-  //   select: { raceid: true },
-  // });
+  const boostedBoss = await prisma.boosted_boss.findFirstOrThrow({
+    select: { raceid: true },
+  });
+
   return {
     boostedcreature: true,
     creatureraceid: Number(boostedCreature.raceid),
-    bossraceid: 0,
+    bossraceid: Number(boostedBoss.raceid),
   };
 }
 
