@@ -44,6 +44,9 @@ export const parseXml = (document: string) => {
   return parser.parse(document);
 };
 
+export const formatNumberWithCommas = (x: number): string =>
+  x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
 export const vocationIdToName = [
   'None', // 0
   'Sorcerer',
@@ -73,8 +76,14 @@ export const RankGuild = [
   'Member', // 3
 ];
 
-export const getOutfitImageUrl = (player) => {
+export const getOutfitImageUrl = (player: any) => {
   const baseOutfitURL =
     'https://outfit-images.ots.me/idleOutfits1092/outfit.php';
   return `${baseOutfitURL}?id=${player.looktype}&addons=${player.lookaddons}&head=${player.lookhead}&body=${player.lookbody}&legs=${player.lookmountlegs}&feet=${player.lookmountfeet}&mount=0&direction=3`;
+};
+
+export const getItemImageUrl = (itemid: string) => {
+  const baseItemURL = `https://item-images.ots.me/latest_otbr/${itemid}.png`;
+
+  return baseItemURL;
 };

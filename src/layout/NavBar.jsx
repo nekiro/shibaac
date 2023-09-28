@@ -31,6 +31,7 @@ const navigationItems = [
       { text: 'Highscores', url: '/community/highscores' },
       { text: 'Guilds', url: '/community/guilds' },
       { text: 'Houses', url: '/community/houses' },
+      { text: 'Character Bazar', url: '/community/characterbazar' },
       { text: 'Support Team', url: '/community/support' },
     ],
     text: 'Community',
