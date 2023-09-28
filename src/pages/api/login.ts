@@ -80,17 +80,20 @@ async function handleCacheInfo() {
 }
 
 async function handleBoostedCreature() {
-  const boostedCreature = await prisma.boosted_creature.findFirstOrThrow({
-    select: { raceid: true },
+  const boostedCreature = await prisma.server_config.findFirst({
+    where: {
+      config: 'boost_monster',
+    },
   });
-  const boostedBoss = await prisma.boosted_boss.findFirstOrThrow({
-    select: { raceid: true },
-  });
+
+  if (!boostedCreature) {
+    throw new Error('Boosted creature config not found.');
+  }
 
   return {
     boostedcreature: true,
-    creatureraceid: Number(boostedCreature.raceid),
-    bossraceid: Number(boostedBoss.raceid),
+    raceid: Number(boostedCreature.value),
+    bossraceid: 0,
   };
 }
 
