@@ -1,8 +1,8 @@
-import * as Yup from 'yup';
+import * as Yup from "yup";
 
 export const deleteCharacterSchema = Yup.object().shape({
-  password: Yup.string().required('Required'),
-  name: Yup.string().required('Required'),
+	password: Yup.string().required("Required"),
+	name: Yup.string().required("Required"),
 });
 
 export type DeleteCharacter = Yup.TypeOf<typeof deleteCharacterSchema>;

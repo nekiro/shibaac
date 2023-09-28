@@ -1,14 +1,14 @@
-import { withSessionRoute } from '../../../lib/session';
-import { NextApiRequest, NextApiResponse } from 'next';
-import apiHandler from '../../../middleware/apiHandler';
+import { withSessionRoute } from "../../../lib/session";
+import { NextApiRequest, NextApiResponse } from "next";
+import apiHandler from "../../../middleware/apiHandler";
 
 const post = withSessionRoute(
-  async (req: NextApiRequest, res: NextApiResponse) => {
-    req.session.destroy();
-    res.json({ success: true });
-  }
+	async (req: NextApiRequest, res: NextApiResponse) => {
+		req.session.destroy();
+		res.json({ success: true });
+	}
 );
 
 export default apiHandler({
-  post,
+	post,
 });

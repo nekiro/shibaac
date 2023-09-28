@@ -1,7 +1,7 @@
 // TODO: implement proper 404 page
 
 export default function Custom404() {
-  return null;
+	return null;
 }
 
 // breaks CLI auto deployment, Error: `redirect` can not be returned from getStaticProps during prerendering (/404)

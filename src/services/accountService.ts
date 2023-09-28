@@ -1,90 +1,90 @@
-import { accounts, Prisma } from '@prisma/client';
-import prisma from '../prisma';
-import { sha1Encrypt } from '../lib/crypt';
+import { accounts, Prisma } from "@prisma/client";
+import prisma from "../prisma";
+import { sha1Encrypt } from "../lib/crypt";
 
 type Account = Promise<accounts | null>;
 
 export const getAccountByIdIncludeDefault: Prisma.accountsInclude = {
-  players: { select: { id: true, name: true, level: true, vocation: true } },
+	players: { select: { id: true, name: true, level: true, vocation: true } },
 };
 
 export const getAccountById = async (
-  accountId: number,
-  include:
-    | Prisma.accountsInclude
-    | null
-    | undefined = getAccountByIdIncludeDefault,
+	accountId: number,
+	include:
+		| Prisma.accountsInclude
+		| null
+		| undefined = getAccountByIdIncludeDefault
 ): Account => {
-  try {
-    const account = await prisma.accounts.findFirst({
-      where: {
-        id: accountId,
-      },
-      include,
-    });
+	try {
+		const account = await prisma.accounts.findFirst({
+			where: {
+				id: accountId,
+			},
+			include,
+		});
 
-    return account;
-  } catch (err) {
-    return null;
-  }
+		return account;
+	} catch (err) {
+		return null;
+	}
 };
 
 export const getAccountByName = async (
-  accountName: string,
-  include?: Prisma.accountsInclude,
+	accountName: string,
+	include?: Prisma.accountsInclude
 ): Account => {
-  try {
-    const account = await prisma.accounts.findFirst({
-      where: {
-        name: accountName,
-      },
-      include,
-    });
+	try {
+		const account = await prisma.accounts.findFirst({
+			where: {
+				name: accountName,
+			},
+			include,
+		});
 
-    return account;
-  } catch (err) {
-    return null;
-  }
+		return account;
+	} catch (err) {
+		return null;
+	}
 };
 
 export const getAccountBy = async (
-  where?: Prisma.accountsWhereInput,
-  select?: Prisma.accountsSelect,
+	where?: Prisma.accountsWhereInput,
+	select?: Prisma.accountsSelect
 ): Account => {
-  try {
-    const account = (await prisma.accounts.findFirst({
-      where,
-      select,
-    })) as Account;
+	try {
+		const account = (await prisma.accounts.findFirst({
+			where,
+			select,
+		})) as Account;
 
-    return account;
-  } catch (err) {
-    return null;
-  }
+		return account;
+	} catch (err) {
+		return null;
+	}
 };
 
 export const createAccount = async (
-  name: string,
-  password: string,
-  email: string,
+	name: string,
+	password: string,
+	email: string
 ): Account => {
-  const timestampInSeconds = Math.floor(Date.now() / 1000);
+	const timestampInSeconds = Math.floor(Date.now() / 1000);
 
-  try {
-    const account = await prisma.accounts.create({
-      data: {
-        name,
-        password: await sha1Encrypt(password),
-        email,
-        twoFAEnabled: false,
-        creation: timestampInSeconds,
-      },
-    });
+	try {
+		const account = await prisma.accounts.create({
+			data: {
+				name,
+				password: await sha1Encrypt(password),
+				email,
+				twoFAEnabled: false,
+				creation: timestampInSeconds,
+			},
+		});
 
-    return account;
-  } catch (err) {
-    return null;
-  }
+		return account;
+	} catch (err) {
+		return null;
+	}
 };
 
 export const updateAccount = async () => {};

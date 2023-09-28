@@ -1,49 +1,49 @@
-import { prismaMock } from '../../../singleton';
-import * as accountService from '../../../services/accountService';
+import { prismaMock } from "../../../singleton";
+import * as accountService from "../../../services/accountService";
 
-describe('getAccountBy', () => {
-  test('should call prisma.findFirst with supplied arguments', async () => {
-    const mockedSelect = {
-      players: true,
-    };
-    const mockedWhere = {
-      name: 'foo',
-    };
+describe("getAccountBy", () => {
+	test("should call prisma.findFirst with supplied arguments", async () => {
+		const mockedSelect = {
+			players: true,
+		};
+		const mockedWhere = {
+			name: "foo",
+		};
 
-    prismaMock.account.findFirst.mockResolvedValue({} as any);
+		prismaMock.account.findFirst.mockResolvedValue({} as any);
 
-    await accountService.getAccountBy(mockedWhere, mockedSelect);
+		await accountService.getAccountBy(mockedWhere, mockedSelect);
 
-    expect(prismaMock.account.findFirst).toBeCalledWith({
-      where: mockedWhere,
-      select: mockedSelect,
-    });
-  });
+		expect(prismaMock.account.findFirst).toBeCalledWith({
+			where: mockedWhere,
+			select: mockedSelect,
+		});
+	});
 
-  test('should return found account', async () => {
-    const mockedAccount = {
-      name: 'foo',
-    };
+	test("should return found account", async () => {
+		const mockedAccount = {
+			name: "foo",
+		};
 
-    prismaMock.account.findFirst.mockResolvedValue(mockedAccount as any);
+		prismaMock.account.findFirst.mockResolvedValue(mockedAccount as any);
 
-    const result = await accountService.getAccountBy({}, {});
+		const result = await accountService.getAccountBy({}, {});
 
-    expect(result).toBe(mockedAccount);
-  });
+		expect(result).toBe(mockedAccount);
+	});
 
-  test('should return null when exception is thrown', async () => {
-    const mockedSelect = {
-      players: true,
-    };
-    const mockedWhere = {
-      name: 'foo',
-    };
+	test("should return null when exception is thrown", async () => {
+		const mockedSelect = {
+			players: true,
+		};
+		const mockedWhere = {
+			name: "foo",
+		};
 
-    prismaMock.account.findFirst.mockRejectedValue(new Error());
+		prismaMock.account.findFirst.mockRejectedValue(new Error());
 
-    const result = await accountService.getAccountBy(mockedWhere, mockedSelect);
+		const result = await accountService.getAccountBy(mockedWhere, mockedSelect);
 
-    expect(result).toBe(null);
-  });
+		expect(result).toBe(null);
+	});
 });

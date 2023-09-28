@@ -1,20 +1,20 @@
-import { PrismaClient } from '@prisma/client';
-import { dev } from '../lib/config';
+import { PrismaClient } from "@prisma/client";
+import { dev } from "../lib/config";
 
 declare global {
-  // allow global `var` declarations
-  // eslint-disable-next-line no-var
-  var prisma: PrismaClient | undefined;
+	// allow global `var` declarations
+	// eslint-disable-next-line no-var
+	var prisma: PrismaClient | undefined;
 }
 
 const prisma =
-  global.prisma ||
-  new PrismaClient({
-    log: ['query'],
-  });
+	global.prisma ||
+	new PrismaClient({
+		log: ["query"],
+	});
 
 if (dev) {
-  global.prisma = prisma;
+	global.prisma = prisma;
 }
 
 export default prisma;
