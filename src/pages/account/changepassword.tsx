@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import Panel from 'src/components/Panel';
-import FormWrapper from 'src/components/FormWrapper';
-import { fetchApi } from 'src/lib/request';
-import { withSessionSsr } from 'src/lib/session';
-import { changePasswordSchema } from 'src/schemas/ChangePassword';
+import Panel from '../../components/Panel';
+import FormWrapper from '../../components/FormWrapper';
+import { fetchApi } from '../../lib/request';
+import { withSessionSsr } from '../../lib/session';
+import { changePasswordSchema } from '../../schemas/ChangePassword';
 import { Text } from '@chakra-ui/react';
 
 const fields = [
@@ -40,6 +40,7 @@ export default function ChangePassword() {
     const response = await fetchApi('POST', '/api/account/changepassword', {
       data: {
         newPassword: values.newPassword,
+        repeatNewPassword: values.repeatNewPassword,
         password: values.password,
       },
     });

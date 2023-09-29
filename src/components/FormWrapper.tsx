@@ -29,26 +29,26 @@ export type FormButton = {
   href?: string;
 };
 
-type FormWrapperProps = {
-  initialValues?: object;
+type FormWrapperProps<FormValues> = {
+  initialValues?: FormValues;
   validationSchema: {};
   onSubmit: (
-    values: unknown,
-    formikHelpers: FormikHelpers<object>,
+    values: FormValues,
+    formikHelpers: FormikHelpers<FormValues>,
   ) => void | Promise<void>;
   fields: FormField[];
   buttons: FormButton[];
   response: FetchResult | null;
 };
 
-const FormWrapper = ({
-  initialValues = {},
+const FormWrapper = <FormValues extends object>({
+  initialValues = {} as FormValues,
   validationSchema,
   onSubmit,
   fields,
   buttons,
   response,
-}: FormWrapperProps) => {
+}: FormWrapperProps<FormValues>) => {
   const toast = useToast();
 
   useEffect(() => {

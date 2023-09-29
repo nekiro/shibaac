@@ -9,7 +9,6 @@ import { vocationIdToName, RankGuild } from '../../../lib';
 import { withSessionSsr } from '../../../lib/session';
 import { CgUserRemove } from 'react-icons/cg';
 import Image from 'next/image';
-
 import {
   Box,
   Button as ChakraButton,
@@ -21,13 +20,9 @@ import {
   useToast,
   VStack,
 } from '@chakra-ui/react';
-
-export type FormButton = {
-  type?: 'submit' | 'button' | 'reset';
-  btnType: any;
-  value: string;
-  href?: string;
-};
+import { FormValues } from '../../../shared/interfaces/FormValues';
+import { ApiResponse } from '../../../shared/types/ApiResponse';
+import { FormButton } from '../../../shared/types/FormButton';
 
 type Field = {
   type: string;
@@ -64,16 +59,6 @@ interface Guild {
   guild_membership: GuildMember[];
   logoUrl?: string;
 }
-
-interface FormValues {
-  [key: string]: string;
-}
-
-type ApiResponse = {
-  message: string;
-  success: boolean;
-  data: any;
-};
 
 interface GuildInvite {
   player: {
