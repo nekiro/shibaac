@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import Panel from 'src/components/Panel';
-import Head from 'src/layout/Head';
-import { fetchApi } from 'src/lib/request';
-import { withSessionSsr } from 'src/lib/session';
+import Panel from '../../components/Panel';
+import Head from '../../layout/Head';
+import { fetchApi } from '../../lib/request';
+import { withSessionSsr } from '../../lib/session';
 import Button from '../../components/Button';
 import StripedTable from '../../components/StrippedTable';
 import {
@@ -25,13 +25,14 @@ import {
 import { vocationIdToName, timestampToDate } from '../../lib';
 import { Toggle } from '../../components/Toggle';
 import { SettingsIcon } from '@chakra-ui/icons';
+import { UserData } from '../../shared/interfaces/UserData';
 
 export default function Account({ user }) {
-  const [info, setInfo] = useState(null);
+  const [info, setInfo] = useState<UserData | null>(null);
   const [is2FAEnabled, setIs2FAEnabled] = useState(false);
   const [qrCodeDataURL, setQRCodeDataURL] = useState(null);
   const [isOpenModal, setIsOpenModal] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchData = useCallback(async () => {
@@ -95,6 +96,7 @@ export default function Account({ user }) {
       <Panel header="Account Management">
         <Panel header="Informations">
           <StripedTable
+            head={[]}
             body={[
               [{ text: 'Account Name' }, { text: info.name }],
               [{ text: 'E-mail Address' }, { text: info.email }],
@@ -156,17 +158,7 @@ export default function Account({ user }) {
                 },
               ],
             ]}
-          >
-            {/* '.(!$rec_key ? '
-                <a
-                  href="?view=account&action=generatekey"
-                  className="btn btn-primary btn-sm"
-                >
-                  <i className="fa fa-key"></i> Generate Recovery Key
-                </a>
-                ' : '').' */}
-            {/* </td> */}
-          </StripedTable>
+          />
         </Panel>
 
         <Panel header="Actions">
@@ -180,24 +172,25 @@ export default function Account({ user }) {
           <Wrap>
             <Button
               value="Change Password"
-              btnType="primary"
+              btnColorType="primary"
               href="/account/changepassword"
             />
             <Button
               value="Change Email"
-              btnType="primary"
+              btnColorType="primary"
               href="/account/changeemail"
             />
             <Button
               value="Create Character"
-              btnType="primary"
+              btnColorType="primary"
               href="/account/createcharacter"
             />
             <Button
               value="Delete Character"
-              btnType="primary"
+              btnColorType="primary"
               href="/account/deletecharacter"
             />
+
             {isLoading && <Spinner />}
 
             {is2FAEnabled && qrCodeDataURL && (

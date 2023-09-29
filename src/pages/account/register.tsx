@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
-import Panel from 'src/components/Panel';
-import Head from 'src/layout/Head';
-import { withSessionSsr } from 'src/lib/session';
-import { fetchApi } from 'src/lib/request';
-import FormWrapper from 'src/components/FormWrapper';
-import { registerSchema } from 'src/schemas/Register';
+import { FormikHelpers } from 'formik';
+import Panel from '../../components/Panel';
+import Head from '../../layout/Head';
+import { withSessionSsr } from '../../lib/session';
+import { fetchApi } from '../../lib/request';
+import FormWrapper from '../../components/FormWrapper';
+import { registerSchema } from '../../schemas/Register';
+import { ApiResponse } from '../../shared/types/ApiResponse';
+import { FormValues } from '../../shared/interfaces/FormValues';
+import { ButtonProps } from '../../shared/types/FormButton';
 
 const fields = [
   {
@@ -33,25 +37,46 @@ const fields = [
   },
 ];
 
-const buttons = [
-  { type: 'submit', btnType: 'primary', value: 'Submit' },
-  { value: 'Reset' },
+const buttons: ButtonProps[] = [
+  {
+    type: 'submit',
+    btnColorType: 'primary',
+    value: 'Submit',
+    isLoading: false,
+    isActive: false,
+    loadingText: 'Loading',
+  },
+  {
+    href: '/account',
+    value: 'Back',
+    btnColorType: 'danger',
+    isLoading: false,
+    isActive: false,
+    loadingText: 'Loading',
+  },
 ];
 
 export default function Register() {
-  const [response, setResponse] = useState(null);
+  const [response, setResponse] = useState<ApiResponse | null>(null);
 
-  const onSubmit = async (values, { resetForm }) => {
-    const response = await fetchApi('POST', '/api/account/register', {
-      data: {
-        name: values.name,
-        password: values.password,
-        email: values.email,
+  const onSubmit = async (
+    values: FormValues,
+    formikHelpers: FormikHelpers<FormValues>,
+  ) => {
+    const response: ApiResponse = await fetchApi(
+      'POST',
+      '/api/account/register',
+      {
+        data: {
+          name: values.name,
+          password: values.password,
+          email: values.email,
+        },
       },
-    });
+    );
 
     setResponse(response);
-    resetForm();
+    formikHelpers.resetForm();
   };
 
   return (

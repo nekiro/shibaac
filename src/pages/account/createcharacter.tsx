@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
-import Panel from 'src/components/Panel';
-import { withSessionSsr } from 'src/lib/session';
-import { fetchApi } from 'src/lib/request';
-import FormWrapper from 'src/components/FormWrapper';
-import { createCharacterSchema } from 'src/schemas/CreateCharacter';
+import { FormikHelpers } from 'formik';
+import Panel from '../../components/Panel';
+import { withSessionSsr } from '../../lib/session';
+import { fetchApi } from '../../lib/request';
+import FormWrapper from '../../components/FormWrapper';
+import { createCharacterSchema } from '../../schemas/CreateCharacter';
 import { Select, Text } from '@chakra-ui/react';
+import { ButtonProps } from '../../shared/types/FormButton';
+import { ApiResponse } from '../../shared/types/ApiResponse';
+import { FormValues } from '../../shared/interfaces/FormValues';
 
 const startLocation = process.env.NEXT_PUBLIC_START_ON_ROOK;
 
@@ -28,6 +32,7 @@ const fields = [
   },
   {
     as: Select,
+    type: 'select',
     name: 'vocation',
     label: { text: 'Vocation', size: 3 },
     size: 9,
@@ -35,9 +40,23 @@ const fields = [
   },
 ];
 
-const buttons = [
-  { type: 'submit', btnType: 'primary', value: 'Submit' },
-  { href: '/account', value: 'Back' },
+const buttons: ButtonProps[] = [
+  {
+    type: 'submit',
+    btnColorType: 'primary',
+    value: 'Submit',
+    isLoading: false,
+    isActive: false,
+    loadingText: 'Loading',
+  },
+  {
+    href: '/account',
+    value: 'Back',
+    btnColorType: 'danger',
+    isLoading: false,
+    isActive: false,
+    loadingText: 'Loading',
+  },
 ];
 
 const initialValues = {
@@ -47,19 +66,26 @@ const initialValues = {
 };
 
 export default function CreateCharacter() {
-  const [response, setResponse] = useState(null);
+  const [response, setResponse] = useState<ApiResponse | null>(null);
 
-  const onSubmit = async (values, { resetForm }) => {
-    const response = await fetchApi('POST', '/api/account/createcharacter', {
-      data: {
-        name: values.name,
-        vocation: values.vocation,
-        sex: values.sex,
+  const onSubmit = async (
+    values: FormValues,
+    formikHelpers: FormikHelpers<FormValues>,
+  ) => {
+    const response: ApiResponse = await fetchApi(
+      'POST',
+      '/api/account/createcharacter',
+      {
+        data: {
+          name: values.name,
+          vocation: values.vocation,
+          sex: values.sex,
+        },
       },
-    });
+    );
 
     setResponse(response);
-    resetForm();
+    formikHelpers.resetForm();
   };
 
   return (

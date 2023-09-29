@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
+import { FormikHelpers } from 'formik';
 import Panel from '../../components/Panel';
 import FormWrapper from '../../components/FormWrapper';
 import { fetchApi } from '../../lib/request';
 import { withSessionSsr } from '../../lib/session';
 import { changePasswordSchema } from '../../schemas/ChangePassword';
 import { Text } from '@chakra-ui/react';
+import { ApiResponse } from '../../shared/types/ApiResponse';
+import { FormValues } from '../../shared/interfaces/FormValues';
+import { ButtonProps } from '../../shared/types/FormButton';
 
 const fields = [
   {
@@ -28,25 +32,46 @@ const fields = [
   },
 ];
 
-const buttons = [
-  { type: 'submit', btnType: 'primary', value: 'Submit' },
-  { href: '/account', btnType: 'danger', value: 'Back' },
+const buttons: ButtonProps[] = [
+  {
+    type: 'submit',
+    btnColorType: 'primary',
+    value: 'Submit',
+    isLoading: false,
+    isActive: false,
+    loadingText: 'Loading',
+  },
+  {
+    href: '/account',
+    value: 'Back',
+    btnColorType: 'danger',
+    isLoading: false,
+    isActive: false,
+    loadingText: 'Loading',
+  },
 ];
 
 export default function ChangePassword() {
-  const [response, setResponse] = useState(null);
+  const [response, setResponse] = useState<ApiResponse | null>(null);
 
-  const onSubmit = async (values, { resetForm }) => {
-    const response = await fetchApi('POST', '/api/account/changepassword', {
-      data: {
-        newPassword: values.newPassword,
-        repeatNewPassword: values.repeatNewPassword,
-        password: values.password,
+  const onSubmit = async (
+    values: FormValues,
+    formikHelpers: FormikHelpers<FormValues>,
+  ) => {
+    const response: ApiResponse = await fetchApi(
+      'POST',
+      '/api/account/changepassword',
+      {
+        data: {
+          newPassword: values.newPassword,
+          repeatNewPassword: values.repeatNewPassword,
+          password: values.password,
+        },
       },
-    });
+    );
 
     setResponse(response);
-    resetForm();
+    formikHelpers.resetForm();
   };
 
   return (
