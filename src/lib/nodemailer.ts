@@ -12,13 +12,15 @@ interface MailOptions {
   from: string;
   to: string;
   subject: string;
-  text: string;
+  text?: string;
+  html?: string;
 }
 
 export async function sendEmail(
   email: string,
   subject: string,
   message: string,
+  html?: string,
 ): Promise<void> {
   try {
     const mailOptions: MailOptions = {
@@ -26,6 +28,7 @@ export async function sendEmail(
       to: email,
       subject: subject,
       text: message,
+      html: html,
     };
 
     await transporter.sendMail(mailOptions);
