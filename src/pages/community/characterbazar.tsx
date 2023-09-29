@@ -16,6 +16,7 @@ import {
   Select,
   Flex,
   Box,
+  useToast,
 } from '@chakra-ui/react';
 import { withSessionSsr } from '../../lib/session';
 import Panel from '../../components/Panel';
@@ -24,120 +25,6 @@ import CharacterCard from '../../components/CharacterCard';
 import { fetchApi } from '../../lib/request';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-
-const listBazarCharacters = [
-  {
-    id: 1,
-    name: 'Pantes',
-    characterPage: 'auction-pantes',
-    level: 500,
-    vocation: 'Elite Knight',
-    highlight: true,
-    country: 'BR',
-    world: 'Gentebra',
-    pvpType: 'Optional',
-    battlEyeStatus: 'Yellow BattlEyeOptional',
-    remainingTime: '9h 5m',
-    endingAt: '20:00',
-    coins: 3001,
-    skills: {
-      Magic: 121,
-      Club: 14,
-      Fist: 49,
-      Sword: 17,
-      Fishing: 71,
-      Axe: 29,
-      Distance: 113,
-      Shielding: 10,
-    },
-    equipedItems: [3079, 3397, 5741, 8863],
-    imbuements: {
-      total: 16,
-      max: 23,
-    },
-    charms: {
-      total: 4,
-      max: 19,
-    },
-    quests: {
-      total: 16,
-      max: 41,
-      completedQuests: [
-        'Dawnport Quest',
-        'Doublet Quest',
-        'Behemoth Quest',
-        'Black Knight Quest',
-        'Crusader Helmet Quest',
-        'The Annihilator Quest',
-        'The Demon Oak Quest',
-        'Demon Helmet Quest',
-      ],
-    },
-    bossPoints: 920,
-    extras: [
-      'Charm Expansion',
-      'Prey Slot',
-      'Wasted Tibia Coin 2,400',
-      'Soul War disponível',
-      'Primal Ordeal disponível',
-    ],
-  },
-  {
-    id: 2,
-    name: 'Pedrog',
-    characterPage: 'Ir para a página do personagem',
-    level: 999,
-    vocation: 'Elder Druid',
-    highlight: 'Destaque seu leilão!',
-    country: 'BR',
-    world: 'Amera',
-    battlEyeStatus: 'Green BattlEye',
-    remainingTime: '9h 5m',
-    endingAt: '20:00',
-    coins: 3001,
-    skills: {
-      Magic: 121,
-      Club: 14,
-      Fist: 49,
-      Sword: 17,
-      Fishing: 71,
-      Axe: 29,
-      Distance: 113,
-      Shielding: 10,
-    },
-    equipedItems: [3397, 5741, 8863, 3419, 3276],
-    imbuements: {
-      total: 16,
-      max: 23,
-    },
-    charms: {
-      total: 4,
-      max: 19,
-    },
-    quests: {
-      total: 16,
-      max: 41,
-      completedQuests: [
-        'Dawnport Quest',
-        'Doublet Quest',
-        'Behemoth Quest',
-        'Black Knight Quest',
-        'Crusader Helmet Quest',
-        'The Annihilator Quest',
-        'The Demon Oak Quest',
-        'Demon Helmet Quest',
-      ],
-    },
-    bossPoints: 920,
-    extras: [
-      'Charm Expansion',
-      'Prey Slot',
-      'Wasted Tibia Coin 2,400',
-      'Soul War disponível',
-      'Primal Ordeal disponível',
-    ],
-  },
-];
 
 type ApiResponse = {
   message: string;
@@ -148,7 +35,12 @@ type ApiResponse = {
 export default function CharacterBazar({ user }) {
   const [response, setResponse] = useState<ApiResponse | null>(null);
   const [info, setInfo] = useState([]);
+  const [characterBazarList, setCharacterBazarList] = useState([]);
+  const [isBidModalOpen, setIsBidModalOpen] = useState(false);
+  const [selectedCharacter, setSelectedCharacter] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const toast = useToast();
 
   const fetchData = useCallback(async () => {
     const response = await fetchApi('GET', `/api/account/${user.id}`);
@@ -159,14 +51,23 @@ export default function CharacterBazar({ user }) {
     fetchData();
   }, [fetchData]);
 
+  const fetchCharacterBazar = useCallback(async () => {
+    const response = await fetchApi('GET', `/api/community/characterbazar`);
+    setCharacterBazarList(response.data);
+  }, [user]);
+
+  useEffect(() => {
+    fetchCharacterBazar();
+  }, [fetchCharacterBazar]);
+
   const formik = useFormik({
     initialValues: {
-      charctername: '',
+      charactername: '',
       initial_bid: '',
       end_date: '',
     },
     validationSchema: Yup.object({
-      leader: Yup.string().required('O personagem é obrigatório.'),
+      charactername: Yup.string().required('O personagem é obrigatório.'),
       initial_bid: Yup.number()
         .required('O valor inicial é obrigatório.')
         .positive('O valor deve ser positivo.')
@@ -176,34 +77,82 @@ export default function CharacterBazar({ user }) {
         .min(new Date(), 'A data de término deve ser no futuro.'),
     }),
     onSubmit: async (values) => {
-      // call api
       const response = await fetchApi('POST', '/api/community/characterbazar', {
         data: {
-          playerId: values.charctername,
+          playerId: Number(values.charactername),
           initial_bid: values.initial_bid,
           end_date: values.end_date,
         },
       });
 
       if (response.success) {
-        // Handle success logic
-      } else {
-        // toast({
-        //   position: 'top',
-        //   title: 'Error.',
-        //   description: response?.message,
-        //   status: 'error',
-        //   duration: 9000,
-        //   isClosable: true,
-        // });
+        onClose();
       }
     },
   });
 
+  const bidFormik = useFormik({
+    initialValues: {
+      bid_amount: '',
+    },
+    validationSchema: Yup.object({
+      bid_amount: Yup.number()
+        .required('O valor do lance é obrigatório.')
+        .positive('O valor deve ser positivo.')
+        .integer('O valor deve ser um número inteiro.'),
+    }),
+    onSubmit: async (values) => {
+      await submitBid(values.bid_amount);
+    },
+  });
+
+  const submitBid = async (bidAmount: string) => {
+    try {
+      const response = await fetchApi(
+        'POST',
+        '/api/community/characterbazar/placebid',
+        {
+          data: {
+            bazarListingId: selectedCharacter.id,
+            bidAmount: bidAmount,
+            currentBidAmount: selectedCharacter.coins,
+            bidderAccountId: user.id,
+          },
+        },
+      );
+
+      if (response.success) {
+        closeBidModal();
+        fetchCharacterBazar();
+      } else {
+        toast({
+          position: 'top',
+          title: 'Error.',
+          description: response.message,
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.error('Error submitting bid:', error);
+      return { success: false, message: 'Error submitting bid' };
+    }
+  };
+
+  const openBidModal = (character: string) => {
+    setSelectedCharacter(character);
+    setIsBidModalOpen(true);
+  };
+
+  const closeBidModal = () => {
+    setIsBidModalOpen(false);
+    setSelectedCharacter('');
+  };
+
   return (
     <>
-      <Head title="Highscores" />
-
+      <Head title="Character Bazar" />
       <Panel header="Character Bazar">
         <Flex justifyContent="space-between" alignItems="center" mb="2">
           <Box></Box>
@@ -213,8 +162,12 @@ export default function CharacterBazar({ user }) {
         </Flex>
 
         <Grid templateColumns="repeat(auto-fit, minmax(240px, 1fr))" gap={6}>
-          {listBazarCharacters.map((item, index) => (
-            <CharacterCard key={index} characterData={item} />
+          {characterBazarList?.map((item, index) => (
+            <CharacterCard
+              key={index}
+              characterData={item}
+              openBidModal={openBidModal}
+            />
           ))}
         </Grid>
 
@@ -226,13 +179,12 @@ export default function CharacterBazar({ user }) {
               <ModalCloseButton />
               <ModalBody>
                 <form onSubmit={formik.handleSubmit}>
-                  {/* Select for Character */}
                   <FormControl id="charactername" mb={4}>
                     <FormLabel>Character Name</FormLabel>
                     <Select
                       name="charactername"
                       onChange={formik.handleChange}
-                      value={formik.values.leader}
+                      value={formik.values.charactername}
                     >
                       <option value="" label="<Selecione>" />
                       {info.players &&
@@ -244,7 +196,6 @@ export default function CharacterBazar({ user }) {
                     </Select>
                   </FormControl>
 
-                  {/* Number input for Initial Bid */}
                   <FormControl id="initial_bid" mb={4}>
                     <FormLabel>Initial Value (coins)</FormLabel>
                     <Input
@@ -255,7 +206,6 @@ export default function CharacterBazar({ user }) {
                     />
                   </FormControl>
 
-                  {/* Date input for Auction Ending Date */}
                   <FormControl id="end_date" mb={4}>
                     <FormLabel>End Date Auction</FormLabel>
                     <Input
@@ -281,6 +231,45 @@ export default function CharacterBazar({ user }) {
               <ModalFooter>
                 <Button variant="ghost" onClick={onClose}>
                   Cancelar
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+        )}
+
+        {isBidModalOpen && selectedCharacter && (
+          <Modal isOpen={isBidModalOpen} onClose={closeBidModal}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>
+                Place a bid for {selectedCharacter.name}
+              </ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <form onSubmit={bidFormik.handleSubmit}>
+                  <FormControl id="bid_amount" mb={4}>
+                    <FormLabel>Bid Amount</FormLabel>
+                    <Input
+                      type="number"
+                      name="bid_amount"
+                      onChange={bidFormik.handleChange}
+                      value={bidFormik.values.bid_amount}
+                    />
+                  </FormControl>
+                  <Button
+                    width="100%"
+                    mt={4}
+                    size="sm"
+                    colorScheme="purple"
+                    type="submit"
+                  >
+                    <i className="fa fa-gavel"></i> Place Bid
+                  </Button>
+                </form>
+              </ModalBody>
+              <ModalFooter>
+                <Button variant="ghost" onClick={closeBidModal}>
+                  Cancel
                 </Button>
               </ModalFooter>
             </ModalContent>

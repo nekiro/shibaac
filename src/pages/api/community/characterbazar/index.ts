@@ -52,12 +52,11 @@ const getRemainingTime = (endDateStr: string): string => {
 
 const post = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const { accountId, playerId, startingPrice, endDate } = req.body;
+    const { playerId, initial_bid, end_date } = req.body;
 
     const player = await prisma.players.findFirst({
       where: {
-        id: playerId,
-        account_id: accountId,
+        id: Number(playerId),
       },
     });
 
@@ -69,7 +68,7 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const playerItems = await prisma.player_items.findMany({
       where: {
-        player_id: playerId,
+        player_id: Number(playerId),
         pid: { in: [1, 4, 5, 6, 8] },
       },
     });
@@ -84,6 +83,7 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
       Axe: player.skill_axe || 0,
       Distance: player.skill_dist || 0,
       Shielding: player.skill_shielding || 0,
+      Fishing: player.skill_fishing || 0,
     };
 
     const storagesInRange = await prisma.player_storage.findMany({
@@ -100,7 +100,7 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const playerCharms = await prisma.player_charms.findFirst({
       where: {
-        player_guid: playerId,
+        player_guid: Number(playerId),
       },
     });
 
@@ -112,7 +112,11 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const newListing = await prisma.bazarListings.create({
       data: {
-        playerId: player.id,
+        player: {
+          connect: {
+            id: player.id,
+          },
+        },
         name: player.name,
         characterPage: 'auction-' + player.name.toLowerCase(),
         level: player.level,
@@ -122,13 +126,14 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
         world: player.town_id,
         pvpType: 'PVP',
         battlEyeStatus: 'disabled',
-        remainingTime: getRemainingTime(endDate),
-        endingAt: endDate,
-        coins: startingPrice,
+        remainingTime: getRemainingTime(end_date),
+        endingAt: end_date,
+        coins: initial_bid,
         skills: transformPlayerSkills,
         equipedItems: equipedItems,
         charms: charmData,
         quests: questArray,
+        extras: {},
       },
     });
 
@@ -141,6 +146,35 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
+const get = async (req: NextApiRequest, res: NextApiResponse) => {
+  try {
+    const bazarListings = await prisma.bazarListings.findMany({
+      include: {
+        BazarBids: {
+          select: {
+            id: true,
+            bazarListingId: true,
+            amount: true,
+            bidderPlayerName: true,
+            createdAt: true,
+          },
+          orderBy: {
+            amount: 'desc',
+          },
+        },
+      },
+    });
+
+    res.status(200).json({ success: true, args: { data: bazarListings } });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  } finally {
+    await prisma.$disconnect();
+  }
+};
+
 export default apiHandler({
   post,
+  get,
 });

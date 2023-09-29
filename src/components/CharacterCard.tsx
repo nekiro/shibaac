@@ -19,6 +19,15 @@ import {
 } from '@chakra-ui/react';
 import { getItemImageUrl } from '../lib';
 import { ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons';
+import { Towns, vocationIdToName } from '../lib';
+
+type BidList = {
+  amount: number;
+  bazarListingId: number;
+  bidderPlayerName: string;
+  id: number;
+  createdAt: Date;
+};
 
 interface CharacterData {
   id: string;
@@ -26,39 +35,50 @@ interface CharacterData {
   level: number;
   vocation: string;
   transfer: boolean;
-  auctionEnd: number;
+  coins: number;
+  pvpType: string;
+  remainingTime: number;
   hasBeenBidded: boolean;
-  currentBid: number;
   battlEyeStatus: boolean;
   world: string;
   items: any[];
   skills: any[];
+  quests: any[];
+  extras: {
+    wastedCoins: number;
+  };
   equipedItems: any[];
   imbuements: any[];
   charms: {
-    total: number;
-    max: number;
+    charm_points: string;
+    charm_expansion: number;
+    rune_wound: number;
   };
+  BazarBids: BidList[];
 }
 
 interface Props {
   characterData: CharacterData;
+  openBidModal: (CharacterData) => void;
 }
 
-const CharacterCard: React.FC<Props> = ({ characterData }) => {
+const CharacterCard: React.FC<Props> = ({ characterData, openBidModal }) => {
   const [showDetails, setShowDetails] = useState(false);
 
   const {
     name,
     level,
     vocation,
-    auctionEnd,
-    battlEyeStatus,
+    coins,
+    remainingTime,
     world,
-    currentBid,
+    pvpType,
     charms,
+    quests,
     equipedItems,
     skills,
+    extras,
+    BazarBids,
   } = characterData;
 
   const highestSkillValue = Math.max(...Object.values(characterData.skills));
@@ -105,6 +125,15 @@ const CharacterCard: React.FC<Props> = ({ characterData }) => {
     </Box>
   );
 
+  const renderBids = () => {
+    return BazarBids.map((bid, index) => (
+      <div key={bid.id}>
+        {index + 1}. {bid.amount} coins by {bid.bidderPlayerName || 'Anonymous'}{' '}
+        at {new Date(bid.createdAt).toLocaleString()}
+      </div>
+    ));
+  };
+
   return (
     <Box
       borderWidth="1px"
@@ -133,28 +162,42 @@ const CharacterCard: React.FC<Props> = ({ characterData }) => {
         <VStack align="start" flex="1" ml="4">
           <Text fontWeight="bold">{name}</Text>
           <Text fontSize="12px" color="gray.600">
-            {level} - {vocation}
+            {level} - {vocationIdToName[vocation]}
           </Text>
         </VStack>
 
-        <Button>Buy</Button>
+        <Button onClick={() => openBidModal(characterData)}>Bid</Button>
       </Flex>
 
       <Divider my="3" />
 
       <Grid templateColumns="repeat(2, 1fr)" gap={4} mb="3">
-        {renderLabeledBox('Server', world)}
-        {renderLabeledBox('PvP', <span>{battlEyeStatus}</span>)}
+        {renderLabeledBox('Town', Towns[world])}
+        {renderLabeledBox('Server Type', <span>{pvpType}</span>)}
+        {renderLabeledBox('Final Auction', remainingTime)}
         {renderLabeledBox(
-          'Fim do Leilão',
-          new Date(auctionEnd * 1000).toLocaleString(),
-        )}
-        {renderLabeledBox(
-          'Lance Atual',
-          <Text>
-            <Icon name="coin" />
-            <span>{currentBid}</span>
-          </Text>,
+          'Current Bid',
+          <Tooltip
+            label={renderBids()}
+            fontSize="sm"
+            placement="top"
+            maxW="300px"
+            overflowWrap="break-word"
+            bg="violet.700"
+            color="white"
+            p={2}
+            borderRadius="md"
+            border="1px solid"
+            borderColor="violet.600"
+            shadow="lg"
+          >
+            <Text display="flex" alignItems="center" justifyContent="center">
+              <Image src="/images/ico-tibia-coin.png" marginRight="10px" />
+              <span>
+                {coins > BazarBids[0].amount ? coins : BazarBids[0].amount}
+              </span>
+            </Text>
+          </Tooltip>,
         )}
       </Grid>
 
@@ -162,13 +205,16 @@ const CharacterCard: React.FC<Props> = ({ characterData }) => {
 
       <Grid templateColumns="repeat(4, 1fr)" gap={4} mt="4">
         {equipedItems &&
-          equipedItems.slice(0, 4).map((equipaments: string) => {
-            return (
-              <div key={equipaments}>
-                {renderCardItem(getItemImageUrl(equipaments))}
-              </div>
-            );
-          })}
+          Object.values(equipedItems)
+            .filter((item) => item !== null)
+            .slice(0, 4)
+            .map((equipaments: string) => {
+              return (
+                <div key={equipaments}>
+                  {renderCardItem(getItemImageUrl(equipaments))}
+                </div>
+              );
+            })}
       </Grid>
 
       <Divider my="3" />
@@ -281,7 +327,7 @@ const CharacterCard: React.FC<Props> = ({ characterData }) => {
 
                     {itemName === 'quests' ? (
                       <Tooltip
-                        label={characterData.quests.completedQuests.join(', ')}
+                        label={quests?.join(', ')}
                         fontSize="xs"
                         placement="top"
                         maxW="300px"
@@ -294,16 +340,14 @@ const CharacterCard: React.FC<Props> = ({ characterData }) => {
                         borderColor="violet.600"
                         shadow="lg"
                       >
-                        <Text fontSize="sm">
-                          {characterData.quests.total}/
-                          {characterData.quests.max}
-                        </Text>
+                        <Text fontSize="sm">{quests.length}/41</Text>
                       </Tooltip>
-                    ) : (
+                    ) : itemName === 'charms' ? (
                       <Text fontSize="sm">
-                        {characterData[itemName].total}/
-                        {characterData[itemName].max}
+                        {charms.charm_points ? charms.charm_points : '0'}/19
                       </Text>
+                    ) : (
+                      <Text fontSize="sm">0</Text>
                     )}
                   </Flex>
                 </Box>
@@ -313,33 +357,35 @@ const CharacterCard: React.FC<Props> = ({ characterData }) => {
                   <Text fontWeight="semibold" fontSize="sm">
                     Boss Points
                   </Text>
-                  <Text fontSize="sm">{characterData.bossPoints}</Text>
+                  <Text fontSize="sm">0</Text>
                 </Flex>
               </Box>
             </VStack>
+
             <VStack spacing={4} align="start">
-              {characterData.extras.map((extra, index) => (
-                <Checkbox
-                  key={index}
-                  isChecked={true}
-                  isReadOnly
-                  size="lg"
-                  colorScheme="purple"
-                  fontSize="md"
-                  fontWeight="medium"
-                  borderColor="violet.600"
-                  borderRadius="md"
-                  px={2}
-                  py={1}
-                  _checked={{
-                    bg: 'violet.200',
-                    borderColor: 'violet.500',
-                    color: 'violet.800',
-                  }}
-                >
-                  {extra}
-                </Checkbox>
-              ))}
+              {extras &&
+                Object.entries(extras).map(([key, value], index) => (
+                  <Checkbox
+                    key={index}
+                    isChecked={true}
+                    isReadOnly
+                    size="lg"
+                    colorScheme="purple"
+                    fontSize="md"
+                    fontWeight="medium"
+                    borderColor="violet.600"
+                    borderRadius="md"
+                    px={2}
+                    py={1}
+                    _checked={{
+                      bg: 'violet.200',
+                      borderColor: 'violet.500',
+                      color: 'violet.800',
+                    }}
+                  >
+                    {key}: {value}
+                  </Checkbox>
+                ))}
             </VStack>
           </Grid>
         </Collapse>

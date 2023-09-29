@@ -809,6 +809,32 @@ CREATE TABLE `player_autoloot_persist` (
     PRIMARY KEY (`player_guid`, `cont_id`, `item_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- CreateTable
+CREATE TABLE `bazarListings` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `playerId` INTEGER NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `level` INTEGER NOT NULL,
+    `vocation` INTEGER NOT NULL,
+    `characterPage` VARCHAR(191) NOT NULL,
+    `highlight` BOOLEAN NOT NULL,
+    `country` VARCHAR(191) NOT NULL,
+    `world` INTEGER NOT NULL,
+    `pvpType` VARCHAR(191) NOT NULL,
+    `battlEyeStatus` VARCHAR(191) NOT NULL,
+    `remainingTime` VARCHAR(191) NOT NULL,
+    `endingAt` VARCHAR(191) NOT NULL,
+    `coins` INTEGER NOT NULL,
+    `equipedItems` JSON NULL,
+    `skills` JSON NOT NULL,
+    `quests` JSON NULL,
+    `charms` JSON NULL,
+
+    UNIQUE INDEX `bazarListings_playerId_key`(`playerId`),
+    INDEX `idx_bazarListings_playerId`(`playerId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 -- AddForeignKey
 ALTER TABLE `account_ban_history` ADD CONSTRAINT `account_bans_history_account_fk` FOREIGN KEY (`account_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -940,3 +966,6 @@ ALTER TABLE `shop_orders` ADD CONSTRAINT `shop_orders_accountId_fkey` FOREIGN KE
 
 -- AddForeignKey
 ALTER TABLE `player_preydata` ADD CONSTRAINT `player_preydata_player_id_fkey` FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `bazarListings` ADD CONSTRAINT `bazarListings_playerId_fkey` FOREIGN KEY (`playerId`) REFERENCES `players`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

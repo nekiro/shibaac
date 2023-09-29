@@ -28,14 +28,14 @@ export default function Character() {
     if (response.success) {
       state.player = response.player;
 
-      // const townResponse = await fetchApi(
-      //   'GET',
-      //   `/api/town/${state.player.town_id}`,
-      // );
+      const townResponse = await fetchApi(
+        'GET',
+        `/api/town/${state.player.town_id}`,
+      );
 
-      // if (townResponse.success) {
-      //   state.town = townResponse.town;
-      // }
+      if (townResponse.success) {
+        state.town = townResponse.town;
+      }
     }
 
     setState(state);
@@ -110,7 +110,6 @@ export default function Character() {
           ]}
         />
       </Panel>
-
       <Panel header="Account Information">
         <StrippedTable
           body={[
@@ -140,7 +139,6 @@ export default function Character() {
           ]}
         />
       </Panel>
-
       {state.player.player_deaths.length > 0 && (
         <Box>
           <Panel header="Deaths">
@@ -170,7 +168,6 @@ export default function Character() {
           </Panel>
         </Box>
       )}
-
       {/* <span className="label label-danger">Deleted</span>  */}
 
       <Panel header="Characters">
@@ -181,12 +178,23 @@ export default function Character() {
             { text: 'Profession' },
             { text: 'Status' },
           ]}
-          body={state.player.accounts.players.map((player) => [
-            { href: `/character/${player.name}`, text: player.name },
-            { text: player.level },
-            { text: vocationIdToName[player.vocation] },
-            { text: player.players_online ? 'Online' : 'Offline' },
-          ])}
+          body={
+            state && state.player?.accounts?.length > 0
+              ? state.player?.accounts?.players.map((player) => [
+                  { href: `/character/${player.name}`, text: player.name },
+                  { text: player.level },
+                  { text: vocationIdToName[player.vocation] },
+                  { text: player.players_online ? 'Online' : 'Offline' },
+                ])
+              : [
+                  [
+                    {
+                      text: 'There is no data to show',
+                      colspan: 4,
+                    },
+                  ],
+                ]
+          }
         />
       </Panel>
     </>

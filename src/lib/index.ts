@@ -76,6 +76,20 @@ export const RankGuild = [
   'Member', // 3
 ];
 
+export const Towns = [
+  'None',
+  'Rookgaard',
+  'Verona',
+  'Bluffgard',
+  'Feldarin',
+  'Nissey',
+  'Woundhill Bay',
+  'Salazart',
+  'Tasandira',
+  'Niflheim',
+  'Gray Beach',
+];
+
 export const getOutfitImageUrl = (player: any) => {
   const baseOutfitURL =
     'https://outfit-images.ots.me/idleOutfits1092/outfit.php';
