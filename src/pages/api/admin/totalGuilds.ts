@@ -7,7 +7,7 @@ const get = async function handler(req: NextApiRequest, res: NextApiResponse) {
     const totalGuilds = await prisma.guilds.count();
     res.status(200).json({ success: true, args: { guilds: totalGuilds } });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch total guilds.' });
+    res.status(500).json({ message: 'Failed to fetch total guilds.' });
   }
 };
 

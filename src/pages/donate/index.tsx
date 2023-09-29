@@ -291,7 +291,6 @@ export default function BuyCoins({ user }: any) {
   const handleApprove = async (data: any, actions: any) => {
     try {
       const details = await actions.order.capture();
-      console.log('Transação concluída:', details.status);
 
       if (details.status === 'COMPLETED') {
         router.push('/donate/success');

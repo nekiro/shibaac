@@ -100,7 +100,7 @@ export default function HousePage({ user }: any) {
         console.error('Bid submission failed', error);
       }
     } else {
-      console.log('Invalid bid');
+      console.error('Invalid bid');
     }
   };
 

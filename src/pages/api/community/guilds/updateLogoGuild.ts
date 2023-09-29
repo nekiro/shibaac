@@ -18,7 +18,7 @@ const patch = withSessionRoute(
 
       const file = req.file;
       if (!file) {
-        return res.status(400).json({ error: 'Nenhum arquivo foi enviado.' });
+        return res.status(400).json({ message: 'Nenhum arquivo foi enviado.' });
       }
 
       try {
@@ -51,7 +51,7 @@ const patch = withSessionRoute(
           console.error('Error moving file:', err);
           return res
             .status(500)
-            .json({ error: 'Não foi possível mover o arquivo.' });
+            .json({ message: 'Não foi possível mover o arquivo.' });
         }
 
         const logoUrl = `/tmp/uploads/guilds/${file.filename}`;
@@ -67,7 +67,7 @@ const patch = withSessionRoute(
           console.error(error);
           return res
             .status(500)
-            .json({ success: false, error: 'Internal server error' });
+            .json({ success: false, message: 'Internal server error' });
         } finally {
           await prisma.$disconnect();
         }

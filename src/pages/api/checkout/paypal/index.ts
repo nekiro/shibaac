@@ -74,7 +74,7 @@ export default async function handler(
           console.error(error);
           res
             .status(500)
-            .json({ success: false, error: 'Internal server error' });
+            .json({ success: false, message: 'Internal server error' });
         } finally {
           await prisma.$disconnect();
         }
@@ -83,9 +83,9 @@ export default async function handler(
       res.status(httpStatusCode).json(jsonResponse);
     } catch (error) {
       console.error('Failed to create order:', error);
-      res.status(500).json({ error: 'Failed to create order.' });
+      res.status(500).json({ message: 'Failed to create order.' });
     }
   } else {
-    res.status(405).json({ error: 'Method not allowed' });
+    res.status(405).json({ message: 'Method not allowed' });
   }
 }

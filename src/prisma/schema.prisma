@@ -799,6 +799,7 @@ model bazarListings {
   quests         Json?
   charms         Json?
   extras         Json?
+  oldAccountId   Int
 
   player    players     @relation(fields: [playerId], references: [id])
   BazarBids BazarBids[]
@@ -814,7 +815,7 @@ model BazarBids {
   bazarListingId   Int
   createdAt        DateTime @default(now())
 
-  bazarListing bazarListings @relation(fields: [bazarListingId], references: [id])
+  bazarListing bazarListings @relation(fields: [bazarListingId], references: [id], onDelete: Cascade)
 
   @@index([bidderAccountId], name: "idx_BazarBids_bidderId")
   @@index([bazarListingId], name: "idx_BazarBids_bazarListingId")

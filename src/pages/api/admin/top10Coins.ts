@@ -17,7 +17,9 @@ const get = async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     res.status(200).json({ success: true, args: { coins: topCoins } });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch top 10 players by coins.' });
+    res
+      .status(500)
+      .json({ message: 'Failed to fetch top 10 players by coins.' });
   }
 };
 

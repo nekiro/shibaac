@@ -48,7 +48,7 @@ export default async function handler(
         !req.body.payer?.email ||
         !req.body.additional_info?.items
       ) {
-        return res.status(400).json({ error: 'Missing required fields' });
+        return res.status(400).json({ message: 'Missing required fields' });
       }
 
       const preference = {
@@ -116,11 +116,13 @@ export default async function handler(
       });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ success: false, error: 'Internal server error' });
+      res
+        .status(500)
+        .json({ success: false, message: 'Internal server error' });
     } finally {
       await prisma.$disconnect();
     }
   } else {
-    res.status(405).json({ error: 'Method not allowed' });
+    res.status(405).json({ message: 'Method not allowed' });
   }
 }

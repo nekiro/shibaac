@@ -24,7 +24,7 @@ const get = async function handler(req: NextApiRequest, res: NextApiResponse) {
       if (typeof category === 'string') {
         categoryFilter = { [category]: { gte: 0 } };
       } else {
-        return res.status(400).json({ error: 'Invalid category value' });
+        return res.status(400).json({ message: 'Invalid category value' });
       }
     }
 
@@ -34,7 +34,7 @@ const get = async function handler(req: NextApiRequest, res: NextApiResponse) {
       if (!isNaN(filterVocation)) {
         whereCondition.vocation = filterVocation;
       } else {
-        return res.status(400).json({ error: 'Invalid vocation value' });
+        return res.status(400).json({ message: 'Invalid vocation value' });
       }
     }
 
@@ -64,7 +64,7 @@ const get = async function handler(req: NextApiRequest, res: NextApiResponse) {
       .json({ success: true, args: { data: highscoresPlayer } });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, error: 'Internal server error' });
+    res.status(500).json({ success: false, message: 'Internal server error' });
   } finally {
     await prisma.$disconnect();
   }

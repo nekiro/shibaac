@@ -14,7 +14,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (!title || !content || !playerNick || !authorId) {
       return res
         .status(400)
-        .json({ success: false, error: 'Missing required fields' });
+        .json({ success: false, message: 'Missing required fields' });
     }
 
     try {
@@ -32,12 +32,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       console.error(error);
       return res
         .status(500)
-        .json({ success: false, error: 'Internal server error' });
+        .json({ success: false, message: 'Internal server error' });
     } finally {
       await prisma.$disconnect();
     }
   } else {
-    res.status(405).json({ success: false, error: 'Method not allowed' });
+    res.status(405).json({ success: false, message: 'Method not allowed' });
     return;
   }
 };

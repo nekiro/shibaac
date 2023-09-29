@@ -8,7 +8,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   } = req;
 
   if (method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ message: 'Method not allowed' });
   }
 
   try {
@@ -38,17 +38,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     } else {
       return res
         .status(400)
-        .json({ error: 'Name or ID parameter is required' });
+        .json({ message: 'Name or ID parameter is required' });
     }
 
     if (!guild) {
-      return res.status(404).json({ error: 'Guild not found' });
+      return res.status(404).json({ message: 'Guild not found' });
     }
 
     res.status(200).json({ success: true, args: { data: guild } });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, error: 'Internal server error' });
+    res.status(500).json({ success: false, message: 'Internal server error' });
   } finally {
     await prisma.$disconnect();
   }

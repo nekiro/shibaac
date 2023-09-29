@@ -17,7 +17,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(200).json({ success: true, args: { data: invites } });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ success: false, error: 'Internal server error' });
+      res
+        .status(500)
+        .json({ success: false, message: 'Internal server error' });
     } finally {
       await prisma.$disconnect();
     }
@@ -62,7 +64,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(201).json({ success: true, args: { data: newInvite } });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ success: false, error: 'Internal server error' });
+      res
+        .status(500)
+        .json({ success: false, message: 'Internal server error' });
     } finally {
       await prisma.$disconnect();
     }
@@ -97,7 +101,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         .json({ success: true, message: 'Invite deleted successfully' });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ success: false, error: 'Internal server error' });
+      res
+        .status(500)
+        .json({ success: false, message: 'Internal server error' });
     } finally {
       await prisma.$disconnect();
     }

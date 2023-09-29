@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import apiHandler from '../../../../middleware/apiHandler';
 import prisma from '../../../../prisma';
+import { withSessionRoute } from '../../../../lib/session';
 
 import { differenceInMinutes, differenceInHours, parseISO } from 'date-fns';
 
@@ -52,7 +53,7 @@ const getRemainingTime = (endDateStr: string): string => {
 
 const post = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const { playerId, initial_bid, end_date } = req.body;
+    const { playerId, initial_bid, end_date, oldAccountId } = req.body;
 
     const player = await prisma.players.findFirst({
       where: {
@@ -61,8 +62,10 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     if (!player) {
-      return res.status(400).json({
-        error: 'Player não encontrado ou não pertence à conta especificada.',
+      return res.status(500).json({
+        success: false,
+        message:
+          'Player not found or does not belong to the specified account.',
       });
     }
 
@@ -110,6 +113,17 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
       rune_wound: playerCharms?.rune_wound,
     };
 
+    const auctionHouseAccount = await prisma.accounts.findUnique({
+      where: { name: 'AuctionBazar' },
+    });
+
+    if (!auctionHouseAccount) {
+      return res.status(500).json({
+        success: false,
+        message: 'There was a problem transferring to our bazaar system',
+      });
+    }
+
     const newListing = await prisma.bazarListings.create({
       data: {
         player: {
@@ -134,45 +148,83 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
         charms: charmData,
         quests: questArray,
         extras: {},
+        oldAccountId: oldAccountId,
       },
     });
 
-    res.status(201).json(newListing);
-  } catch (error) {
-    res.status(500).json({
-      error: 'Erro ao adicionar listagem ao bazar.',
-      details: error.message,
-    });
-  }
-};
-
-const get = async (req: NextApiRequest, res: NextApiResponse) => {
-  try {
-    const bazarListings = await prisma.bazarListings.findMany({
-      include: {
-        BazarBids: {
-          select: {
-            id: true,
-            bazarListingId: true,
-            amount: true,
-            bidderPlayerName: true,
-            createdAt: true,
-          },
-          orderBy: {
-            amount: 'desc',
-          },
+    if (auctionHouseAccount) {
+      await prisma.players.update({
+        where: {
+          id: Number(playerId),
         },
-      },
-    });
+        data: {
+          account_id: auctionHouseAccount.id,
+        },
+      });
+    } else {
+      return res
+        .status(500)
+        .json({ success: false, error: 'Internal server error' });
+    }
 
-    res.status(200).json({ success: true, args: { data: bazarListings } });
+    return res.status(201).json({ success: true, args: { data: newListing } });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ success: false, error: 'Internal server error' });
+    res.status(500).json({ success: false, message: 'Internal server error' });
   } finally {
     await prisma.$disconnect();
   }
 };
+
+const get = withSessionRoute(
+  async (req: NextApiRequest, res: NextApiResponse) => {
+    const user = req.session.user;
+
+    if (!user) {
+      return res.status(403).json({ message: 'Unauthorised.' });
+    }
+
+    try {
+      const bazarListings = await prisma.bazarListings.findMany({
+        include: {
+          BazarBids: {
+            select: {
+              id: true,
+              bazarListingId: true,
+              amount: true,
+              bidderPlayerName: true,
+              createdAt: true,
+            },
+            orderBy: {
+              amount: 'desc',
+            },
+          },
+        },
+      });
+
+      const modifiedListings = bazarListings.map((listing) => {
+        const isOwner = listing.oldAccountId === user.id;
+        const { oldAccountId, ...remainingProps } = listing;
+
+        return {
+          ...remainingProps,
+          isOwner: isOwner,
+        };
+      });
+
+      return res
+        .status(200)
+        .json({ success: true, args: { data: modifiedListings } });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ success: false, message: 'Internal server error' });
+    } finally {
+      await prisma.$disconnect();
+    }
+  },
+);
 
 export default apiHandler({
   post,

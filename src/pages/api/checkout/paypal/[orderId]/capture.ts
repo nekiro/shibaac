@@ -29,9 +29,9 @@ export default async function handler(
       res.status(httpStatusCode).json(jsonResponse);
     } catch (error) {
       console.error('Failed to capture order:', error);
-      res.status(500).json({ error: 'Failed to capture order.' });
+      res.status(500).json({ message: 'Failed to capture order.' });
     }
   } else {
-    res.status(405).json({ error: 'Method not allowed' });
+    res.status(405).json({ message: 'Method not allowed' });
   }
 }

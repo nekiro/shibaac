@@ -47,7 +47,9 @@ export const post = withSessionRoute(
       res.json({ success: true, args: { account } });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ success: false, error: 'Internal server error' });
+      res
+        .status(500)
+        .json({ success: false, message: 'Internal server error' });
     }
   },
 );

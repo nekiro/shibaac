@@ -281,11 +281,6 @@ export default function Guilds({ user }: any) {
                             name={field.name}
                             onChange={(e) => {
                               formik.handleChange(e);
-                              console.log(
-                                'Field updated:',
-                                e.target.name,
-                                e.target.value,
-                              );
                             }}
                             onBlur={formik.handleBlur}
                             value={formik.values[field.name]}

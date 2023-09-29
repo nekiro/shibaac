@@ -167,11 +167,6 @@ export default function Account({ user }) {
                 ' : '').' */}
             {/* </td> */}
           </StripedTable>
-          {console.log(
-            'NEXT_PUBLIC_PERMISSION_ADMINPANEL',
-            process.env.NEXT_PUBLIC_PERMISSION_ADMINPANEL,
-          )}
-          {console.log('info', info.type)}
         </Panel>
 
         <Panel header="Actions">

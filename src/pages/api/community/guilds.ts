@@ -31,7 +31,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(200).json({ success: true, args: { data: serializedGuilds } });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ success: false, error: 'Internal server error' });
+      res
+        .status(500)
+        .json({ success: false, message: 'Internal server error' });
     } finally {
       await prisma.$disconnect();
     }
@@ -104,7 +106,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(200).json({ success: true, args: { data: newGuild } });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ success: false, error: 'Internal server error' });
+      res
+        .status(500)
+        .json({ success: false, message: 'Internal server error' });
     } finally {
       await prisma.$disconnect();
     }

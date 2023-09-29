@@ -8,7 +8,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (!Array.isArray(requests) || requests.length === 0) {
       return res
         .status(400)
-        .json({ success: false, error: 'Missing required fields' });
+        .json({ success: false, message: 'Missing required fields' });
     }
 
     for (let i = 0; i < requests.length; i++) {
@@ -17,7 +17,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       if (!accountId || !itemid || !type || !count || !coins) {
         return res
           .status(400)
-          .json({ success: false, error: 'Missing required fields' });
+          .json({ success: false, message: 'Missing required fields' });
       }
     }
 
@@ -40,12 +40,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       if (findAccount.coins < totalCost) {
-        return res
-          .status(400)
-          .json({
-            success: false,
-            message: 'Insufficient coins in the account',
-          });
+        return res.status(400).json({
+          success: false,
+          message: 'Insufficient coins in the account',
+        });
       }
 
       for (const request of requests) {
@@ -78,12 +76,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         .json({ success: true, data: 'Orders were created successfully' });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ success: false, error: 'Internal server error' });
+      res
+        .status(500)
+        .json({ success: false, message: 'Internal server error' });
     } finally {
       await prisma.$disconnect();
     }
   } else {
-    res.status(405).json({ success: false, error: 'Method not allowed' });
+    res.status(405).json({ success: false, message: 'Method not allowed' });
   }
 };
 

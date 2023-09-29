@@ -67,7 +67,7 @@ const post = withSessionRoute(
           console.error(error);
           res
             .status(500)
-            .json({ success: false, error: 'Internal server error' });
+            .json({ success: false, message: 'Internal server error' });
         } finally {
           await prisma.$disconnect();
         }

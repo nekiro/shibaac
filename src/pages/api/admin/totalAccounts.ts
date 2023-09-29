@@ -7,7 +7,7 @@ const get = async function handler(req: NextApiRequest, res: NextApiResponse) {
     const totalAccounts = await prisma.accounts.count();
     res.status(200).json({ success: true, args: { accounts: totalAccounts } });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch total accounts.' });
+    res.status(500).json({ message: 'Failed to fetch total accounts.' });
   }
 };
 

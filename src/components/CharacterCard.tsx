@@ -7,7 +7,6 @@ import {
   Image,
   Text,
   VStack,
-  Icon,
   Checkbox,
   Divider,
   Heading,
@@ -16,54 +15,29 @@ import {
   Collapse,
   Button,
   Tooltip,
+  useToast,
 } from '@chakra-ui/react';
 import { getItemImageUrl } from '../lib';
 import { ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import { Towns, vocationIdToName } from '../lib';
-
-type BidList = {
-  amount: number;
-  bazarListingId: number;
-  bidderPlayerName: string;
-  id: number;
-  createdAt: Date;
-};
-
-interface CharacterData {
-  id: string;
-  name: string;
-  level: number;
-  vocation: string;
-  transfer: boolean;
-  coins: number;
-  pvpType: string;
-  remainingTime: number;
-  hasBeenBidded: boolean;
-  battlEyeStatus: boolean;
-  world: string;
-  items: any[];
-  skills: any[];
-  quests: any[];
-  extras: {
-    wastedCoins: number;
-  };
-  equipedItems: any[];
-  imbuements: any[];
-  charms: {
-    charm_points: string;
-    charm_expansion: number;
-    rune_wound: number;
-  };
-  BazarBids: BidList[];
-}
+import { fetchApi } from '../lib/request';
+import { CharacterData } from '../shared/interfaces/CharacterAuctionBazar';
 
 interface Props {
   characterData: CharacterData;
-  openBidModal: (CharacterData) => void;
+  openBidModal: (characterData: CharacterData) => void;
+  setCharacterBazarList: React.Dispatch<React.SetStateAction<CharacterData[]>>;
+  characterBazarList: CharacterData[];
 }
 
-const CharacterCard: React.FC<Props> = ({ characterData, openBidModal }) => {
+const CharacterCard: React.FC<Props> = ({
+  characterData,
+  openBidModal,
+  characterBazarList,
+  setCharacterBazarList,
+}) => {
   const [showDetails, setShowDetails] = useState(false);
+  const toast = useToast();
 
   const {
     name,
@@ -79,6 +53,7 @@ const CharacterCard: React.FC<Props> = ({ characterData, openBidModal }) => {
     skills,
     extras,
     BazarBids,
+    isOwner,
   } = characterData;
 
   const highestSkillValue = Math.max(...Object.values(characterData.skills));
@@ -134,6 +109,42 @@ const CharacterCard: React.FC<Props> = ({ characterData, openBidModal }) => {
     ));
   };
 
+  const cancelAuction = async (characterData) => {
+    try {
+      const response = await fetchApi(
+        'POST',
+        '/api/community/characterbazar/cancel-auction',
+        {
+          params: {
+            auctionId: characterData.id,
+          },
+        },
+      );
+
+      if (response.success) {
+        const updatedList = characterBazarList.filter(
+          (auction: any) => auction.id !== characterData.id,
+        );
+
+        setCharacterBazarList(updatedList);
+
+        toast({
+          position: 'top',
+          title: 'Error.',
+          description: response.message,
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+        });
+      } else {
+        console.error('Error:', response.message);
+      }
+    } catch (error) {
+      console.error('Error cancelling the auction:', error);
+      alert('An error occurred while trying to cancel the auction.');
+    }
+  };
+
   return (
     <Box
       borderWidth="1px"
@@ -166,7 +177,13 @@ const CharacterCard: React.FC<Props> = ({ characterData, openBidModal }) => {
           </Text>
         </VStack>
 
-        <Button onClick={() => openBidModal(characterData)}>Bid</Button>
+        {isOwner ? (
+          <Button onClick={() => cancelAuction(characterData)}>
+            Cancel Auction
+          </Button>
+        ) : (
+          <Button onClick={() => openBidModal(characterData)}>Bid</Button>
+        )}
       </Flex>
 
       <Divider my="3" />
@@ -194,7 +211,9 @@ const CharacterCard: React.FC<Props> = ({ characterData, openBidModal }) => {
             <Text display="flex" alignItems="center" justifyContent="center">
               <Image src="/images/ico-tibia-coin.png" marginRight="10px" />
               <span>
-                {coins > BazarBids[0].amount ? coins : BazarBids[0].amount}
+                {coins > BazarBids[0]?.amount || BazarBids.length === 0
+                  ? coins
+                  : BazarBids[0]?.amount}
               </span>
             </Text>
           </Tooltip>,

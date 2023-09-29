@@ -25,6 +25,7 @@ import CharacterCard from '../../components/CharacterCard';
 import { fetchApi } from '../../lib/request';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { CharacterData } from '../../shared/interfaces/CharacterAuctionBazar';
 
 type ApiResponse = {
   message: string;
@@ -32,18 +33,29 @@ type ApiResponse = {
   data: any;
 };
 
+interface AccountInfo {
+  players?: {
+    id: string;
+    name: string;
+  }[];
+}
+
 export default function CharacterBazar({ user }) {
   const [response, setResponse] = useState<ApiResponse | null>(null);
-  const [info, setInfo] = useState([]);
-  const [characterBazarList, setCharacterBazarList] = useState([]);
+  const [info, setInfo] = useState<AccountInfo>({});
+  const [characterBazarList, setCharacterBazarList] = useState<CharacterData[]>(
+    [],
+  );
   const [isBidModalOpen, setIsBidModalOpen] = useState(false);
-  const [selectedCharacter, setSelectedCharacter] = useState('');
+  const [selectedCharacter, setSelectedCharacter] =
+    useState<CharacterData | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const toast = useToast();
 
   const fetchData = useCallback(async () => {
     const response = await fetchApi('GET', `/api/account/${user.id}`);
+
     setInfo(response.account);
   }, [user]);
 
@@ -82,6 +94,7 @@ export default function CharacterBazar({ user }) {
           playerId: Number(values.charactername),
           initial_bid: values.initial_bid,
           end_date: values.end_date,
+          oldAccountId: user.id,
         },
       });
 
@@ -113,9 +126,9 @@ export default function CharacterBazar({ user }) {
         '/api/community/characterbazar/placebid',
         {
           data: {
-            bazarListingId: selectedCharacter.id,
+            bazarListingId: selectedCharacter?.id,
             bidAmount: bidAmount,
-            currentBidAmount: selectedCharacter.coins,
+            currentBidAmount: selectedCharacter?.coins,
             bidderAccountId: user.id,
           },
         },
@@ -140,14 +153,14 @@ export default function CharacterBazar({ user }) {
     }
   };
 
-  const openBidModal = (character: string) => {
-    setSelectedCharacter(character);
+  const openBidModal = (characterData: CharacterData) => {
+    setSelectedCharacter(characterData);
     setIsBidModalOpen(true);
   };
 
   const closeBidModal = () => {
     setIsBidModalOpen(false);
-    setSelectedCharacter('');
+    setSelectedCharacter(null);
   };
 
   return (
@@ -156,6 +169,7 @@ export default function CharacterBazar({ user }) {
       <Panel header="Character Bazar">
         <Flex justifyContent="space-between" alignItems="center" mb="2">
           <Box></Box>
+
           <Button size="sm" colorScheme="purple" onClick={onOpen}>
             <i className="fa fa-lock"></i> Add Character to Bazar
           </Button>
@@ -167,6 +181,8 @@ export default function CharacterBazar({ user }) {
               key={index}
               characterData={item}
               openBidModal={openBidModal}
+              characterBazarList={characterBazarList}
+              setCharacterBazarList={setCharacterBazarList}
             />
           ))}
         </Grid>

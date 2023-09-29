@@ -26,7 +26,7 @@ const get = async function handler(req: NextApiRequest, res: NextApiResponse) {
   } catch (error) {
     res
       .status(500)
-      .json({ error: 'Failed to fetch players who logged in today.' });
+      .json({ message: 'Failed to fetch players who logged in today.' });
   }
 };
 

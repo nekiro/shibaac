@@ -32,6 +32,21 @@ async function main() {
     });
   }
 
+  let auctionBazarAccount = await prisma.accounts.findUnique({
+    where: { name: 'AuctionBazar' },
+  });
+
+  if (!auctionBazarAccount) {
+    auctionBazarAccount = await prisma.accounts.create({
+      data: {
+        name: 'AuctionBazar',
+        password: 'securepasswordhash',
+        email: 'auction@dev.com',
+        twoFAEnabled: false,
+      },
+    });
+  }
+
   const existingNews = await prisma.aac_news.findFirst({
     where: { title: 'Welcome' },
   });
