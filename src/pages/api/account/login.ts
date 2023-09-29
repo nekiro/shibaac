@@ -28,8 +28,8 @@ export const post = withSessionRoute(
       }
 
       if (account.twoFAEnabled) {
-        console.log('Secret:', account.twoFASecret);
-        console.log('Token:', twoFAToken);
+        // console.log('Secret:', account.twoFASecret);
+        // console.log('Token:', twoFAToken);
         const verified = speakeasy.totp.verify({
           secret: String(account.twoFASecret),
           encoding: 'base32',

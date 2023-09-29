@@ -228,7 +228,7 @@ export default function Lost() {
         });
 
         if (response.success) {
-          console.log('Success:', response);
+          // console.log('Success:', response);
         } else {
           console.error('Error:', response.message);
           toast({
