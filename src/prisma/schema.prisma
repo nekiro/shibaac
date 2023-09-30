@@ -668,6 +668,7 @@ model store_history {
   description String   @db.VarChar(3500)
   coin_type   Boolean  @default(false)
   coin_amount Int      @default(0)
+  amount      Int      @default(0)
   time        BigInt   @db.UnsignedBigInt
   timestamp   Int      @default(0)
   coins       Int      @default(0)
@@ -779,7 +780,7 @@ model player_autoloot_persist {
   @@id([player_guid, cont_id, item_id])
 }
 
-model bazarListings {
+model bazar_listings {
   id             Int     @id @default(autoincrement())
   playerId       Int     @unique
   name           String
@@ -801,13 +802,13 @@ model bazarListings {
   extras         Json?
   oldAccountId   Int
 
-  player    players     @relation(fields: [playerId], references: [id])
-  BazarBids BazarBids[]
+  player    players      @relation(fields: [playerId], references: [id])
+  BazarBids bazar_bids[]
 
   @@index([playerId], name: "idx_bazarListings_playerId")
 }
 
-model BazarBids {
+model bazar_bids {
   id               Int      @id @default(autoincrement())
   bidderAccountId  Int
   bidderPlayerName String?
@@ -815,7 +816,7 @@ model BazarBids {
   bazarListingId   Int
   createdAt        DateTime @default(now())
 
-  bazarListing bazarListings @relation(fields: [bazarListingId], references: [id], onDelete: Cascade)
+  bazarListing bazar_listings @relation(fields: [bazarListingId], references: [id], onDelete: Cascade)
 
   @@index([bidderAccountId], name: "idx_BazarBids_bidderId")
   @@index([bazarListingId], name: "idx_BazarBids_bazarListingId")

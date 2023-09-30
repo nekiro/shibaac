@@ -673,6 +673,7 @@ CREATE TABLE `store_history` (
     `description` VARCHAR(3500) NOT NULL,
     `coin_type` BOOLEAN NOT NULL DEFAULT false,
     `coin_amount` INTEGER NOT NULL DEFAULT 0,
+    `amount` INTEGER NOT NULL DEFAULT 0,
     `time` BIGINT UNSIGNED NOT NULL,
     `timestamp` INTEGER NOT NULL DEFAULT 0,
     `coins` INTEGER NOT NULL DEFAULT 0,
@@ -829,9 +830,25 @@ CREATE TABLE `bazarListings` (
     `skills` JSON NOT NULL,
     `quests` JSON NULL,
     `charms` JSON NULL,
+    `extras` JSON NULL,
+    `oldAccountId` INTEGER NOT NULL,
 
     UNIQUE INDEX `bazarListings_playerId_key`(`playerId`),
     INDEX `idx_bazarListings_playerId`(`playerId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `BazarBids` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `bidderAccountId` INTEGER NOT NULL,
+    `bidderPlayerName` VARCHAR(191) NULL,
+    `amount` INTEGER NOT NULL,
+    `bazarListingId` INTEGER NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    INDEX `idx_BazarBids_bidderId`(`bidderAccountId`),
+    INDEX `idx_BazarBids_bazarListingId`(`bazarListingId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -969,3 +986,6 @@ ALTER TABLE `player_preydata` ADD CONSTRAINT `player_preydata_player_id_fkey` FO
 
 -- AddForeignKey
 ALTER TABLE `bazarListings` ADD CONSTRAINT `bazarListings_playerId_fkey` FOREIGN KEY (`playerId`) REFERENCES `players`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `BazarBids` ADD CONSTRAINT `BazarBids_bazarListingId_fkey` FOREIGN KEY (`bazarListingId`) REFERENCES `bazarListings`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
