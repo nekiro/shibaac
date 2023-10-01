@@ -26,6 +26,7 @@ import { vocationIdToName, timestampToDate } from '../../lib';
 import { Toggle } from '../../components/Toggle';
 import { SettingsIcon } from '@chakra-ui/icons';
 import { UserData } from '../../shared/interfaces/UserData';
+import { useRouter } from 'next/router';
 
 export default function Account({ user }) {
   const [info, setInfo] = useState<UserData | null>(null);
@@ -34,6 +35,8 @@ export default function Account({ user }) {
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
 
   const fetchData = useCallback(async () => {
     const response = await fetchApi('GET', `/api/account/${user.id}`);
@@ -135,8 +138,7 @@ export default function Account({ user }) {
                             }}
                             cursor="pointer"
                             onClick={() => {
-                              // Redirect to the admin panel
-                              window.location.href = '/admin';
+                              router.push('/admin');
                             }}
                           />
                         </Box>

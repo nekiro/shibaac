@@ -4,7 +4,7 @@ import Panel from '../../components/Panel';
 import Head from '../../layout/Head';
 import { fetchApi } from '../../lib/request';
 import { withSessionSsr } from '../../lib/session';
-import { CKEditorComponent } from '../../components/Editor';
+import { TextEditor } from '../../components/Editor';
 import {
   FormControl,
   FormLabel,
@@ -32,7 +32,6 @@ export default function CreateNews({ user }: any) {
   const [playerNick, setPlayerNick] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [info, setInfo] = useState<Account | null>(null);
-  const [isClient, setIsClient] = useState(false);
 
   const router = useRouter();
 
@@ -45,10 +44,6 @@ export default function CreateNews({ user }: any) {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -90,9 +85,11 @@ export default function CreateNews({ user }: any) {
             </FormControl>
             <FormControl id="content">
               <FormLabel>Content</FormLabel>
-              {isClient && (
-                <CKEditorComponent setValue={setContent} value={content} />
-              )}
+              <TextEditor
+                value={content}
+                onChange={(value) => setContent(value)}
+                onImageUpload={handleSubmit}
+              />
             </FormControl>
             <FormControl id="author">
               <FormLabel>Author</FormLabel>
@@ -107,14 +104,6 @@ export default function CreateNews({ user }: any) {
                   </option>
                 ))}
               </Select>
-            </FormControl>
-            <FormControl id="image-url">
-              <FormLabel>Image URL</FormLabel>
-              <Input
-                type="text"
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-              />
             </FormControl>
             <Button colorScheme="blue" type="submit">
               Create

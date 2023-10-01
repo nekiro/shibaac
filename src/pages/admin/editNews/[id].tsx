@@ -4,7 +4,7 @@ import Panel from '../../../components/Panel';
 import Head from '../../../layout/Head';
 import { fetchApi } from '../../../lib/request';
 import { withSessionSsr } from '../../../lib/session';
-import { CKEditorComponent } from '../../../components/Editor';
+import { TextEditor } from '../../../components/Editor';
 import {
   FormControl,
   FormLabel,
@@ -81,16 +81,10 @@ function EditNews() {
           </FormControl>
           <FormControl id="content">
             <FormLabel>Content</FormLabel>
-            {isClient && (
-              <CKEditorComponent setValue={setContent} value={content} />
-            )}
-          </FormControl>
-          <FormControl id="image-url">
-            <FormLabel>Image URL</FormLabel>
-            <Input
-              type="text"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
+            <TextEditor
+              value={content}
+              onChange={(value) => setContent(value)}
+              onImageUpload={handleSubmit}
             />
           </FormControl>
           <Button

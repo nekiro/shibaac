@@ -67,6 +67,7 @@ model accounts {
   twoFASecret        String?
   twoFAEnabled       Boolean @default(false)
   tournamentBalance  Int     @default(0)
+  isValidate         boolean @default(false)
 
   account_bans        account_bans?
   players             players[]
@@ -305,7 +306,7 @@ model players {
   online                                            players_online?
   aac_news                                          aac_news[]
   player_preydata                                   player_preydata[]
-  bazarListings                                     bazarListings?
+  bazarListings                                     bazar_listings?
 
   @@index([deletion], map: "deletion")
   @@index([account_id], map: "account_id")
@@ -329,7 +330,7 @@ model player_deaths {
 model aac_news {
   id         Int      @id @default(autoincrement())
   title      String   @db.VarChar(255)
-  content    String   @db.VarChar(255)
+  content    String   @db.LongText()
   createdAt  DateTime @default(now())
   authorId   Int      @db.UnsignedInt
   author     accounts @relation(fields: [authorId], references: [id])

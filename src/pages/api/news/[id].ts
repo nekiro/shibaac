@@ -1,5 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import path from 'path';
+import fs from 'fs';
+import { uploadEditorImages } from '../../../middleware/multer';
+import { withSessionRoute } from '../../../lib/session';
 import prisma from '../../../prisma';
+
+export const config = { api: { bodyParser: false } };
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { id } = req.query;
@@ -37,37 +43,55 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   if (req.method === 'PUT') {
+    const { id } = req.query;
+
     if (!id) {
       return res
         .status(400)
         .json({ success: false, message: 'ID not provided' });
     }
 
-    const { title, content, imageUrl } = req.body;
+    uploadEditorImages(req as any, res as any, async (err) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
 
-    try {
-      const updatedNews = await prisma.aac_news.update({
-        where: {
-          id: Number(id),
-        },
-        data: {
-          title,
-          content,
-          imageUrl,
-        },
-      });
+      const files = req.files;
 
-      return res
-        .status(200)
-        .json({ success: true, args: { data: updatedNews } });
-    } catch (error) {
-      console.error(error);
-      return res
-        .status(500)
-        .json({ success: false, message: 'Internal server error' });
-    } finally {
-      await prisma.$disconnect();
-    }
+      if (!files || files.length === 0) {
+        return res.status(400).json({ message: 'Nenhuma imagem foi enviada.' });
+      }
+
+      const imageUrls = files.map(
+        (file: any) => `/tmp/uploads/news/${file.filename}`,
+      );
+
+      const { title, content } = req.body;
+
+      try {
+        const updatedNews = await prisma.aac_news.update({
+          where: {
+            id: Number(id),
+          },
+          data: {
+            title,
+            content,
+            imageUrl: JSON.stringify(imageUrls),
+          },
+        });
+
+        return res
+          .status(200)
+          .json({ success: true, args: { data: updatedNews } });
+      } catch (error) {
+        console.error(error);
+        return res
+          .status(500)
+          .json({ success: false, message: 'Internal server error' });
+      } finally {
+        await prisma.$disconnect();
+      }
+    });
   } else {
     return res
       .status(405)
