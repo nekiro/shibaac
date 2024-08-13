@@ -91,8 +91,7 @@ export const Towns = [
 ];
 
 export const getOutfitImageUrl = (player: any) => {
-  const baseOutfitURL =
-    'https://outfit-images.ots.me/idleOutfits1092/outfit.php';
+  const baseOutfitURL = 'https://outfit-images-oracle.ots.me/latest/outfit.php';
   return `${baseOutfitURL}?id=${player.looktype}&addons=${player.lookaddons}&head=${player.lookhead}&body=${player.lookbody}&legs=${player.lookmountlegs}&feet=${player.lookmountfeet}&mount=0&direction=3`;
 };
 

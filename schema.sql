@@ -16,3 +16,6 @@ ADD COLUMN `twoFASecret` VARCHAR(255),
 ADD COLUMN `twoFAEnabled` BOOLEAN NOT NULL DEFAULT false;
 
 CREATE UNIQUE INDEX `accounts_rec_key_unique` ON `accounts` (`rec_key`);
+
+ALTER TABLE player_deaths
+ADD COLUMN id INT NOT NULL AUTO_INCREMENT PRIMARY KEY;

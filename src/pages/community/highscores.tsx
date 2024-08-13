@@ -205,7 +205,7 @@ export default function Highscores() {
                   {highscores && highscores.length > 0 ? (
                     highscores.map((player, index) => (
                       <Tr key={player.name}>
-                        <Td textAlign="center">
+                        <Td textAlign="center" color="white">
                           {index + 1 + (page - 1) * perPage}
                         </Td>
                         <Td textAlign="center">
@@ -230,7 +230,7 @@ export default function Highscores() {
                           <Link href={`/character/${player.name}`} passHref>
                             <Text
                               as="a"
-                              color="purple.600"
+                              color="white"
                               fontWeight="bold"
                               _hover={{ textDecoration: 'underline' }}
                             >
@@ -238,9 +238,15 @@ export default function Highscores() {
                             </Text>
                           </Link>
                         </Td>
-                        <Td>{vocationIdToName[player.vocation]}</Td>
-                        <Td textAlign="center">{player.level}</Td>
-                        <Td textAlign="center">{player.experience}</Td>
+                        <Td color="white">
+                          {vocationIdToName[player.vocation]}
+                        </Td>
+                        <Td color="white" textAlign="center">
+                          {player.level}
+                        </Td>
+                        <Td color="white" textAlign="center">
+                          {player.experience}
+                        </Td>
                       </Tr>
                     ))
                   ) : (

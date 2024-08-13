@@ -238,8 +238,8 @@ model market_offers {
   @@index([sale, itemtype], map: "sale")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model player_deaths {
+  id                     Int     @id @default(autoincrement())
   player_id              Int
   time                   BigInt  @default(0) @db.UnsignedBigInt
   level                  Int     @default(1)
@@ -254,7 +254,6 @@ model player_deaths {
   @@index([killed_by], map: "killed_by")
   @@index([mostdamage_by], map: "mostdamage_by")
   @@index([player_id], map: "player_id")
-  @@ignore
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
@@ -428,7 +427,7 @@ model players {
   ip_bans                                                  ip_bans[]
   market_history                                           market_history[]
   market_offers                                            market_offers[]
-  player_deaths                                            player_deaths[]          @ignore
+  player_deaths                                            player_deaths[]
   player_depotitems                                        player_depotitems[]
   player_inboxitems                                        player_inboxitems[]
   player_items                                             player_items[]           @ignore
