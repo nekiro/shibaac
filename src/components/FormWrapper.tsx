@@ -52,6 +52,8 @@ const FormWrapper = ({
   const toast = useToast();
 
   useEffect(() => {
+    console.log('response', response);
+
     if (
       response &&
       response.message?.length > 0 &&

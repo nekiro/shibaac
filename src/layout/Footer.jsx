@@ -9,6 +9,7 @@ const Footer = () => {
       borderRadius="md"
       padding="10px"
       textAlign="center"
+      color="purple"
     >
       Copyright © 2021-2023 Nekiro, Pedrog
     </Box>

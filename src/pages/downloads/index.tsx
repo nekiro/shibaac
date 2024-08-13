@@ -12,14 +12,14 @@ const Downloads = () => {
     <>
       <Head title="Downloads" />
       <Panel header="Downloads">
-        <Flex direction={{ base: 'column', lg: 'row' }} px={4} py={5}>
-          <Box flex="1" mb={{ base: 5, lg: 0 }} maxW={{ lg: '40%' }}>
+        <Flex direction="column" px={4} py={5}>
+          <Box mb={5} maxW="100%">
             <Box mb={4}>
               <Text as="span" fontSize="lg" fontWeight="bold">
                 Our downloads
               </Text>
               <Heading as="h2" size="lg">
-                What We do?
+                What We Do?
               </Heading>
             </Box>
             <Text>
@@ -29,10 +29,12 @@ const Downloads = () => {
           </Box>
 
           <Grid
-            templateColumns={{ base: '1fr', lg: 'repeat(2, 1fr)' }}
+            templateColumns={{
+              base: '1fr',
+              md: '1fr 1fr',
+              lg: 'repeat(2, 1fr)',
+            }}
             gap={6}
-            flex="2"
-            maxW={{ lg: '60%' }}
           >
             {[
               {

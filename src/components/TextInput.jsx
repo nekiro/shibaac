@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { Input } from '@chakra-ui/react';
 
 const TextInput = (props) => {
@@ -11,6 +10,7 @@ const TextInput = (props) => {
       _hover={{ borderColor: 'violet.400' }}
       borderColor="violet.200"
       bg="white"
+      _placeholder={{ color: 'purple.900' }}
     />
   );
 };

@@ -44,7 +44,11 @@ export const post = withSessionRoute(
 
       req.session.user = account;
       await req.session.save();
-      res.json({ success: true, args: { account } });
+      res.json({
+        success: true,
+        message: 'Hey! Its great to have you here, your login was a success',
+        args: { account },
+      });
     } catch (error) {
       console.error(error);
       res

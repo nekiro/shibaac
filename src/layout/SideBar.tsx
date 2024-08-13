@@ -52,6 +52,20 @@ const SideBar = (props: LayoutProps) => {
           width="100%"
           colorScheme="purple"
           onClick={() => window.open(downloadURL, '_blank')}
+          color="white"
+          mt={4}
+          bgGradient="linear(to-r, violet.500, purple.600)"
+          _hover={{
+            bgGradient: 'linear(to-r, purple.600, violet.500)',
+            boxShadow: 'lg',
+          }}
+          _active={{
+            bgGradient: 'linear(to-r, purple.700, violet.600)',
+            boxShadow: 'inner',
+          }}
+          _focus={{ outline: 0, boxShadow: 'outline' }}
+          borderRadius="md"
+          transition="all 0.2s ease-in-out"
         >
           Download Client
         </Button>
@@ -66,7 +80,7 @@ const SideBar = (props: LayoutProps) => {
                 text: serverStatus?.online ? (
                   <Label colorScheme="green">ONLINE</Label>
                 ) : (
-                  <Label colorScheme="red">OFFLINE</Label>
+                  <Label colorScheme="purple">OFFLINE</Label>
                 ),
               },
             ],

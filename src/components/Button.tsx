@@ -16,12 +16,14 @@ type ButtonProps = {
   isLoading?: boolean;
   isActive?: boolean;
   loadingText?: string;
+  btnTextColor?: string;
 };
 
 const Button = ({
   value,
   type = 'button',
   btnColorType = 'primary',
+  btnTextColor = 'white',
   size = 'md',
   href,
   isLoading,
@@ -37,6 +39,7 @@ const Button = ({
       isLoading={isLoading}
       isActive={isActive}
       loadingText={loadingText}
+      color={btnTextColor}
     >
       {value}
     </ChakraButton>

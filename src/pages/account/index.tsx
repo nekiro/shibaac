@@ -6,12 +6,12 @@ import { withSessionSsr } from '../../lib/session';
 import Button from '../../components/Button';
 import StripedTable from '../../components/StrippedTable';
 import {
+  Box,
+  IconButton,
+  Text,
   Alert,
   AlertIcon,
-  Box,
-  Button as ChakraButton,
-  Center,
-  Image,
+  Wrap,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -20,28 +20,50 @@ import {
   ModalHeader,
   ModalOverlay,
   Spinner,
-  Wrap,
+  Center,
+  Image,
+  Button as ChakraButton,
 } from '@chakra-ui/react';
+import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { vocationIdToName, timestampToDate } from '../../lib';
 import { Toggle } from '../../components/Toggle';
 import { SettingsIcon } from '@chakra-ui/icons';
 import { UserData } from '../../shared/interfaces/UserData';
 import { useRouter } from 'next/router';
 
+interface AccountResponse {
+  account: UserData;
+}
+
+interface TwoFactorResponse {
+  success: boolean;
+  dataURL?: string;
+}
+
 export default function Account({ user }) {
   const [info, setInfo] = useState<UserData | null>(null);
   const [is2FAEnabled, setIs2FAEnabled] = useState(false);
-  const [qrCodeDataURL, setQRCodeDataURL] = useState(null);
+  const [qrCodeDataURL, setQRCodeDataURL] = useState<string | null>(null);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const [showAccountName, setShowAccountName] = useState(false);
+  const [showEmail, setShowEmail] = useState(false);
+
   const router = useRouter();
 
   const fetchData = useCallback(async () => {
-    const response = await fetchApi('GET', `/api/account/${user.id}`);
-    setInfo(response.account);
-    setIs2FAEnabled(response.account.twoFAEnabled);
+    try {
+      const response: AccountResponse = await fetchApi(
+        'GET',
+        `/api/account/${user.id}`,
+      );
+      setInfo(response.account);
+      setIs2FAEnabled(response.account.twoFAEnabled);
+    } catch (error) {
+      console.error('Failed to fetch account data', error);
+    }
   }, [user]);
 
   useEffect(() => {
@@ -52,7 +74,7 @@ export default function Account({ user }) {
     try {
       setIsLoading(true);
 
-      const response = await fetchApi(
+      const response: TwoFactorResponse = await fetchApi(
         'POST',
         '/api/account/two-factor/enable-2fa',
         {
@@ -80,7 +102,7 @@ export default function Account({ user }) {
     }
   };
 
-  const showQRCode = (dataURL) => {
+  const showQRCode = (dataURL: string) => {
     setQRCodeDataURL(dataURL);
   };
 
@@ -93,6 +115,8 @@ export default function Account({ user }) {
     );
   }
 
+  const maskText = (text, show) => (show ? text : '****');
+
   return (
     <>
       <Head title="Account Management" />
@@ -101,8 +125,44 @@ export default function Account({ user }) {
           <StripedTable
             head={[]}
             body={[
-              [{ text: 'Account Name' }, { text: info.name }],
-              [{ text: 'E-mail Address' }, { text: info.email }],
+              [
+                { text: 'Account Name' },
+                {
+                  text: (
+                    <Box display="flex" alignItems="center">
+                      <Text>{maskText(info.name, showAccountName)}</Text>
+                      <IconButton
+                        aria-label="Toggle Account Name Visibility"
+                        icon={showAccountName ? <ViewOffIcon /> : <ViewIcon />}
+                        onClick={() => setShowAccountName(!showAccountName)}
+                        ml={2}
+                        variant="ghost"
+                        color="purple.500"
+                        _hover={{ color: 'purple.700' }}
+                      />
+                    </Box>
+                  ),
+                },
+              ],
+              [
+                { text: 'E-mail Address' },
+                {
+                  text: (
+                    <Box display="flex" alignItems="center">
+                      <Text>{maskText(info.email, showEmail)}</Text>
+                      <IconButton
+                        aria-label="Toggle Email Visibility"
+                        icon={showEmail ? <ViewOffIcon /> : <ViewIcon />}
+                        onClick={() => setShowEmail(!showEmail)}
+                        ml={2}
+                        variant="ghost"
+                        color="purple.500"
+                        _hover={{ color: 'purple.700' }}
+                      />
+                    </Box>
+                  ),
+                },
+              ],
               [
                 { text: 'Creation Date' },
                 {
@@ -112,7 +172,6 @@ export default function Account({ user }) {
                       : 'Unknown',
                 },
               ],
-              //{ name: 'Last Login', value: '11/02/2021' },
               [{ text: 'Shop Coins' }, { text: info.coins }],
               info.type >= Number(process.env.NEXT_PUBLIC_PERMISSION_ADMINPANEL)
                 ? [
@@ -171,32 +230,68 @@ export default function Account({ user }) {
             </Alert>
           )}
 
-          <Wrap>
-            <Button
-              value="Change Password"
-              btnColorType="primary"
-              href="/account/changepassword"
-            />
-            <Button
-              value="Change Email"
-              btnColorType="primary"
-              href="/account/changeemail"
-            />
-            <Button
-              value="Create Character"
-              btnColorType="primary"
-              href="/account/createcharacter"
-            />
-            <Button
-              value="Delete Character"
-              btnColorType="primary"
-              href="/account/deletecharacter"
-            />
+          <Wrap spacing={4} justify="center">
+            <ChakraButton
+              width={{ base: '100%', sm: 'auto' }}
+              colorScheme="purple"
+              bgGradient="linear(to-r, purple.400, purple.600)"
+              _hover={{
+                bgGradient: 'linear(to-r, purple.500, purple.700)',
+                boxShadow: 'md',
+              }}
+              color="white"
+              onClick={() => router.push('/account/changepassword')}
+            >
+              Change Password
+            </ChakraButton>
+            <ChakraButton
+              width={{ base: '100%', sm: 'auto' }}
+              colorScheme="purple"
+              bgGradient="linear(to-r, purple.400, purple.600)"
+              _hover={{
+                bgGradient: 'linear(to-r, purple.500, purple.700)',
+                boxShadow: 'md',
+              }}
+              color="white"
+              onClick={() => router.push('/account/changeemail')}
+            >
+              Change Email
+            </ChakraButton>
+            <ChakraButton
+              width={{ base: '100%', sm: 'auto' }}
+              colorScheme="purple"
+              bgGradient="linear(to-r, purple.400, purple.600)"
+              _hover={{
+                bgGradient: 'linear(to-r, purple.500, purple.700)',
+                boxShadow: 'md',
+              }}
+              color="white"
+              onClick={() => router.push('/account/createcharacter')}
+            >
+              Create Character
+            </ChakraButton>
+            <ChakraButton
+              width={{ base: '100%', sm: 'auto' }}
+              colorScheme="purple"
+              bgGradient="linear(to-r, purple.400, purple.600)"
+              _hover={{
+                bgGradient: 'linear(to-r, purple.500, purple.700)',
+                boxShadow: 'md',
+              }}
+              color="white"
+              onClick={() => router.push('/account/deletecharacter')}
+            >
+              Delete Character
+            </ChakraButton>
 
-            {isLoading && <Spinner />}
+            {isLoading && <Spinner color="purple.500" />}
 
             {is2FAEnabled && qrCodeDataURL && (
-              <Modal isOpen={isOpenModal} onClose={() => setIsOpenModal(false)}>
+              <Modal
+                isOpen={isOpenModal}
+                onClose={() => setIsOpenModal(false)}
+                isCentered
+              >
                 <ModalOverlay />
                 <ModalContent>
                   <ModalHeader>Scan QR Code to enable 2FA</ModalHeader>
@@ -206,7 +301,11 @@ export default function Account({ user }) {
                       <Image
                         src={qrCodeDataURL}
                         alt="QR Code"
-                        boxSize="100px"
+                        boxSize="150px"
+                        borderRadius="md"
+                        border="2px solid"
+                        borderColor="purple.400"
+                        p={2}
                       />
                     </Center>
                   </ModalBody>
@@ -214,6 +313,7 @@ export default function Account({ user }) {
                     <ChakraButton
                       variant="ghost"
                       onClick={() => setIsOpenModal(false)}
+                      colorScheme="purple"
                     >
                       Close
                     </ChakraButton>
@@ -221,49 +321,18 @@ export default function Account({ user }) {
                 </ModalContent>
               </Modal>
             )}
-
-            {/* <Button
-              value="Generate recovery key"
-              btnType="primary"
-              href="/account/deletecharacter"
-            /> */}
           </Wrap>
         </Panel>
 
         <Panel header="Characters">
-          {/* <div className="pull-right">
-                      <Link
-                        href={`/account/editcharacter/${player.name}`}
-                        passHref
-                      >
-                        <button
-                          className="btn btn-sm btn-primary"
-                          style={{ margin: { right: '5px' } }}
-                        >
-                          <i className="fa fa-pencil"></i> Edit
-                        </button>
-                      </Link>
-                    </div> */}
-
           <StripedTable
-            head={[
-              { text: 'Name' },
-              { text: 'Level' },
-              { text: 'Profession' },
-              // { text: 'Edit' }
-            ]}
+            head={[{ text: 'Name' }, { text: 'Level' }, { text: 'Profession' }]}
             body={info.players.map((player) => [
               { href: `/character/${player.name}`, text: player.name },
               { text: player.level },
               { text: vocationIdToName[player.vocation] },
-
-              // {
-              //   type: 'button',
-              //   text: 'Edit',
-              //   href: `/account/editcharacter/${player.name}`,
-              // },
             ])}
-          ></StripedTable>
+          />
         </Panel>
       </Panel>
     </>
