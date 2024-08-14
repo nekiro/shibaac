@@ -19,7 +19,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         include: {
           guild_membership: {
             include: {
-              player: {
+              players: {
                 select: {
                   name: true,
                   level: true,

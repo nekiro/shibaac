@@ -10,7 +10,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           guild_id: Number(guildId),
         },
         include: {
-          player: true,
+          players: true,
         },
       });
 
@@ -57,7 +57,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         data: {
           player_id: Number(getPlayerToInvite.id),
           guild_id: Number(guild_id),
-          date: new Date(),
         },
       });
 
@@ -93,7 +92,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       await prisma.guild_invites.delete({
-        where: { player_id: Number(inviteId) },
+        where: {
+          player_id_guild_id: {
+            player_id: Number(inviteId),
+            guild_id: Number(guildId),
+          },
+        },
       });
 
       res

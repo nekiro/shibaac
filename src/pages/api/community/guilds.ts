@@ -44,6 +44,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const requiredLevel = parseInt(
       process.env.NEXT_PUBLIC_MIN_GUILD_LEVEL_CREATE || '8',
     );
+    const timestampInSeconds = Math.floor(Date.now() / 1000);
 
     if (!leader_id || !leader_name || !guild_name) {
       return res.status(400).json({
@@ -79,7 +80,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const newGuild = await prisma.guilds.create({
         data: {
           name: guild_name,
-          creationdata: new Date(),
+          creationdata: timestampInSeconds,
           ownerid: leader_id,
         },
       });
