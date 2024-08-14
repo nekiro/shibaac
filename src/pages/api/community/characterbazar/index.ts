@@ -77,6 +77,7 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     const equipedItems = transformPlayerItemsToEquipedItems(playerItems);
+    const equipedItemsAsString = JSON.stringify(equipedItems);
 
     const transformPlayerSkills = {
       Magic: player.maglevel || 0,
@@ -89,6 +90,8 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
       Fishing: player.skill_fishing || 0,
     };
 
+    const skillsAsString = JSON.stringify(transformPlayerSkills);
+
     const storagesInRange = await prisma.player_storage.findMany({
       where: {
         player_id: playerId,
@@ -100,6 +103,7 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
     });
 
     const questArray = storagesInRange.map((storage) => storage.key);
+    const questsAsString = JSON.stringify(questArray);
 
     const playerCharms = await prisma.player_charms.findFirst({
       where: {
@@ -112,6 +116,10 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
       charm_expansion: playerCharms?.charm_expansion,
       rune_wound: playerCharms?.rune_wound,
     };
+    const charmsAsString = JSON.stringify(charmData);
+
+    const extrasData = {};
+    const extrasAsString = JSON.stringify(extrasData);
 
     const auctionHouseAccount = await prisma.accounts.findUnique({
       where: { name: 'AuctionBazar' },
@@ -124,9 +132,9 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
       });
     }
 
-    const newListing = await prisma.bazarListings.create({
+    const newListing = await prisma.bazar_listings.create({
       data: {
-        player: {
+        players: {
           connect: {
             id: player.id,
           },
@@ -143,11 +151,11 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
         remainingTime: getRemainingTime(end_date),
         endingAt: end_date,
         coins: initial_bid,
-        skills: transformPlayerSkills,
-        equipedItems: equipedItems,
-        charms: charmData,
-        quests: questArray,
-        extras: {},
+        skills: skillsAsString,
+        equipedItems: equipedItemsAsString,
+        charms: charmsAsString,
+        quests: questsAsString,
+        extras: extrasAsString,
         oldAccountId: oldAccountId,
       },
     });
@@ -185,9 +193,9 @@ const get = withSessionRoute(
     }
 
     try {
-      const bazarListings = await prisma.bazarListings.findMany({
+      const bazarListings = await prisma.bazar_listings.findMany({
         include: {
-          BazarBids: {
+          bazar_bids: {
             select: {
               id: true,
               bazarListingId: true,
@@ -204,11 +212,24 @@ const get = withSessionRoute(
 
       const modifiedListings = bazarListings.map((listing) => {
         const isOwner = listing.oldAccountId === user.id;
-        const { oldAccountId, ...remainingProps } = listing;
+        const {
+          oldAccountId,
+          skills,
+          equipedItems,
+          charms,
+          quests,
+          extras,
+          ...remainingProps
+        } = listing;
 
         return {
           ...remainingProps,
           isOwner: isOwner,
+          skills: skills ? JSON.parse(skills) : null,
+          equipedItems: equipedItems ? JSON.parse(equipedItems) : null,
+          charms: charms ? JSON.parse(charms) : null,
+          quests: quests ? JSON.parse(quests) : null,
+          extras: extras ? JSON.parse(extras) : null,
         };
       });
 

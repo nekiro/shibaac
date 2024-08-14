@@ -89,6 +89,46 @@ model accounts {
   sessions            sessions[]
 }
 
+model bazar_bids {
+  id               Int             @id @default(autoincrement())
+  bidderAccountId  Int?
+  bidderPlayerName String?         @db.VarChar(255)
+  amount           Int?
+  bazarListingId   Int?
+  createdAt        DateTime?       @default(now()) @db.DateTime(0)
+  bazar_listings   bazar_listings? @relation(fields: [bazarListingId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_BazarBids_bazarListingId")
+
+  @@index([bazarListingId], map: "idx_BazarBids_bazarListingId")
+  @@index([bidderAccountId], map: "idx_BazarBids_bidderId")
+}
+
+model bazar_listings {
+  id             Int          @id @default(autoincrement())
+  playerId       Int?         @unique(map: "playerId")
+  name           String?      @db.VarChar(255)
+  level          Int?
+  vocation       Int?
+  characterPage  String?      @db.VarChar(255)
+  highlight      Boolean?
+  country        String?      @db.VarChar(255)
+  world          Int?
+  pvpType        String?      @db.VarChar(255)
+  battlEyeStatus String?      @db.VarChar(255)
+  remainingTime  String?      @db.VarChar(255)
+  endingAt       String?      @db.VarChar(255)
+  coins          Int?
+  equipedItems   String?      @db.LongText
+  skills         String?      @db.LongText
+  quests         String?      @db.LongText
+  charms         String?      @db.LongText
+  extras         String?      @db.LongText
+  oldAccountId   Int?
+  bazar_bids     bazar_bids[]
+  players        players?     @relation(fields: [playerId], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "fk_bazarListings_playerId")
+
+  @@index([playerId], map: "idx_bazarListings_playerId")
+}
+
 model guild_invites {
   player_id Int     @default(0)
   guild_id  Int     @default(0)
@@ -239,6 +279,35 @@ model market_offers {
   @@index([sale, itemtype], map: "sale")
 }
 
+model player_charms {
+  id               Int      @id @default(autoincrement())
+  player_guid      Int
+  charm_points     String?  @db.VarChar(250)
+  charm_expansion  Boolean?
+  rune_wound       Int?
+  rune_enflame     Int?
+  rune_poison      Int?
+  rune_freeze      Int?
+  rune_zap         Int?
+  rune_curse       Int?
+  rune_cripple     Int?
+  rune_parry       Int?
+  rune_dodge       Int?
+  rune_adrenaline  Int?
+  rune_numb        Int?
+  rune_cleanse     Int?
+  rune_bless       Int?
+  rune_scavenge    Int?
+  rune_gut         Int?
+  rune_low_blow    Int?
+  rune_divine      Int?
+  rune_vamp        Int?
+  rune_void        Int?
+  UsedRunesBit     String?  @db.VarChar(250)
+  UnlockedRunesBit String?  @db.VarChar(250)
+  tracker_list     Bytes?   @map("tracker list") @db.Blob
+}
+
 model player_deaths {
   player_id              Int
   time                   BigInt  @default(0) @db.UnsignedBigInt
@@ -282,7 +351,6 @@ model player_inboxitems {
   @@unique([player_id, sid], map: "player_id_2")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model player_items {
   player_id  Int     @default(0)
   pid        Int     @default(0)
@@ -290,11 +358,11 @@ model player_items {
   itemtype   Int     @default(0) @db.UnsignedSmallInt
   count      Int     @default(0) @db.SmallInt
   attributes Bytes   @db.Blob
+  id         Int     @id @default(autoincrement())
   players    players @relation(fields: [player_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "player_items_ibfk_1")
 
   @@index([player_id], map: "player_id")
   @@index([sid], map: "sid")
-  @@ignore
 }
 
 model player_mounts {
@@ -422,6 +490,7 @@ model players {
   account_ban_history                                      account_ban_history[]
   account_bans                                             account_bans[]
   account_viplist                                          account_viplist[]
+  bazar_listings                                           bazar_listings?
   guild_invites                                            guild_invites[]
   guild_membership                                         guild_membership?
   guilds                                                   guilds?
@@ -431,7 +500,7 @@ model players {
   player_deaths                                            player_deaths[]
   player_depotitems                                        player_depotitems[]
   player_inboxitems                                        player_inboxitems[]
-  player_items                                             player_items[]           @ignore
+  player_items                                             player_items[]
   player_mounts                                            player_mounts[]
   player_namelocks_player_namelocks_player_idToplayers     player_namelocks?        @relation("player_namelocks_player_idToplayers")
   player_namelocks_player_namelocks_namelocked_byToplayers player_namelocks[]       @relation("player_namelocks_namelocked_byToplayers")

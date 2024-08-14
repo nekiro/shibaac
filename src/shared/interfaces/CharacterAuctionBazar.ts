@@ -23,7 +23,7 @@ export interface CharacterData {
     charm_expansion: number;
     rune_wound: number;
   };
-  BazarBids: BidList[];
+  bazar_bids: BidList[];
   isOwner?: boolean;
 }
 

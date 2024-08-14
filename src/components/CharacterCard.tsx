@@ -39,6 +39,8 @@ const CharacterCard: React.FC<Props> = ({
   const [showDetails, setShowDetails] = useState(false);
   const toast = useToast();
 
+  console.log('characterData', characterData);
+
   const {
     name,
     level,
@@ -52,7 +54,7 @@ const CharacterCard: React.FC<Props> = ({
     equipedItems,
     skills,
     extras,
-    BazarBids,
+    bazar_bids,
     isOwner,
   } = characterData;
 
@@ -101,7 +103,7 @@ const CharacterCard: React.FC<Props> = ({
   );
 
   const renderBids = () => {
-    return BazarBids.map((bid, index) => (
+    return bazar_bids.map((bid, index) => (
       <div key={bid.id}>
         {index + 1}. {bid.amount} coins by {bid.bidderPlayerName || 'Anonymous'}{' '}
         at {new Date(bid.createdAt).toLocaleString()}
@@ -211,9 +213,9 @@ const CharacterCard: React.FC<Props> = ({
             <Text display="flex" alignItems="center" justifyContent="center">
               <Image src="/images/ico-tibia-coin.png" marginRight="10px" />
               <span>
-                {coins > BazarBids[0]?.amount || BazarBids.length === 0
+                {coins > bazar_bids[0]?.amount || bazar_bids.length === 0
                   ? coins
-                  : BazarBids[0]?.amount}
+                  : bazar_bids[0]?.amount}
               </span>
             </Text>
           </Tooltip>,
