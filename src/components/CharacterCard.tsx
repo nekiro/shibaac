@@ -184,7 +184,12 @@ const CharacterCard: React.FC<Props> = ({
             Cancel Auction
           </Button>
         ) : (
-          <Button onClick={() => openBidModal(characterData)}>Bid</Button>
+          <Button
+            onClick={() => openBidModal(characterData)}
+            colorScheme="purple"
+          >
+            Bid
+          </Button>
         )}
       </Flex>
 

@@ -81,6 +81,7 @@ model accounts {
   rec_key             String?               @unique(map: "accounts_rec_key_unique") @db.VarChar(255)
   twoFASecret         String?               @db.VarChar(255)
   twoFAEnabled        Boolean               @default(false)
+  coins               Int?
   account_ban_history account_ban_history[]
   account_bans        account_bans?
   account_storage     account_storage[]

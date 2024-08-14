@@ -35,7 +35,10 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
     });
   }
 
-  if (getAccountBidder.coins < currentBidAmount) {
+  if (
+    getAccountBidder.coins == null ||
+    getAccountBidder.coins < currentBidAmount
+  ) {
     return res.status(400).json({
       message: 'The account does not have enough coins to cover the bid.',
       success: false,
@@ -51,7 +54,7 @@ const post = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   try {
-    const newBid = await prisma.bazarBids.create({
+    const newBid = await prisma.bazar_bids.create({
       data: {
         bidderAccountId,
         amount: bidAmount,

@@ -11,6 +11,7 @@ CREATE TABLE aac_news (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ALTER TABLE `accounts` 
+ADD COLUMN `coins` INT,
 ADD COLUMN `rec_key` VARCHAR(255),
 ADD COLUMN `twoFASecret` VARCHAR(255),
 ADD COLUMN `twoFAEnabled` BOOLEAN NOT NULL DEFAULT false;
