@@ -74,7 +74,7 @@ export default function Guilds({ user }: any) {
     try {
       setIsLoading(true);
 
-      const response = await fetchApi('GET', `/api/account/${user.id}`);
+      const response: any = await fetchApi('GET', `/api/account/${user.id}`);
 
       if (response.success) {
         setInfo(response.account);
@@ -92,7 +92,7 @@ export default function Guilds({ user }: any) {
 
   const fetchGuilds = useCallback(async () => {
     try {
-      const response = await fetchApi('GET', '/api/community/guilds');
+      const response: any = await fetchApi('GET', '/api/community/guilds');
 
       setGuilds(response.data);
     } catch (error) {
@@ -120,7 +120,7 @@ export default function Guilds({ user }: any) {
         (option) => option.value === Number(values.leader),
       );
 
-      const response = await fetchApi('POST', '/api/community/guilds', {
+      const response: any = await fetchApi('POST', '/api/community/guilds', {
         data: {
           leader_id: leaderOption ? leaderOption.value : null,
           leader_name: leaderOption ? leaderOption.label : null,

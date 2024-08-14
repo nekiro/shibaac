@@ -93,10 +93,16 @@ const fields: Field[] = [
   },
 ];
 
-const buttons = [{ type: 'submit', btnType: 'primary', value: 'Submit' }];
+const buttons = [
+  {
+    type: 'submit',
+    btnColorType: 'primary',
+    value: 'Submit',
+  },
+];
 
 export default function Guild({ user }: any) {
-  const router = useRouter();
+  const router = useRouter() as any;
   const { name } = router.query;
   const [guild, setGuild] = useState<Guild | null>(null);
   const [guildInvites, setGuildInvites] = useState<GuildInvite[]>([]);
@@ -112,7 +118,7 @@ export default function Guild({ user }: any) {
   const fetchGuildData = useCallback(async () => {
     if (name) {
       try {
-        const response = await fetchApi(
+        const response: any = await fetchApi(
           'GET',
           `/api/community/guilds/${encodeURIComponent(name)}`,
         );
@@ -131,7 +137,7 @@ export default function Guild({ user }: any) {
   const fetchGuildInvites = useCallback(async () => {
     try {
       if (guild?.id) {
-        const response = await fetchApi(
+        const response: any = await fetchApi(
           'GET',
           `/api/community/guilds/inviteplayer/?guildId=${guild.id}`,
         );
@@ -151,7 +157,7 @@ export default function Guild({ user }: any) {
     values: FormValues,
     { resetForm }: { resetForm: () => void },
   ) => {
-    const response = await fetchApi(
+    const response: any = await fetchApi(
       'POST',
       '/api/community/guilds/inviteplayer',
       {
@@ -247,7 +253,7 @@ export default function Guild({ user }: any) {
     try {
       const response = await fetchApi(
         'POST',
-        `/api/community/guilds/acceptinvite?inviteId=${inviteId}&player_name=${findIdByAccept?.player.name}`,
+        `/api/community/guilds/acceptinvite?inviteId=${inviteId}&player_name=${findIdByAccept?.players.name}`,
       );
 
       if (response.success) {
@@ -365,7 +371,7 @@ export default function Guild({ user }: any) {
     if (e.target.files[0]) {
       const reader = new FileReader();
 
-      reader.onload = (e) => {
+      reader.onload = (e: any) => {
         setPreviewUrl(e.target.result);
       };
 
@@ -459,9 +465,9 @@ export default function Guild({ user }: any) {
                               },
                               { text: member.online ? 'Online' : 'Offline' },
                               {
-                                text: member.player
-                                  ? `${member.player.level}/${
-                                      vocationIdToName[member.player.vocation]
+                                text: member.players
+                                  ? `${member.players.level}/${
+                                      vocationIdToName[member.players.vocation]
                                     }`
                                   : 'N/A',
                               },
@@ -523,11 +529,11 @@ export default function Guild({ user }: any) {
                       >
                         <Image
                           src={
-                            guild.logoUrl
-                              ? `${baseUrl}/${guild.logoUrl}`
+                            guild?.banner_url
+                              ? `${baseUrl}${guild.banner_url}`
                               : `/images/guild-logo-default.gif`
                           }
-                          alt={`${guild.name} logo`}
+                          alt={`${guild?.name} logo`}
                           layout="fill"
                           objectFit="cover"
                         />
