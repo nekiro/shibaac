@@ -211,16 +211,15 @@ export default function Guilds({ user }: any) {
           ]}
           body={
             guilds && guilds.length > 0
-              ? guilds.map((guild, index) => [
+              ? guilds.map((guild: any) => [
                   {
                     text: (
                       <Avatar
                         src={
-                          guild.logoUrl
-                            ? `${baseUrl}/${guild.logoUrl}`
+                          guild.banner_url
+                            ? `${baseUrl}${guild?.banner_url}`
                             : `/images/guild-logo-default.gif`
                         }
-                        alt="Guild Logo"
                         width="50"
                         height="50"
                       />

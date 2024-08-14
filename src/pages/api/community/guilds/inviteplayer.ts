@@ -10,7 +10,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           guild_id: Number(guildId),
         },
         include: {
-          players: true,
+          players: {
+            select: {
+              name: true,
+              level: true,
+              vocation: true,
+            },
+          },
         },
       });
 

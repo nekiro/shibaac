@@ -145,6 +145,7 @@ model guilds {
   ownerid          Int                @unique(map: "ownerid")
   creationdata     Int
   motd             String             @default("") @db.VarChar(255)
+  banner_url       String?            @db.VarChar(255)
   guild_invites    guild_invites[]
   guild_membership guild_membership[]
   guild_ranks      guild_ranks[]
@@ -239,7 +240,6 @@ model market_offers {
 }
 
 model player_deaths {
-  id                     Int     @id @default(autoincrement())
   player_id              Int
   time                   BigInt  @default(0) @db.UnsignedBigInt
   level                  Int     @default(1)
@@ -249,6 +249,7 @@ model player_deaths {
   mostdamage_is_player   Int     @default(0) @db.TinyInt
   unjustified            Int     @default(0) @db.TinyInt
   mostdamage_unjustified Int     @default(0) @db.TinyInt
+  id                     Int     @id @default(autoincrement())
   players                players @relation(fields: [player_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "player_deaths_ibfk_1")
 
   @@index([killed_by], map: "killed_by")

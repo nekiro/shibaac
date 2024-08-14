@@ -19,3 +19,6 @@ CREATE UNIQUE INDEX `accounts_rec_key_unique` ON `accounts` (`rec_key`);
 
 ALTER TABLE player_deaths
 ADD COLUMN id INT NOT NULL AUTO_INCREMENT PRIMARY KEY;
+
+ALTER TABLE guilds
+ADD COLUMN banner_url VARCHAR(255);

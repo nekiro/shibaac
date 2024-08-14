@@ -22,7 +22,6 @@ import {
 } from '@chakra-ui/react';
 import { FormValues } from '../../../shared/interfaces/FormValues';
 import { ApiResponse } from '../../../shared/types/ApiResponse';
-import { FormButton } from '../../../shared/types/FormButton';
 
 type Field = {
   type: string;
@@ -40,7 +39,8 @@ interface GuildMember {
   guild_id: number;
   rank_id: number;
   nick: string;
-  player?: {
+  players?: {
+    name: string;
     level: number;
     vocation: string;
   };
@@ -57,11 +57,11 @@ interface Guild {
   balance: number;
   points: number;
   guild_membership: GuildMember[];
-  logoUrl?: string;
+  banner_url?: string;
 }
 
 interface GuildInvite {
-  player: {
+  players: {
     name: string;
     level: number;
     vocation: number;
@@ -77,7 +77,8 @@ interface GuildMember {
   rank_id: number;
   nick: string;
   online?: boolean;
-  player?: {
+  players?: {
+    name: string;
     level: number;
     vocation: string;
   };
@@ -92,9 +93,7 @@ const fields: Field[] = [
   },
 ];
 
-const buttons: FormButton[] = [
-  { type: 'submit', btnType: 'primary', value: 'Submit' },
-];
+const buttons = [{ type: 'submit', btnType: 'primary', value: 'Submit' }];
 
 export default function Guild({ user }: any) {
   const router = useRouter();
@@ -584,21 +583,21 @@ export default function Guild({ user }: any) {
                 ? guildInvites.map((invite, index) => [
                     {
                       text: (
-                        <Link href={`/character/${invite.player.name}`}>
-                          {invite.player.name}
+                        <Link href={`/character/${invite.players.name}`}>
+                          {invite.players.name}
                         </Link>
                       ),
                     },
                     {
-                      text: `${invite.player.level} - ${
-                        vocationIdToName[invite.player.vocation]
+                      text: `${invite.players.level} - ${
+                        vocationIdToName[invite.players.vocation]
                       }`,
                     },
                     { text: new Date(invite.date).toLocaleString() },
                     {
                       text: (
                         <>
-                          {user.id === guild.ownerid ? (
+                          {user.id === guild?.ownerid ? (
                             <ChakraButton
                               onClick={() =>
                                 handleDeleteInvite(invite.player_id)
