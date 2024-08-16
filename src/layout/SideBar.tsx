@@ -28,7 +28,11 @@ const SideBar = () => {
 
   const toggleSidebar = () => setSidebarIsOpen(!sidebarIsOpen);
 
-  const bg = useColorModeValue('white', 'gray.900');
+  const bgMaximized = useColorModeValue(
+    'rgba(0, 0, 0, 0.7)',
+    'rgba(0, 0, 0, 0.7)',
+  ); // Fundo semi-transparente
+  const bgMinimized = useColorModeValue('white', 'gray.900'); // Fundo sólido
   const borderColor = useColorModeValue('gray.200', 'gray.700');
   const textColor = useColorModeValue('gray.800', 'white');
   const iconColor = useColorModeValue('gray.600', 'gray.400');
@@ -38,14 +42,15 @@ const SideBar = () => {
       direction="column"
       width={sidebarIsOpen ? '300px' : '72px'}
       height="100vh"
-      bg={bg}
+      bg={sidebarIsOpen ? bgMaximized : bgMinimized}
       borderRight="1px solid"
       borderColor={borderColor}
       position="fixed"
       top={0}
       left={0}
-      transition="width 0.4s"
+      transition="width 0.4s, background-color 0.4s"
       boxShadow="20px 0px 20px 20px rgba(0, 0, 0, 0.1)"
+      zIndex={20}
     >
       <Box textAlign="center" my={4}>
         <Image
@@ -251,7 +256,7 @@ const SideBar = () => {
         right={sidebarIsOpen ? '-20px' : '-20px'}
         transform="translateY(-50%)"
         onClick={toggleSidebar}
-        bg={bg}
+        bg={bgMinimized}
         borderColor={borderColor}
         borderWidth="1px"
         borderRadius="full"

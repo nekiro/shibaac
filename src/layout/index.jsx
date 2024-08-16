@@ -1,41 +1,174 @@
-import React from 'react';
-import Head from './Head';
-import NavBar from './NavBar';
-import SideBar from './SideBar';
-import Footer from './Footer';
+import React, { useState } from 'react';
+import {
+  Flex,
+  Box,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  Avatar,
+  useColorModeValue,
+  IconButton,
+  Text,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+} from '@chakra-ui/react';
+import { FiSearch, FiMoon, FiBell } from 'react-icons/fi';
+import { BsDiamondFill } from 'react-icons/bs';
+import { IoIosArrowDown } from 'react-icons/io';
+import SideBar from '../layout/SideBar';
+import Footer from '../layout/Footer';
+import HeaderBanner from '../layout/HeaderBanner';
 
-import { Box, Image, Flex } from '@chakra-ui/react';
+const TopBar = () => {
+  const bg = useColorModeValue('gray.900', 'gray.900');
+  const color = useColorModeValue('white', 'white');
+  const iconBg = useColorModeValue('gray.800', 'gray.800');
+
+  const handleChangeTheme = () => {
+    //TODO
+  };
+
+  return (
+    <Flex
+      justify="space-between"
+      align="center"
+      paddingX="6"
+      paddingY="2"
+      bg={bg}
+      width="100%"
+      height="80px"
+      position="fixed"
+      top={0}
+      zIndex={3}
+    >
+      <InputGroup width="400px" marginLeft="auto" marginRight="auto">
+        <InputLeftElement pointerEvents="none">
+          <FiSearch color="gray.500" />
+        </InputLeftElement>
+        <Input
+          placeholder="Type / to search"
+          variant="filled"
+          bg={iconBg}
+          color="white"
+          _placeholder={{ color: 'gray.500' }}
+        />
+      </InputGroup>
+
+      <Flex align="center" gap="1.5rem">
+        <IconButton
+          aria-label="Toggle theme"
+          icon={<FiMoon />}
+          onClick={handleChangeTheme}
+          bg={iconBg}
+          color="white"
+          borderRadius="full"
+        />
+        <Box position="relative">
+          <IconButton
+            aria-label="Notifications"
+            icon={<FiBell />}
+            bg={iconBg}
+            color="white"
+            borderRadius="full"
+          />
+          <Box
+            position="absolute"
+            top="2px"
+            right="2px"
+            width="8px"
+            height="8px"
+            bg="red.500"
+            borderRadius="full"
+          />
+        </Box>
+        <Menu>
+          <MenuButton>
+            <Flex align="center">
+              <Box position="relative" width="34px" height="34px">
+                <Avatar
+                  name="Pedro Giampietro"
+                  src="https://github.com/pedrogiampietro.png"
+                  width="34px"
+                  height="34px"
+                  borderRadius="full"
+                  objectFit="cover"
+                />
+                <Box
+                  position="absolute"
+                  left="50%"
+                  top="50%"
+                  transform="translate(-50%, -50%)"
+                  width="40px"
+                  height="40px"
+                  backgroundImage="url('/images/contorno.svg')"
+                  backgroundSize="cover"
+                  backgroundRepeat="no-repeat"
+                  zIndex={10}
+                  pointerEvents="none"
+                />
+              </Box>
+              <Box textAlign="left" marginLeft="0.5rem">
+                <Text fontSize="sm" fontWeight="bold" color={color}>
+                  Pedro Giampietro
+                </Text>
+                <Flex align="center" fontSize="sm" color="gray.400">
+                  <BsDiamondFill color="purple.500" />
+                  <Text ml="1">5700</Text>
+                  <IoIosArrowDown ml="2" />
+                </Flex>
+              </Box>
+            </Flex>
+          </MenuButton>
+          <MenuList bg={bg} borderColor="gray.700">
+            <MenuItem>Profile</MenuItem>
+            <MenuItem>Settings</MenuItem>
+            <MenuItem>Logout</MenuItem>
+          </MenuList>
+        </Menu>
+      </Flex>
+    </Flex>
+  );
+};
 
 const Layout = ({ children }) => {
+  const [isSidebarMinimized, setIsSidebarMinimized] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsSidebarMinimized((prev) => !prev);
+  };
+
   return (
-    <Box
-      w={{ base: '95%', md: '70%' }}
-      marginX={'auto'}
-      marginY={{ base: '1em', md: 0 }}
-    >
-      <Head />
-      <Image
-        width="15%"
-        marginLeft="auto"
-        marginRight="auto"
-        marginBottom="15px"
-        marginTop="15px"
-        src="/images/header.png"
-        alt="shibaac"
-      />
-      <NavBar />
-      <Flex flexDirection={{ base: 'column', md: 'row' }}>
-        <Box
-          flexGrow="1"
-          marginRight={{ base: 0, md: '3em' }}
-          order={{ base: 2, md: 1 }}
-        >
-          {children}
-          <Footer />
-        </Box>
-        <SideBar order={{ base: 1, md: 2 }} />
+    <Flex direction="column" height="100vh" bg="gray.900">
+      <TopBar />
+
+      <Flex flex="1" marginTop="80px">
+        <SideBar
+          marginTop="80px"
+          zIndex={1}
+          isSidebarMinimized={isSidebarMinimized}
+          toggleSidebar={toggleSidebar}
+        />
+
+        <Flex direction="column" flex="1">
+          <HeaderBanner isSidebarMinimized={isSidebarMinimized} />
+          <Flex
+            direction="column"
+            flex="1"
+            padding={{ base: '1rem', md: '2rem' }}
+            color="white"
+            overflowY="auto"
+            position="relative"
+            mt="2rem"
+            width="100%"
+          >
+            {children}
+          </Flex>
+          <Footer width="100%" maxWidth="none" margin="0 auto" />
+        </Flex>
       </Flex>
-    </Box>
+    </Flex>
   );
 };
 
