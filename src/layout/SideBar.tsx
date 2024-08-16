@@ -1,132 +1,267 @@
-import React, { useState, useEffect } from 'react';
-import Panel from '../components/Panel';
-import Label from '../components/Label';
-import { fetchApi } from '../lib/request';
-import Link from '../components/Link';
-import { Box, LayoutProps, Button } from '@chakra-ui/react';
-import StripedTable from '../components/StrippedTable';
-import { type ProtocolStatusCache } from '../cache/protocolStatus';
-import { players } from '.prisma/client';
+import React, { useState } from 'react';
+import {
+  Flex,
+  IconButton,
+  VStack,
+  Box,
+  Text,
+  Divider,
+  useColorModeValue,
+  Tooltip,
+} from '@chakra-ui/react';
+import {
+  FiUser,
+  FiUsers,
+  FiGrid,
+  FiAward,
+  FiUserCheck,
+  FiShield,
+  FiLogOut,
+  FiArrowLeft,
+  FiArrowRight,
+} from 'react-icons/fi';
+import Link from 'next/link';
+import Image from 'next/image';
 
-const SideBar = (props: LayoutProps) => {
-  const [serverStatus, setServerStatus] = useState<ProtocolStatusCache>();
-  const [topPlayers, setTopPlayers] = useState<players[]>();
-  const [isLoading, setIsLoading] = useState(false);
+const SideBar = () => {
+  const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
 
-  const downloadURL = process.env.NEXT_PUBLIC_CLIENT_DOWNLOAD_URL;
+  const toggleSidebar = () => setSidebarIsOpen(!sidebarIsOpen);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-
-      const [players, status] = await Promise.all([
-        fetchApi<{ players: players[] }>('GET', `/api/player/top5`),
-        fetchApi<{ status: ProtocolStatusCache }>('GET', `/api/status`),
-      ]);
-
-      if (players.success && status.success) {
-        setIsLoading(false);
-        setTopPlayers(players.players || []);
-        setServerStatus(status.status);
-      }
-    };
-
-    fetchData();
-  }, []);
+  const bg = useColorModeValue('white', 'gray.900');
+  const borderColor = useColorModeValue('gray.200', 'gray.700');
+  const textColor = useColorModeValue('gray.800', 'white');
+  const iconColor = useColorModeValue('gray.600', 'gray.400');
 
   return (
-    <Box minWidth="15em" {...props}>
-      <Panel header="Information" isLoading={isLoading}>
-        <StripedTable
-          head={[]}
-          body={[
-            [{ text: 'IP' }, { text: process.env.NEXT_PUBLIC_SERVER_ADDRESS }],
-            [
-              { text: 'Cliente' },
-              { text: process.env.NEXT_PUBLIC_CLIENT_VERSION },
-            ],
-            [{ text: 'Tipo' }, { text: 'RPG/PVP' }],
-          ]}
+    <Flex
+      direction="column"
+      width={sidebarIsOpen ? '300px' : '72px'}
+      height="100vh"
+      bg={bg}
+      borderRight="1px solid"
+      borderColor={borderColor}
+      position="fixed"
+      top={0}
+      left={0}
+      transition="width 0.4s"
+      boxShadow="20px 0px 20px 20px rgba(0, 0, 0, 0.1)"
+    >
+      <Box textAlign="center" my={4}>
+        <Image
+          src="/images/header.png"
+          alt="Logo"
+          width={sidebarIsOpen ? 72 : 40}
+          height={sidebarIsOpen ? 72 : 40}
+          style={{ cursor: 'pointer' }}
         />
-        <Button
-          width="100%"
-          colorScheme="purple"
-          onClick={() => window.open(downloadURL, '_blank')}
-          color="white"
-          mt={4}
-          bgGradient="linear(to-r, violet.500, purple.600)"
-          _hover={{
-            bgGradient: 'linear(to-r, purple.600, violet.500)',
-            boxShadow: 'lg',
-          }}
-          _active={{
-            bgGradient: 'linear(to-r, purple.700, violet.600)',
-            boxShadow: 'inner',
-          }}
-          _focus={{ outline: 0, boxShadow: 'outline' }}
-          borderRadius="md"
-          transition="all 0.2s ease-in-out"
-        >
-          Download Client
-        </Button>
-      </Panel>
+      </Box>
 
-      <Panel header="Server Status" isLoading={isLoading}>
-        <StripedTable
-          head={[]}
-          body={[
-            [
-              {
-                text: serverStatus?.online ? (
-                  <Label colorScheme="green">ONLINE</Label>
-                ) : (
-                  <Label colorScheme="purple">OFFLINE</Label>
-                ),
-              },
-            ],
-            [
-              {
-                text: serverStatus
-                  ? `${serverStatus.onlineCount} players online`
-                  : '',
-                component: serverStatus && (
-                  <Link
-                    href="/online"
-                    text={`${serverStatus.onlineCount} players online`}
-                  />
-                ),
-              },
-            ],
-          ]}
-        />
-      </Panel>
+      <VStack
+        as="nav"
+        align={sidebarIsOpen ? 'stretch' : 'center'}
+        spacing={4}
+        mt={8}
+        flexGrow={1}
+      >
+        <Link href="/account">
+          <Tooltip label="Account" isDisabled={sidebarIsOpen} placement="right">
+            <Flex
+              align="center"
+              justify={sidebarIsOpen ? 'flex-start' : 'center'}
+              px={sidebarIsOpen ? 5 : 0}
+              py={2}
+              _hover={{ bg: 'gray.700' }}
+              cursor="pointer"
+              width="100%"
+            >
+              <Box as={FiUser} color={iconColor} />
+              {sidebarIsOpen && (
+                <Text ml={4} color={textColor}>
+                  Account
+                </Text>
+              )}
+            </Flex>
+          </Tooltip>
+        </Link>
+        <Link href="/my-team">
+          <Tooltip label="My Team" isDisabled={sidebarIsOpen} placement="right">
+            <Flex
+              align="center"
+              justify={sidebarIsOpen ? 'flex-start' : 'center'}
+              px={sidebarIsOpen ? 5 : 0}
+              py={2}
+              _hover={{ bg: 'gray.700' }}
+              cursor="pointer"
+              width="100%"
+            >
+              <Box as={FiUsers} color={iconColor} />
+              {sidebarIsOpen && (
+                <Text ml={4} color={textColor}>
+                  My Team
+                </Text>
+              )}
+            </Flex>
+          </Tooltip>
+        </Link>
 
-      <Panel header="Top 5 Level" isLoading={isLoading}>
-        <StripedTable
-          head={[{ text: 'Name' }, { text: 'Level' }]}
-          body={
-            topPlayers && topPlayers.length > 0
-              ? topPlayers.map((player, index) => [
-                  {
-                    text: `${index + 1}. ${player.name}`,
-                    href: `/character/${player.name}`,
-                  },
-                  {
-                    text: player.level,
-                  },
-                ])
-              : [
-                  [
-                    {
-                      text: 'There is no data to show',
-                      colspan: 2,
-                    },
-                  ],
-                ]
-          }
-        />
-      </Panel>
-    </Box>
+        <Divider borderColor={borderColor} />
+
+        <Link href="/dashboard">
+          <Tooltip
+            label="Dashboard"
+            isDisabled={sidebarIsOpen}
+            placement="right"
+          >
+            <Flex
+              align="center"
+              justify={sidebarIsOpen ? 'flex-start' : 'center'}
+              px={sidebarIsOpen ? 5 : 0}
+              py={2}
+              _hover={{ bg: 'gray.700' }}
+              cursor="pointer"
+              width="100%"
+            >
+              <Box as={FiGrid} color={iconColor} />
+              {sidebarIsOpen && (
+                <Text ml={4} color={textColor}>
+                  Dashboard
+                </Text>
+              )}
+            </Flex>
+          </Tooltip>
+        </Link>
+        <Link href="/players">
+          <Tooltip label="Players" isDisabled={sidebarIsOpen} placement="right">
+            <Flex
+              align="center"
+              justify={sidebarIsOpen ? 'flex-start' : 'center'}
+              px={sidebarIsOpen ? 5 : 0}
+              py={2}
+              _hover={{ bg: 'gray.700' }}
+              cursor="pointer"
+              width="100%"
+            >
+              <Box as={FiUserCheck} color={iconColor} />
+              {sidebarIsOpen && (
+                <Text ml={4} color={textColor}>
+                  Players
+                </Text>
+              )}
+            </Flex>
+          </Tooltip>
+        </Link>
+        <Link href="/tournaments">
+          <Tooltip
+            label="Tournaments"
+            isDisabled={sidebarIsOpen}
+            placement="right"
+          >
+            <Flex
+              align="center"
+              justify={sidebarIsOpen ? 'flex-start' : 'center'}
+              px={sidebarIsOpen ? 5 : 0}
+              py={2}
+              _hover={{ bg: 'gray.700' }}
+              cursor="pointer"
+              width="100%"
+            >
+              <Box as={FiAward} color={iconColor} />
+              {sidebarIsOpen && (
+                <Text ml={4} color={textColor}>
+                  Tournaments
+                </Text>
+              )}
+            </Flex>
+          </Tooltip>
+        </Link>
+        <Link href="/matches">
+          <Tooltip label="Matches" isDisabled={sidebarIsOpen} placement="right">
+            <Flex
+              align="center"
+              justify={sidebarIsOpen ? 'flex-start' : 'center'}
+              px={sidebarIsOpen ? 5 : 0}
+              py={2}
+              _hover={{ bg: 'gray.700' }}
+              cursor="pointer"
+              width="100%"
+            >
+              <Box as={FiShield} color={iconColor} />
+              {sidebarIsOpen && (
+                <Text ml={4} color={textColor}>
+                  Matches
+                </Text>
+              )}
+            </Flex>
+          </Tooltip>
+        </Link>
+        <Link href="/community">
+          <Tooltip
+            label="Community"
+            isDisabled={sidebarIsOpen}
+            placement="right"
+          >
+            <Flex
+              align="center"
+              justify={sidebarIsOpen ? 'flex-start' : 'center'}
+              px={sidebarIsOpen ? 5 : 0}
+              py={2}
+              _hover={{ bg: 'gray.700' }}
+              cursor="pointer"
+              width="100%"
+            >
+              <Box as={FiUsers} color={iconColor} />
+              {sidebarIsOpen && (
+                <Text ml={4} color={textColor}>
+                  Community
+                </Text>
+              )}
+            </Flex>
+          </Tooltip>
+        </Link>
+      </VStack>
+
+      <Flex
+        align="center"
+        justify={sidebarIsOpen ? 'flex-start' : 'center'}
+        px={sidebarIsOpen ? 5 : 0}
+        py={2}
+        _hover={{ bg: 'gray.700' }}
+        cursor="pointer"
+        width="100%"
+        mt="auto"
+      >
+        <Tooltip label="Logout" isDisabled={sidebarIsOpen} placement="right">
+          <Flex align="center" justify="center" width="100%">
+            <Box as={FiLogOut} color={iconColor} />
+            {sidebarIsOpen && (
+              <Text ml={4} color={textColor}>
+                Logout
+              </Text>
+            )}
+          </Flex>
+        </Tooltip>
+      </Flex>
+
+      <IconButton
+        aria-label="Toggle Sidebar"
+        icon={sidebarIsOpen ? <FiArrowLeft /> : <FiArrowRight />}
+        position="absolute"
+        top="50%"
+        right={sidebarIsOpen ? '-20px' : '-20px'}
+        transform="translateY(-50%)"
+        onClick={toggleSidebar}
+        bg={bg}
+        borderColor={borderColor}
+        borderWidth="1px"
+        borderRadius="full"
+        shadow="lg"
+        _hover={{
+          transform: 'translateY(-50%) scale(1.1)',
+          bg: borderColor,
+        }}
+      />
+    </Flex>
   );
 };
 
