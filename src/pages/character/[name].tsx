@@ -13,7 +13,8 @@ import {
   VStack,
   HStack,
   Avatar,
-  StackDivider,
+  Grid,
+  GridItem,
   Badge,
   Spinner,
   Alert,
@@ -21,57 +22,36 @@ import {
   SimpleGrid,
   useColorModeValue,
   Heading,
+  Divider,
+  Flex,
+  Container,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
-// Define the types for the state
-interface Player {
-  name: string;
-  level: number;
-  sex: number;
-  vocation: number;
-  town?: string;
-  guild?: { name: string };
-  lastlogin: number;
-  onlinetime: number;
-  premium_ends_at: number;
-  creation: number;
-  group_id: number;
-  player_deaths: Death[];
-  accounts?: { players: PlayerSummary[] };
-}
+const Card = ({ children, ...props }) => (
+  <Box
+    as={motion.div}
+    p={6}
+    bg={useColorModeValue('gray.900', 'gray.700')}
+    boxShadow="lg"
+    borderRadius="lg"
+    whileHover={{ scale: 1.02 }}
+    transition="0.2s"
+    {...props}
+  >
+    {children}
+  </Box>
+);
 
-interface Death {
-  time: number;
-  level: number;
-  is_player: number;
-  killed_by: string;
-  killerDetails: KillerDetails;
-}
-
-interface KillerDetails {
-  level: number;
-  vocation: number;
-  isMonster: number;
-  lookaddons: number;
-  lookbody: number;
-  lookfeet: number;
-  lookhead: number;
-  looklegs: number;
-  looktype: number;
-}
-
-interface PlayerSummary {
-  name: string;
-  level: number;
-  vocation: number;
-  players_online: boolean;
-}
-
-interface State {
-  player?: Player;
-  town?: string;
-}
+const Section = ({ title, children, ...props }) => (
+  <VStack align="flex-start" spacing={4} {...props}>
+    <Heading size="md" color="purple.500">
+      {title}
+    </Heading>
+    <Divider borderColor="gray.600" />
+    {children}
+  </VStack>
+);
 
 export default function Character() {
   const router = useRouter();
@@ -113,9 +93,6 @@ export default function Character() {
     fetchData();
   }, [fetchData]);
 
-  const cardBg = useColorModeValue('white', 'gray.800');
-  const cardShadow = useColorModeValue('lg', 'dark-lg');
-
   if (isLoading) {
     return (
       <VStack justify="center" align="center" h="100vh">
@@ -153,167 +130,152 @@ export default function Character() {
   const isPremium = player.premium_ends_at >= Date.now();
 
   return (
-    <VStack
-      spacing={6}
-      align="stretch"
-      p={4}
-      maxW="6xl"
-      mx="auto"
-      divider={<StackDivider borderColor="gray.200" />}
-    >
-      {/* Character Overview */}
-      <HStack
-        as={motion.div}
-        p={6}
-        bg={cardBg}
-        boxShadow={cardShadow}
-        borderRadius="md"
-        align="center"
-        spacing={6}
-        whileHover={{ scale: 1.02 }}
-        transition="0.2s"
-      >
-        <Avatar
-          size="xl"
-          name={player.name}
-          src={`/images/characters/${player.name}.jpg`}
-        />
-        <VStack align="flex-start" spacing={1}>
-          <Heading size="lg">{player.name}</Heading>
-          <HStack>
-            <Badge colorScheme="purple">
-              {vocationIdToName[player.vocation]}
-            </Badge>
-            <Badge colorScheme={player.sex === 1 ? 'blue' : 'pink'}>
-              {player.sex === 1 ? 'Male' : 'Female'}
-            </Badge>
-            {isPremium && <Badge colorScheme="yellow">Premium</Badge>}
-          </HStack>
-          <Text fontSize="sm" color="gray.500">
-            Level {player.level} - {state.town || 'Unknown Town'}
-          </Text>
-        </VStack>
-      </HStack>
-
-      {/* Character Information */}
-      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
-        <VStack
-          as={motion.div}
-          p={6}
-          bg={cardBg}
-          boxShadow={cardShadow}
-          borderRadius="md"
-          align="flex-start"
-          spacing={3}
-          whileHover={{ scale: 1.02 }}
-          transition="0.2s"
-        >
-          <Text fontWeight="bold">Account Status:</Text>
-          <Text>{isPremium ? 'Premium Account' : 'Free Account'}</Text>
-
-          <Text fontWeight="bold">Last Login:</Text>
-          <Text>{lastLoginDate}</Text>
-
-          <Text fontWeight="bold">Online Time:</Text>
-          <Text>
-            {player.onlinetime > 0
-              ? secondsToTime(player.onlinetime)
-              : 'Never logged in'}
-          </Text>
-        </VStack>
-
-        {player.guild && (
-          <VStack
-            as={motion.div}
-            p={6}
-            bg={cardBg}
-            boxShadow={cardShadow}
-            borderRadius="md"
-            align="flex-start"
-            spacing={3}
-            whileHover={{ scale: 1.02 }}
-            transition="0.2s"
+    <Container maxW="7xl" py={8}>
+      <VStack spacing={8} align="stretch">
+        {/* Character Overview */}
+        <Card>
+          <Flex
+            direction={{ base: 'column', md: 'row' }}
+            align="center"
+            spacing={6}
           >
-            <Text fontWeight="bold">Guild:</Text>
-            <Text>{player.guild.name}</Text>
-          </VStack>
-        )}
-      </SimpleGrid>
-
-      {/* Deaths Timeline */}
-      {player.player_deaths.length > 0 && (
-        <VStack
-          as={motion.div}
-          p={6}
-          bg={cardBg}
-          boxShadow={cardShadow}
-          borderRadius="md"
-          align="flex-start"
-          spacing={3}
-          whileHover={{ scale: 1.02 }}
-          transition="0.2s"
-        >
-          <Heading size="md">Deaths</Heading>
-          <Timeline
-            items={player.player_deaths.map((death) => ({
-              date: death.time,
-              text: `${
-                death.is_player ? 'Fragged a player' : 'Died'
-              } at level ${death.level}.`,
-              killedByPlayer: death.is_player,
-              killer: {
-                killed_by: death.killed_by,
-                mostdamage_by: death.mostdamage_by,
-                unjustified: death.unjustified,
-                level: death.killerDetails.level,
-                vocation: death.killerDetails.vocation,
-                isMonster: death.killerDetails.isMonster,
-                lookaddons: death.killerDetails.lookaddons,
-                lookbody: death.killerDetails.lookbody,
-                lookfeet: death.killerDetails.lookfeet,
-                lookhead: death.killerDetails.lookhead,
-                looklegs: death.killerDetails.looklegs,
-                looktype: death.killerDetails.looktype,
-              },
-            }))}
-          />
-        </VStack>
-      )}
-
-      {/* Other Characters */}
-      <VStack
-        as={motion.div}
-        p={6}
-        bg={cardBg}
-        boxShadow={cardShadow}
-        borderRadius="md"
-        align="flex-start"
-        spacing={3}
-        whileHover={{ scale: 1.02 }}
-        transition="0.2s"
-      >
-        <Heading size="md">Other Characters</Heading>
-        {player.accounts?.players?.length > 0 ? (
-          player.accounts.players.map((p) => (
-            <HStack key={p.name} spacing={4}>
-              <Text
-                as="a"
-                href={`/character/${p.name}`}
-                fontWeight="bold"
-                color="purple.500"
-              >
-                {p.name}
+            <Avatar
+              size="2xl"
+              name={player.name}
+              src={`/images/characters/${player.name}.jpg`}
+              border="2px solid purple"
+              mb={{ base: 4, md: 0 }}
+            />
+            <VStack align="flex-start" spacing={3} ml={{ md: 6 }}>
+              <Heading size="lg" color="purple.500">
+                {player.name}
+              </Heading>
+              <HStack spacing={4}>
+                <Badge colorScheme="purple">
+                  {vocationIdToName[player.vocation]}
+                </Badge>
+                <Badge colorScheme={player.sex === 1 ? 'blue' : 'pink'}>
+                  {player.sex === 1 ? 'Male' : 'Female'}
+                </Badge>
+                {isPremium && <Badge colorScheme="yellow">Premium</Badge>}
+              </HStack>
+              <Text fontSize="lg" color="gray.400">
+                Level {player.level} - {state.town || 'Unknown Town'}
               </Text>
-              <Text>Level {p.level}</Text>
-              <Badge colorScheme={p.players_online ? 'green' : 'gray'}>
-                {p.players_online ? 'Online' : 'Offline'}
-              </Badge>
-            </HStack>
-          ))
-        ) : (
-          <Text>No other characters found.</Text>
+            </VStack>
+          </Flex>
+        </Card>
+
+        {/* Character Information */}
+        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8}>
+          <Card>
+            <Section title="Account Information">
+              <Text fontWeight="bold" color="purple.500">
+                Account Status:
+              </Text>
+              <Text color="gray.300">
+                {isPremium ? 'Premium Account' : 'Free Account'}
+              </Text>
+
+              <Text fontWeight="bold" color="purple.500">
+                Last Login:
+              </Text>
+              <Text color="gray.300">{lastLoginDate}</Text>
+
+              <Text fontWeight="bold" color="purple.500">
+                Online Time:
+              </Text>
+              <Text color="gray.300">
+                {player.onlinetime > 0
+                  ? secondsToTime(player.onlinetime)
+                  : 'Never logged in'}
+              </Text>
+            </Section>
+          </Card>
+
+          <Card>
+            <Section title="Inventory">
+              <Grid templateColumns="repeat(3, 1fr)" gap={2}>
+                {player.items?.map((item, index) => (
+                  <GridItem key={index} w="100%" h="100%">
+                    <Avatar
+                      size="lg"
+                      src={`/images/items/${item.image}`}
+                      alt={item.name}
+                      border="1px solid gray"
+                      borderRadius="md"
+                      bg="gray.800"
+                    />
+                  </GridItem>
+                ))}
+              </Grid>
+            </Section>
+          </Card>
+
+          {player.guild && (
+            <Card>
+              <Section title="Guild">
+                <Text fontWeight="bold" color="purple.500">
+                  Guild Name:
+                </Text>
+                <Text color="gray.300">{player.guild.name}</Text>
+              </Section>
+            </Card>
+          )}
+        </SimpleGrid>
+
+        {/* Deaths Timeline */}
+        {player.player_deaths.length > 0 && (
+          <Card>
+            <Section title="Deaths">
+              {player.player_deaths.map((death, index) => (
+                <Box key={index} color="gray.300">
+                  <Text>
+                    {`${
+                      death.is_player ? 'Fragged a player' : 'Died'
+                    } at level ${death.level} by ${death.killed_by}.`}
+                  </Text>
+                  {index < player.player_deaths.length - 1 && (
+                    <Divider borderColor="gray.600" my={3} />
+                  )}
+                </Box>
+              ))}
+            </Section>
+          </Card>
         )}
+
+        {/* Other Characters */}
+        <Card>
+          <Section title="Other Characters">
+            {player.accounts?.players?.length > 0 ? (
+              player.accounts.players.map((p) => (
+                <HStack
+                  key={p.name}
+                  spacing={4}
+                  w="full"
+                  justify="space-between"
+                >
+                  <Text
+                    as="a"
+                    href={`/character/${p.name}`}
+                    fontWeight="bold"
+                    color="purple.500"
+                    _hover={{ textDecoration: 'underline' }}
+                  >
+                    {p.name}
+                  </Text>
+                  <Text color="gray.300">Level {p.level}</Text>
+                  <Badge colorScheme={p.players_online ? 'green' : 'gray'}>
+                    {p.players_online ? 'Online' : 'Offline'}
+                  </Badge>
+                </HStack>
+              ))
+            ) : (
+              <Text color="gray.300">No other characters found.</Text>
+            )}
+          </Section>
+        </Card>
       </VStack>
-    </VStack>
+    </Container>
   );
 }
