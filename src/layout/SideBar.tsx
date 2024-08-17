@@ -44,15 +44,17 @@ const SideBar = () => {
   };
 
   const bgMaximized = useColorModeValue(
-    'rgba(0, 0, 0, 0.7)',
-    'rgba(0, 0, 0, 0.7)',
+    'rgba(28, 30, 33, 0.9)',
+    'rgba(28, 30, 33, 0.9)',
   );
   const bgMinimized = useColorModeValue('white', 'gray.900');
-  const borderColor = useColorModeValue('gray.200', 'gray.700');
-  const textColor = useColorModeValue('gray.800', 'white');
+  const borderColor = useColorModeValue('gray.300', 'gray.600');
+  const textColor = useColorModeValue('gray.900', 'white');
   const iconColor = useColorModeValue('gray.600', 'gray.400');
-  const activeBgColor = useColorModeValue('purple.700', 'purple.500');
+  const activeBgColor = useColorModeValue('purple.600', 'purple.400');
   const activeTextColor = useColorModeValue('white', 'gray.100');
+  const submenuBgColor = useColorModeValue('gray.700', 'gray.800');
+  const submenuActiveBgColor = useColorModeValue('purple.500', 'purple.300');
 
   const navigationItems = [
     { text: 'Home', href: '/', icon: FiHome },
@@ -163,10 +165,18 @@ const SideBar = () => {
                     px={sidebarIsOpen || isMobile ? 5 : 0}
                     py={2}
                     bg={
-                      router.pathname === item.href ? activeBgColor : 'inherit'
+                      router.pathname === item.href ||
+                      item.menuItems.some(
+                        (subItem) => router.pathname === subItem.url,
+                      )
+                        ? activeBgColor
+                        : 'inherit'
                     }
                     color={
-                      router.pathname === item.href
+                      router.pathname === item.href ||
+                      item.menuItems.some(
+                        (subItem) => router.pathname === subItem.url,
+                      )
                         ? activeTextColor
                         : textColor
                     }
@@ -203,7 +213,7 @@ const SideBar = () => {
                     spacing={2}
                     align="start"
                     w="full"
-                    bg="gray.600"
+                    bg={submenuBgColor}
                     rounded="md"
                     mt={2}
                   >
@@ -211,11 +221,23 @@ const SideBar = () => {
                       <Link key={subItem.text} href={subItem.url} passHref>
                         <Box as="a" w="full">
                           <Text
-                            color={textColor}
+                            color={
+                              router.pathname === subItem.url
+                                ? activeTextColor
+                                : textColor
+                            }
+                            bg={
+                              router.pathname === subItem.url
+                                ? submenuActiveBgColor
+                                : 'inherit'
+                            }
                             px={4}
                             py={2}
                             w="full"
-                            _hover={{ bg: 'gray.500', cursor: 'pointer' }}
+                            _hover={{
+                              bg: submenuActiveBgColor,
+                              cursor: 'pointer',
+                            }}
                           >
                             {subItem.text}
                           </Text>
