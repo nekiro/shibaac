@@ -9,6 +9,7 @@ import { registerSchema } from '../../schemas/Register';
 import { ApiResponse } from '../../shared/types/ApiResponse';
 import { FormValues } from '../../shared/interfaces/FormValues';
 import { ButtonProps } from '../../shared/types/FormButton';
+import { useRouter } from 'next/router'; // Import useRouter
 
 const fields = [
   {
@@ -58,6 +59,7 @@ const buttons: ButtonProps[] = [
 
 export default function Register() {
   const [response, setResponse] = useState<ApiResponse | null>(null);
+  const router = useRouter(); // Initialize the router
 
   const onSubmit = async (
     values: FormValues,
@@ -77,6 +79,10 @@ export default function Register() {
 
     setResponse(response);
     formikHelpers.resetForm();
+
+    if (response.success) {
+      router.push('/account/login');
+    }
   };
 
   return (

@@ -68,67 +68,72 @@ const TopBar = () => {
           color="white"
           borderRadius="full"
         />
-        <Box position="relative">
-          <IconButton
-            aria-label="Notifications"
-            icon={<FiBell />}
-            bg={iconBg}
-            color="white"
-            borderRadius="full"
-          />
-          <Box
-            position="absolute"
-            top="2px"
-            right="2px"
-            width="8px"
-            height="8px"
-            bg="red.500"
-            borderRadius="full"
-          />
-        </Box>
-        <Menu>
-          <MenuButton>
-            <Flex align="center">
-              <Box position="relative" width="34px" height="34px">
-                <Avatar
-                  name={user?.email || 'User'}
-                  src={user?.avatarUrl || ''}
-                  width="34px"
-                  height="34px"
-                  borderRadius="full"
-                  objectFit="cover"
-                />
-                <Box
-                  position="absolute"
-                  left="50%"
-                  top="50%"
-                  transform="translate(-50%, -50%)"
-                  width="40px"
-                  height="40px"
-                  backgroundImage="url('/images/contorno.svg')"
-                  backgroundSize="cover"
-                  backgroundRepeat="no-repeat"
-                  zIndex={10}
-                  pointerEvents="none"
-                />
-              </Box>
-              <Box textAlign="left" marginLeft="0.5rem">
-                <Text fontSize="sm" fontWeight="bold" color={color}>
-                  {user?.name || 'User'}
-                </Text>
-                <Flex align="center" fontSize="sm" color="gray.400">
-                  <LiaCoinsSolid size={18} color="purple.500" />
-                  <Text ml="1">{user?.coins || '0'}</Text>
-                  <IoIosArrowDown ml="2" />
+
+        {user && (
+          <>
+            <Box position="relative">
+              <IconButton
+                aria-label="Notifications"
+                icon={<FiBell />}
+                bg={iconBg}
+                color="white"
+                borderRadius="full"
+              />
+              <Box
+                position="absolute"
+                top="2px"
+                right="2px"
+                width="8px"
+                height="8px"
+                bg="red.500"
+                borderRadius="full"
+              />
+            </Box>
+            <Menu>
+              <MenuButton>
+                <Flex align="center">
+                  <Box position="relative" width="34px" height="34px">
+                    <Avatar
+                      name={user?.email || 'User'}
+                      src={user?.avatarUrl || ''}
+                      width="34px"
+                      height="34px"
+                      borderRadius="full"
+                      objectFit="cover"
+                    />
+                    <Box
+                      position="absolute"
+                      left="50%"
+                      top="50%"
+                      transform="translate(-50%, -50%)"
+                      width="40px"
+                      height="40px"
+                      backgroundImage="url('/images/contorno.svg')"
+                      backgroundSize="cover"
+                      backgroundRepeat="no-repeat"
+                      zIndex={10}
+                      pointerEvents="none"
+                    />
+                  </Box>
+                  <Box textAlign="left" marginLeft="0.5rem">
+                    <Text fontSize="sm" fontWeight="bold" color={color}>
+                      {user?.name || 'User'}
+                    </Text>
+                    <Flex align="center" fontSize="sm" color="gray.400">
+                      <LiaCoinsSolid size={18} color="purple.500" />
+                      <Text ml="1">{user?.coins || '0'}</Text>
+                      <IoIosArrowDown ml="2" />
+                    </Flex>
+                  </Box>
                 </Flex>
-              </Box>
-            </Flex>
-          </MenuButton>
-          <MenuList bg={bg} borderColor="gray.700">
-            <MenuItem>Profile</MenuItem>
-            <MenuItem>Logout</MenuItem>
-          </MenuList>
-        </Menu>
+              </MenuButton>
+              <MenuList bg={bg} borderColor="gray.700">
+                <MenuItem>Profile</MenuItem>
+                <MenuItem>Logout</MenuItem>
+              </MenuList>
+            </Menu>
+          </>
+        )}
       </Flex>
     </Flex>
   );

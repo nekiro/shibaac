@@ -1,7 +1,6 @@
 import * as Yup from 'yup';
 
 const bannedSequences = ['tutor', 'cancer', 'suck', 'sux', 'fuck'];
-
 const bannedWords = ['gm', 'cm', 'god'];
 
 // Names is valid when:
@@ -14,21 +13,21 @@ const bannedWords = ['gm', 'cm', 'god'];
 
 export const createCharacterSchema = Yup.object().shape({
   name: Yup.string()
-    .required('Field is required')
-    .min(3)
-    .max(29)
+    .required('Name is required.')
+    .min(3, 'Name must be at least 3 characters long.')
+    .max(29, 'Name must be at most 29 characters long.')
     .matches(
       /^[aA-zZ\s]+$/,
-      'Invalid letters, words or format. Use a-Z and spaces.'
+      'Invalid name: only letters (A-Z, a-z) and spaces are allowed.',
     )
     .test(
       'banned-words',
-      'Contains illegal words',
-      async (value: string | undefined) => {
+      'The name contains prohibited words.',
+      (value: string | undefined) => {
         if (value) {
           const sequences = bannedSequences.filter(
             (str: string) =>
-              value.split(' ').join('').indexOf(str.toLowerCase()) != -1
+              value.split(' ').join('').toLowerCase().indexOf(str) !== -1,
           );
 
           if (sequences.length > 0) {
@@ -39,41 +38,41 @@ export const createCharacterSchema = Yup.object().shape({
             .split(' ')
             .filter((str: string) => bannedWords.includes(str.toLowerCase()));
 
-          return words.length == 0;
+          return words.length === 0;
         } else {
           return false;
         }
-      }
+      },
     )
     .test(
       'first-char-alphabet',
-      'First letter must be an A-Z capital letter.',
-      async (value: any) => {
-        return value?.charAt(0).match(/[A-Z]/);
-      }
+      'The first letter must be an uppercase letter (A-Z).',
+      (value: string | undefined) => {
+        return value ? /^[A-Z]/.test(value) : false;
+      },
     )
     .test(
       'last-char-alphabet',
-      'Last letter must be an a-z letter.',
-      async (value: any) => {
-        return value?.charAt(value?.length - 1).match(/[a-z]/);
-      }
+      'The last letter must be a lowercase letter (a-z).',
+      (value: string | undefined) => {
+        return value ? /[a-z]$/.test(value) : false;
+      },
     )
     .test(
       'more-than-one-space-in-a-row',
-      "Name can't have more than one space in a row.",
-      async (value: any) => {
-        return !value?.match(/\s\s+/);
-      }
+      'The name cannot contain more than one consecutive space.',
+      (value: string | undefined) => {
+        return value ? !/\s\s+/.test(value) : false;
+      },
     )
     .test(
       'max-3-words',
-      "Name can't have more than three words.",
-      async (value: any) => {
+      'The name cannot contain more than three words.',
+      (value: string | undefined) => {
         if (!value) return true;
         const split = value.split(' ');
-        return split.length < 4;
-      }
+        return split.length <= 3;
+      },
     ),
 });
 
