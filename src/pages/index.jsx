@@ -1,6 +1,6 @@
 import sanitize from 'sanitize-html';
 import { useState, useEffect, useCallback } from 'react';
-import { Box, Text, useColorModeValue } from '@chakra-ui/react';
+import { Box, Text, useColorModeValue, Grid, GridItem } from '@chakra-ui/react';
 import { fetchApi } from '../lib/request';
 import HeaderBanner from '../layout/HeaderBanner';
 
@@ -56,7 +56,40 @@ export default function Index() {
 
   return (
     <>
-      <HeaderBanner />
+      <Box p={5}>
+        <Grid templateColumns="repeat(12, 1fr)" gap={4}>
+          <GridItem colSpan={9}>
+            <HeaderBanner />
+          </GridItem>
+          <GridItem colSpan={3}>
+            <Box
+              bg={bgMinimized}
+              p={5}
+              borderRadius="md"
+              border="1px solid"
+              borderColor={borderColor}
+            >
+              <Text fontSize="lg" fontWeight="bold">
+                Top Guilds
+              </Text>
+              {/* Aqui você pode mapear as top guilds */}
+            </Box>
+            <Box
+              bg={bgMinimized}
+              p={5}
+              borderRadius="md"
+              border="1px solid"
+              borderColor={borderColor}
+              mt={4}
+            >
+              <Text fontSize="lg" fontWeight="bold">
+                Top Players
+              </Text>
+              {/* Aqui você pode mapear os top players */}
+            </Box>
+          </GridItem>
+        </Grid>
+      </Box>
 
       <Box
         width="100%"
