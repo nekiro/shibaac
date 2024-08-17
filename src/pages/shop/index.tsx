@@ -16,6 +16,7 @@ import {
   TabPanels,
   TabPanel,
   useToast,
+  Divider,
 } from '@chakra-ui/react';
 import Image from 'next/image';
 
@@ -97,7 +98,6 @@ export default function Shopping({ user }: any) {
 
   const fetchData = useCallback(async () => {
     const response = await fetchApi('GET', `/api/account/${user.id}`);
-
     setAccount(response.account);
   }, [user]);
 
@@ -126,7 +126,8 @@ export default function Shopping({ user }: any) {
     const totalToDebit = totalPaymentCoins;
 
     if (account && account.coins < totalToDebit) {
-      console.error('do you not have a coins to buying.');
+      console.error('Você não tem moedas suficientes para comprar.');
+      return;
     }
 
     const serealizedProduts = productsToCreate.map((product) => {
@@ -147,7 +148,7 @@ export default function Shopping({ user }: any) {
       if (response.success) {
         toast({
           position: 'top',
-          title: 'There was a problem with your purchase',
+          title: 'Compra realizada com sucesso',
           status: 'success',
           duration: 9000,
           isClosable: true,
@@ -170,7 +171,7 @@ export default function Shopping({ user }: any) {
       );
       setIsBagOpen(false);
     } catch (error) {
-      console.error('Error:' + error);
+      console.error('Erro:' + error);
     }
   }
 
@@ -184,7 +185,9 @@ export default function Shopping({ user }: any) {
               <Tab
                 key={tab}
                 fontWeight={selectedTab === tab ? 'bold' : 'normal'}
-                _selected={{ color: 'blue.500' }}
+                _selected={{ color: 'rgb(178, 120, 255)' }}
+                _hover={{ color: 'rgb(178, 120, 255)' }}
+                color="rgb(178, 120, 255)"
               >
                 {tab}
               </Tab>
@@ -192,7 +195,7 @@ export default function Shopping({ user }: any) {
           </TabList>
           <TabPanels>
             {['itens', 'outfits', 'misc', 'others'].map((tab) => (
-              <TabPanel key={tab} p={4}>
+              <TabPanel key={tab} p={4} bg="rgb(17, 17, 17)">
                 <Flex flexWrap="wrap">
                   {products
                     .filter((product) => product.category === tab)
@@ -201,7 +204,8 @@ export default function Shopping({ user }: any) {
                         key={product.id}
                         p={4}
                         border="1px"
-                        borderColor="gray.200"
+                        borderColor="rgb(178, 120, 255)"
+                        bg="rgb(14, 14, 14)"
                         borderRadius="md"
                         m={2}
                       >
@@ -212,10 +216,17 @@ export default function Shopping({ user }: any) {
                           objectFit="cover"
                           m="auto"
                         />
-                        <Text mt={2} fontSize="xl" fontWeight="bold">
+                        <Text
+                          mt={2}
+                          fontSize="xl"
+                          fontWeight="bold"
+                          color="rgb(178, 120, 255)"
+                        >
                           {product.name}
                         </Text>
-                        <Text my={2}>{`Tibia Coins: ${product.coins}`}</Text>
+                        <Text my={2} color="rgb(178, 120, 255)">
+                          Tibia Coins: {product.coins}
+                        </Text>
                         {product.quantity > 0 && (
                           <Text color="green.500">
                             Total: {product.coins * product.quantity}
@@ -225,15 +236,21 @@ export default function Shopping({ user }: any) {
                           <Button
                             onClick={() => handleQuantityChange(product.id, -1)}
                             size="sm"
-                            colorScheme="purple"
+                            bg="rgb(14, 14, 14)"
+                            color="rgb(178, 120, 255)"
+                            _hover={{ bg: 'rgb(17, 17, 17)' }}
                           >
                             -
                           </Button>
-                          <Text mx={2}>{product.quantity}</Text>
+                          <Text mx={2} color="rgb(178, 120, 255)">
+                            {product.quantity}
+                          </Text>
                           <Button
                             onClick={() => handleQuantityChange(product.id, 1)}
                             size="sm"
-                            colorScheme="purple"
+                            bg="rgb(14, 14, 14)"
+                            color="rgb(178, 120, 255)"
+                            _hover={{ bg: 'rgb(17, 17, 17)' }}
                           >
                             +
                           </Button>
@@ -253,7 +270,7 @@ export default function Shopping({ user }: any) {
           bottom: '20px',
           right: '20px',
           cursor: 'pointer',
-          backgroundColor: '#9261b8',
+          backgroundColor: 'rgb(178, 120, 255)',
           padding: '10px 20px',
           borderRadius: '5px',
           fontSize: '18px',
@@ -274,13 +291,14 @@ export default function Shopping({ user }: any) {
               right: '0',
               width: '300px',
               height: '100%',
-              backgroundColor: '#fff',
+              backgroundColor: 'rgb(14, 14, 14)',
               boxShadow: '-8px 0 15px rgba(0, 0, 0, 0.1)',
               padding: '20px',
               borderRadius: '24px 0 0 0',
               display: 'flex',
               flexDirection: 'column',
               zIndex: '999',
+              color: 'rgb(178, 120, 255)',
             }}
           >
             <div
@@ -288,6 +306,8 @@ export default function Shopping({ user }: any) {
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
+                borderBottom: '1px solid rgb(20, 20, 20)',
+                paddingBottom: '10px',
               }}
             >
               <h2>Bag</h2>
@@ -301,33 +321,64 @@ export default function Shopping({ user }: any) {
               <ul style={{ padding: 0, margin: 0, listStyleType: 'none' }}>
                 {products
                   .filter((product) => product.quantity > 0)
-                  .map((product) => (
-                    <li key={product.id} style={{ marginBottom: '20px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <Image
-                          src={product.image}
-                          alt={product.name}
-                          style={{
-                            width: '50px',
-                            height: '50px',
-                            marginRight: '10px',
-                            objectFit: 'cover',
-                          }}
+                  .map((product, index) => (
+                    <li
+                      key={product.id}
+                      style={{ marginBottom: '20px', position: 'relative' }}
+                    >
+                      <Box
+                        position="relative"
+                        width="100%"
+                        padding="10px"
+                        borderRadius="md"
+                        bg="rgb(14, 14, 14)"
+                        border="1px solid rgb(20, 20, 20)"
+                        mb={index !== products.length - 1 ? '10px' : 0}
+                      >
+                        <Box
+                          position="absolute"
+                          left="50%"
+                          top="50%"
+                          transform="translate(-50%, -50%)"
+                          width="calc(100% + 10px)"
+                          height="calc(100% + 10px)"
+                          backgroundImage="url('/images/contorno.svg')"
+                          backgroundSize="cover"
+                          backgroundRepeat="no-repeat"
+                          zIndex={-1}
+                          pointerEvents="none"
                         />
-                        <div>
-                          <p
-                            style={{ margin: '0 0 5px 0', fontWeight: 'bold' }}
-                          >
-                            {product.name}
-                          </p>
-                          <p style={{ margin: '0 0 5px 0' }}>
-                            x{product.quantity}
-                          </p>
-                          <p style={{ margin: '0' }}>
-                            Tibia Coins: {product.coins * product.quantity}
-                          </p>
-                        </div>
-                      </div>
+                        <Flex align="center">
+                          <Image
+                            src={product.image}
+                            alt={product.name}
+                            width={50}
+                            height={50}
+                            style={{
+                              marginRight: '10px',
+                              objectFit: 'cover',
+                            }}
+                          />
+                          <Box>
+                            <Text
+                              fontWeight="bold"
+                              color="rgb(178, 120, 255)"
+                              marginBottom="5px"
+                            >
+                              {product.name}
+                            </Text>
+                            <Text color="gray.300" marginBottom="5px">
+                              x{product.quantity}
+                            </Text>
+                            <Text color="gray.300">
+                              Tibia Coins: {product.coins * product.quantity}
+                            </Text>
+                          </Box>
+                        </Flex>
+                      </Box>
+                      {index !== products.length - 1 && (
+                        <Divider borderColor="rgb(20, 20, 20)" />
+                      )}
                     </li>
                   ))}
               </ul>
@@ -346,7 +397,12 @@ export default function Shopping({ user }: any) {
               <span>{totalPaymentCoins} Tibia Coins</span>
             </div>
 
-            <Button colorScheme="green" onClick={() => handlePurchase()}>
+            <Button
+              bg="rgb(14, 14, 14)"
+              color="rgb(178, 120, 255)"
+              _hover={{ bg: 'rgb(17, 17, 17)' }}
+              onClick={() => handlePurchase()}
+            >
               Comprar
             </Button>
           </div>

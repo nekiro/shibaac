@@ -25,6 +25,7 @@ import {
   FiMenu,
 } from 'react-icons/fi';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { useUser } from '../hooks/useUser';
 
@@ -32,6 +33,7 @@ const SideBar = () => {
   const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
   const [openMenus, setOpenMenus] = useState({});
   const { user } = useUser();
+  const router = useRouter();
 
   const toggleSidebar = () => setSidebarIsOpen(!sidebarIsOpen);
   const toggleMenu = (menu) => {
@@ -49,6 +51,8 @@ const SideBar = () => {
   const borderColor = useColorModeValue('gray.200', 'gray.700');
   const textColor = useColorModeValue('gray.800', 'white');
   const iconColor = useColorModeValue('gray.600', 'gray.400');
+  const activeBgColor = useColorModeValue('purple.700', 'purple.500');
+  const activeTextColor = useColorModeValue('white', 'gray.100');
 
   const navigationItems = [
     { text: 'Home', href: '/', icon: FiHome },
@@ -158,17 +162,26 @@ const SideBar = () => {
                     }
                     px={sidebarIsOpen || isMobile ? 5 : 0}
                     py={2}
-                    _hover={{ bg: 'gray.700' }}
-                    cursor="pointer"
-                    width="100%"
+                    bg={
+                      router.pathname === item.href ? activeBgColor : 'inherit'
+                    }
+                    color={
+                      router.pathname === item.href
+                        ? activeTextColor
+                        : textColor
+                    }
+                    _hover={{
+                      bg: 'gray.600',
+                      color: 'white',
+                      cursor: 'pointer',
+                    }}
                     onClick={() => toggleMenu(item.text)}
+                    width="100%"
                   >
                     <Box as={item.icon} color={iconColor} />
                     {(sidebarIsOpen || isMobile) && (
                       <>
-                        <Text ml={4} color={textColor}>
-                          {item.text}
-                        </Text>
+                        <Text ml={4}>{item.text}</Text>
                         <Box
                           as={
                             openMenus[item.text]
@@ -195,41 +208,62 @@ const SideBar = () => {
                     mt={2}
                   >
                     {item.menuItems.map((subItem) => (
-                      <Link key={subItem.text} href={subItem.url}>
-                        <Text color={textColor} px={4} py={2} w="full">
-                          {subItem.text}
-                        </Text>
+                      <Link key={subItem.text} href={subItem.url} passHref>
+                        <Box as="a" w="full">
+                          <Text
+                            color={textColor}
+                            px={4}
+                            py={2}
+                            w="full"
+                            _hover={{ bg: 'gray.500', cursor: 'pointer' }}
+                          >
+                            {subItem.text}
+                          </Text>
+                        </Box>
                       </Link>
                     ))}
                   </VStack>
                 </Collapse>
               </Box>
             ) : (
-              <Link key={item.text} href={item.href}>
-                <Tooltip
-                  label={item.text}
-                  isDisabled={sidebarIsOpen || isMobile}
-                  placement="right"
-                >
-                  <Flex
-                    align="center"
-                    justify={
-                      sidebarIsOpen || isMobile ? 'flex-start' : 'center'
-                    }
-                    px={sidebarIsOpen || isMobile ? 5 : 0}
-                    py={2}
-                    _hover={{ bg: 'gray.700' }}
-                    cursor="pointer"
-                    width="100%"
+              <Link key={item.text} href={item.href} passHref>
+                <Box as="a" w="full">
+                  <Tooltip
+                    label={item.text}
+                    isDisabled={sidebarIsOpen || isMobile}
+                    placement="right"
                   >
-                    <Box as={item.icon} color={iconColor} />
-                    {(sidebarIsOpen || isMobile) && (
-                      <Text ml={4} color={textColor}>
-                        {item.text}
-                      </Text>
-                    )}
-                  </Flex>
-                </Tooltip>
+                    <Flex
+                      align="center"
+                      justify={
+                        sidebarIsOpen || isMobile ? 'flex-start' : 'center'
+                      }
+                      px={sidebarIsOpen || isMobile ? 5 : 0}
+                      py={2}
+                      bg={
+                        router.pathname === item.href
+                          ? activeBgColor
+                          : 'inherit'
+                      }
+                      color={
+                        router.pathname === item.href
+                          ? activeTextColor
+                          : textColor
+                      }
+                      _hover={{
+                        bg: 'gray.600',
+                        color: 'white',
+                        cursor: 'pointer',
+                      }}
+                      width="100%"
+                    >
+                      <Box as={item.icon} color={iconColor} />
+                      {(sidebarIsOpen || isMobile) && (
+                        <Text ml={4}>{item.text}</Text>
+                      )}
+                    </Flex>
+                  </Tooltip>
+                </Box>
               </Link>
             ),
           )}
@@ -241,57 +275,63 @@ const SideBar = () => {
               spacing={4}
               align={sidebarIsOpen || isMobile ? 'stretch' : 'center'}
             >
-              <Link href="/account">
-                <Tooltip
-                  label="Account"
-                  isDisabled={sidebarIsOpen || isMobile}
-                  placement="right"
-                >
-                  <Flex
-                    align="center"
-                    justify={
-                      sidebarIsOpen || isMobile ? 'flex-start' : 'center'
-                    }
-                    px={sidebarIsOpen || isMobile ? 5 : 0}
-                    py={2}
-                    _hover={{ bg: 'gray.700' }}
-                    cursor="pointer"
-                    width="100%"
+              <Link href="/account" passHref>
+                <Box as="a" w="full">
+                  <Tooltip
+                    label="Account"
+                    isDisabled={sidebarIsOpen || isMobile}
+                    placement="right"
                   >
-                    <Box as={FiUserCheck} color={iconColor} />
-                    {(sidebarIsOpen || isMobile) && (
-                      <Text ml={4} color={textColor}>
-                        Account Management
-                      </Text>
-                    )}
-                  </Flex>
-                </Tooltip>
+                    <Flex
+                      align="center"
+                      justify={
+                        sidebarIsOpen || isMobile ? 'flex-start' : 'center'
+                      }
+                      px={sidebarIsOpen || isMobile ? 5 : 0}
+                      py={2}
+                      _hover={{
+                        bg: 'gray.600',
+                        color: 'white',
+                        cursor: 'pointer',
+                      }}
+                      width="100%"
+                    >
+                      <Box as={FiUserCheck} color={iconColor} />
+                      {(sidebarIsOpen || isMobile) && (
+                        <Text ml={4}>Account Management</Text>
+                      )}
+                    </Flex>
+                  </Tooltip>
+                </Box>
               </Link>
-              <Link href="/account/logout">
-                <Tooltip
-                  label="Sign out"
-                  isDisabled={sidebarIsOpen || isMobile}
-                  placement="right"
-                >
-                  <Flex
-                    align="center"
-                    justify={
-                      sidebarIsOpen || isMobile ? 'flex-start' : 'center'
-                    }
-                    px={sidebarIsOpen || isMobile ? 5 : 0}
-                    py={2}
-                    _hover={{ bg: 'gray.700' }}
-                    cursor="pointer"
-                    width="100%"
+              <Link href="/account/logout" passHref>
+                <Box as="a" w="full">
+                  <Tooltip
+                    label="Sign out"
+                    isDisabled={sidebarIsOpen || isMobile}
+                    placement="right"
                   >
-                    <Box as={FiLogOut} color={iconColor} />
-                    {(sidebarIsOpen || isMobile) && (
-                      <Text ml={4} color={textColor}>
-                        Sign out
-                      </Text>
-                    )}
-                  </Flex>
-                </Tooltip>
+                    <Flex
+                      align="center"
+                      justify={
+                        sidebarIsOpen || isMobile ? 'flex-start' : 'center'
+                      }
+                      px={sidebarIsOpen || isMobile ? 5 : 0}
+                      py={2}
+                      _hover={{
+                        bg: 'gray.600',
+                        color: 'white',
+                        cursor: 'pointer',
+                      }}
+                      width="100%"
+                    >
+                      <Box as={FiLogOut} color={iconColor} />
+                      {(sidebarIsOpen || isMobile) && (
+                        <Text ml={4}>Sign out</Text>
+                      )}
+                    </Flex>
+                  </Tooltip>
+                </Box>
               </Link>
             </VStack>
           ) : (
@@ -299,57 +339,63 @@ const SideBar = () => {
               spacing={4}
               align={sidebarIsOpen || isMobile ? 'stretch' : 'center'}
             >
-              <Link href="/account/register">
-                <Tooltip
-                  label="Sign Up"
-                  isDisabled={sidebarIsOpen || isMobile}
-                  placement="right"
-                >
-                  <Flex
-                    align="center"
-                    justify={
-                      sidebarIsOpen || isMobile ? 'flex-start' : 'center'
-                    }
-                    px={sidebarIsOpen || isMobile ? 5 : 0}
-                    py={2}
-                    _hover={{ bg: 'gray.700' }}
-                    cursor="pointer"
-                    width="100%"
+              <Link href="/account/register" passHref>
+                <Box as="a" w="full">
+                  <Tooltip
+                    label="Sign Up"
+                    isDisabled={sidebarIsOpen || isMobile}
+                    placement="right"
                   >
-                    <Box as={FiUserCheck} color={iconColor} />
-                    {(sidebarIsOpen || isMobile) && (
-                      <Text ml={4} color={textColor}>
-                        Sign Up
-                      </Text>
-                    )}
-                  </Flex>
-                </Tooltip>
+                    <Flex
+                      align="center"
+                      justify={
+                        sidebarIsOpen || isMobile ? 'flex-start' : 'center'
+                      }
+                      px={sidebarIsOpen || isMobile ? 5 : 0}
+                      py={2}
+                      _hover={{
+                        bg: 'gray.600',
+                        color: 'white',
+                        cursor: 'pointer',
+                      }}
+                      width="100%"
+                    >
+                      <Box as={FiUserCheck} color={iconColor} />
+                      {(sidebarIsOpen || isMobile) && (
+                        <Text ml={4}>Sign Up</Text>
+                      )}
+                    </Flex>
+                  </Tooltip>
+                </Box>
               </Link>
-              <Link href="/account/login">
-                <Tooltip
-                  label="Sign In"
-                  isDisabled={sidebarIsOpen || isMobile}
-                  placement="right"
-                >
-                  <Flex
-                    align="center"
-                    justify={
-                      sidebarIsOpen || isMobile ? 'flex-start' : 'center'
-                    }
-                    px={sidebarIsOpen || isMobile ? 5 : 0}
-                    py={2}
-                    _hover={{ bg: 'gray.700' }}
-                    cursor="pointer"
-                    width="100%"
+              <Link href="/account/login" passHref>
+                <Box as="a" w="full">
+                  <Tooltip
+                    label="Sign In"
+                    isDisabled={sidebarIsOpen || isMobile}
+                    placement="right"
                   >
-                    <Box as={FiUserCheck} color={iconColor} />
-                    {(sidebarIsOpen || isMobile) && (
-                      <Text ml={4} color={textColor}>
-                        Sign In
-                      </Text>
-                    )}
-                  </Flex>
-                </Tooltip>
+                    <Flex
+                      align="center"
+                      justify={
+                        sidebarIsOpen || isMobile ? 'flex-start' : 'center'
+                      }
+                      px={sidebarIsOpen || isMobile ? 5 : 0}
+                      py={2}
+                      _hover={{
+                        bg: 'gray.600',
+                        color: 'white',
+                        cursor: 'pointer',
+                      }}
+                      width="100%"
+                    >
+                      <Box as={FiUserCheck} color={iconColor} />
+                      {(sidebarIsOpen || isMobile) && (
+                        <Text ml={4}>Sign In</Text>
+                      )}
+                    </Flex>
+                  </Tooltip>
+                </Box>
               </Link>
             </VStack>
           )}

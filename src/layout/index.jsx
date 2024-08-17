@@ -15,17 +15,20 @@ import {
   MenuItem,
 } from '@chakra-ui/react';
 import { FiSearch, FiMoon, FiBell } from 'react-icons/fi';
-import { BsDiamondFill } from 'react-icons/bs';
+import { LiaCoinsSolid } from 'react-icons/lia';
 import { IoIosArrowDown } from 'react-icons/io';
 import SideBar from '../layout/SideBar';
 import Footer from '../layout/Footer';
-import HeaderBanner from '../layout/HeaderBanner';
+import { useUser } from '../hooks/useUser';
 
 const TopBar = () => {
+  const { user } = useUser();
+
   const bg = useColorModeValue('gray.900', 'gray.900');
   const color = useColorModeValue('white', 'white');
   const iconBg = useColorModeValue('gray.800', 'gray.800');
 
+  console.log('user', user);
   const handleChangeTheme = () => {
     //TODO
   };
@@ -88,8 +91,8 @@ const TopBar = () => {
             <Flex align="center">
               <Box position="relative" width="34px" height="34px">
                 <Avatar
-                  name="Pedro Giampietro"
-                  src="https://github.com/pedrogiampietro.png"
+                  name={user?.email || 'User'}
+                  src={user?.avatarUrl || ''}
                   width="34px"
                   height="34px"
                   borderRadius="full"
@@ -111,11 +114,11 @@ const TopBar = () => {
               </Box>
               <Box textAlign="left" marginLeft="0.5rem">
                 <Text fontSize="sm" fontWeight="bold" color={color}>
-                  Pedro Giampietro
+                  {user?.name || 'User'}
                 </Text>
                 <Flex align="center" fontSize="sm" color="gray.400">
-                  <BsDiamondFill color="purple.500" />
-                  <Text ml="1">5700</Text>
+                  <LiaCoinsSolid size={18} color="purple.500" />
+                  <Text ml="1">{user?.coins || '0'}</Text>
                   <IoIosArrowDown ml="2" />
                 </Flex>
               </Box>
@@ -123,7 +126,6 @@ const TopBar = () => {
           </MenuButton>
           <MenuList bg={bg} borderColor="gray.700">
             <MenuItem>Profile</MenuItem>
-            <MenuItem>Settings</MenuItem>
             <MenuItem>Logout</MenuItem>
           </MenuList>
         </Menu>
@@ -152,15 +154,12 @@ const Layout = ({ children }) => {
         />
 
         <Flex direction="column" flex="1">
-          <HeaderBanner isSidebarMinimized={isSidebarMinimized} />
           <Flex
             direction="column"
             flex="1"
-            padding={{ base: '1rem', md: '2rem' }}
             color="white"
             overflowY="auto"
             position="relative"
-            mt="2rem"
             width="100%"
           >
             {children}

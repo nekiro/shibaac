@@ -18,7 +18,6 @@ import {
   Th,
   Td,
   Spinner,
-  Stack,
   Icon,
 } from '@chakra-ui/react';
 import { FaCrown } from 'react-icons/fa';
@@ -120,11 +119,11 @@ export default function Highscores() {
       <Head title="Highscores" />
       <Panel header={`Rankings for ${getCategoryLabel(filter.category)}`}>
         <Box textAlign="center" mb={6}>
-          <Heading as="h2" size={headingSize} mb={4} color="purple.600">
+          <Heading as="h2" size={headingSize} mb={4} color="rgb(178, 120, 255)">
             <Icon as={FaCrown} mr={2} />
             Rankings for {getCategoryLabel(filter.category)}
           </Heading>
-          <Text mb={4} fontSize={textSize} color="gray.600">
+          <Text mb={4} fontSize={textSize} color="rgb(178, 120, 255)">
             {filter.vocation === 'all'
               ? 'All Vocations'
               : vocationIdToName[filter.vocation]}
@@ -183,28 +182,36 @@ export default function Highscores() {
               thickness="4px"
               speed="0.65s"
               emptyColor="gray.200"
-              color="purple.500"
+              color="rgb(178, 120, 255)"
               size="xl"
             />
           </Flex>
         ) : (
           <>
             <Box overflowX="auto">
-              <Table variant="striped" colorScheme="purple">
+              <Table variant="striped" colorScheme="blackAlpha">
                 <Thead>
                   <Tr>
-                    <Th textAlign="center">Rank</Th>
-                    <Th textAlign="center">Outfit</Th>
-                    <Th>Name</Th>
-                    <Th>Vocation</Th>
-                    <Th textAlign="center">Level</Th>
-                    <Th textAlign="center">Points</Th>
+                    <Th textAlign="center" color="rgb(178, 120, 255)">
+                      Rank
+                    </Th>
+                    <Th textAlign="center" color="rgb(178, 120, 255)">
+                      Outfit
+                    </Th>
+                    <Th color="rgb(178, 120, 255)">Name</Th>
+                    <Th color="rgb(178, 120, 255)">Vocation</Th>
+                    <Th textAlign="center" color="rgb(178, 120, 255)">
+                      Level
+                    </Th>
+                    <Th textAlign="center" color="rgb(178, 120, 255)">
+                      Points
+                    </Th>
                   </Tr>
                 </Thead>
                 <Tbody>
                   {highscores && highscores.length > 0 ? (
                     highscores.map((player, index) => (
-                      <Tr key={player.name}>
+                      <Tr key={player.name} bg="rgb(17, 17, 17)">
                         <Td textAlign="center" color="white">
                           {index + 1 + (page - 1) * perPage}
                         </Td>
@@ -230,7 +237,7 @@ export default function Highscores() {
                           <Link href={`/character/${player.name}`} passHref>
                             <Text
                               as="a"
-                              color="white"
+                              color="rgb(178, 120, 255)"
                               fontWeight="bold"
                               _hover={{ textDecoration: 'underline' }}
                             >
@@ -251,7 +258,11 @@ export default function Highscores() {
                     ))
                   ) : (
                     <Tr>
-                      <Td colSpan={6} textAlign="center">
+                      <Td
+                        colSpan={6}
+                        textAlign="center"
+                        color="rgb(178, 120, 255)"
+                      >
                         No data available.
                       </Td>
                     </Tr>
@@ -267,7 +278,7 @@ export default function Highscores() {
                 justifyContent="center"
                 mt={6}
               >
-                <Text mb={2} color="gray.600">
+                <Text mb={2} color="rgb(178, 120, 255)">
                   Showing{' '}
                   <strong>
                     {page * perPage - perPage + 1} -{' '}

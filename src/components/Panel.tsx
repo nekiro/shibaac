@@ -22,28 +22,44 @@ const Panel: React.FC<PanelProps> = ({
   return (
     <Flex
       key={identifier}
-      width="100%"
+      width="calc(100% - 20)"
       flexDirection="column"
-      color="black"
+      color="rgb(178, 120, 255)"
       border="1px"
-      borderColor="#ddd"
+      borderColor="gray.700"
       mb="20px"
-      bgColor="#fff"
+      ml="20"
+      bgColor="rgb(17, 17, 17)"
       borderRadius="md"
+      boxShadow="lg"
     >
-      <Flex bg="#f5f5f5" border="1px" borderColor="#ddd" borderRadius="md">
-        <Grid margin="10px" width="100%" templateColumns="1fr auto">
-          <Text>{header}</Text>
+      <Flex
+        bg="rgb(14, 14, 14)"
+        borderRadius="md"
+        px={4}
+        py={3}
+        alignItems="center"
+      >
+        <Grid width="100%" templateColumns="1fr auto">
+          <Text fontSize="xl" fontWeight="bold" color="rgb(178, 120, 255)">
+            {header}
+          </Text>
           {date && (
             <Box display="flex" justifyContent="flex-end">
-              <Text display="flex" alignItems="center">
+              <Text
+                display="flex"
+                alignItems="center"
+                color="rgb(178, 120, 255)"
+              >
                 <TimeIcon mr={2} /> {formatDate(date)}
               </Text>
             </Box>
           )}
         </Grid>
       </Flex>
-      <Box padding="10px">{isLoading ? <Loader /> : children}</Box>
+      <Box padding="10px" bg="rgb(17, 17, 17)" borderBottomRadius="md">
+        {isLoading ? <Loader /> : children}
+      </Box>
     </Flex>
   );
 };

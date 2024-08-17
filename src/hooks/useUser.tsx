@@ -21,6 +21,7 @@ export const UserContextWrapper = ({ children }) => {
   const fetchUser = async () => {
     try {
       const response = (await fetchApi('GET', '/api/user')) as any;
+
       if (response.isLoggedIn) {
         setUser(response.user);
       }
