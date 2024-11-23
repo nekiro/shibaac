@@ -2,7 +2,12 @@ import React from "react";
 import Link from "./Link";
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
 
-const StripedTable = ({ head, body }) => {
+export interface StripedTableProps {
+	head?: { text: string }[];
+	body: { text: string; href?: string }[][];
+}
+
+const StripedTable = ({ head, body }: StripedTableProps) => {
 	return (
 		<Table variant="simple">
 			{head && (
@@ -16,7 +21,7 @@ const StripedTable = ({ head, body }) => {
 			)}
 			<Tbody>
 				{body.map((row, index) => (
-					<Tr key={`${row.text} ${index}`}>
+					<Tr key={`${index}`}>
 						{row.map((data, dataIndex) => (
 							<Td key={`${data.text} ${dataIndex}`}>
 								{data.href ? (

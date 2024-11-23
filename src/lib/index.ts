@@ -23,7 +23,7 @@ export const secondsToTime = (seconds: number) => {
 	}${hours}h, ${minutes}m and ${seconds}s`;
 };
 
-export function formatDate(dateString: Date) {
+export function formatDate(dateString: string | Date) {
 	const date = new Date(dateString);
 
 	const day = date.getDate().toString().padStart(2, "0");

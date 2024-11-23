@@ -12,12 +12,11 @@ import {
 	MenuGroup,
 	IconButton,
 	Link,
-	Icon,
+	useBreakpointValue,
 } from "@chakra-ui/react";
 import DropdownButton from "../components/DropdownButton";
 import TextInput from "../components/TextInput";
-import { HamburgerIcon } from "@chakra-ui/icons";
-import { useBreakpointValue } from "@chakra-ui/react";
+import { RxHamburgerMenu } from "react-icons/rx";
 
 const navigationItems = [
 	{ text: "Home", href: "/" },
@@ -55,7 +54,7 @@ const MobileNavigation = ({ user }) => {
 				<MenuButton
 					as={IconButton}
 					aria-label="Menu"
-					icon={<HamburgerIcon />}
+					icon={<RxHamburgerMenu />}
 					variant="outline"
 					_hover={{}}
 					color={"white"}

@@ -1,8 +1,18 @@
 import React from "react";
-
 import { Input } from "@chakra-ui/react";
 
-const TextInput = (props) => {
+export interface TextInputProps {
+	placeholder?: string;
+	type?: string;
+	name?: string;
+}
+
+const TextInput = ({
+	placeholder,
+	type = "text",
+	name,
+	...props
+}: TextInputProps) => {
 	return (
 		<Input
 			{...props}
@@ -13,12 +23,6 @@ const TextInput = (props) => {
 			bg="white"
 		/>
 	);
-};
-
-TextInput.defaultProps = {
-	placeholder: "",
-	type: "text",
-	name: "",
 };
 
 export default TextInput;

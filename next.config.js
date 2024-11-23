@@ -5,15 +5,17 @@
  **/
 const nextConfig = {
 	images: {
-		domains: ['localhost', 'shibaac.vercel.app'],
+		domains: ["localhost", "shibaac.vercel.app"],
 	},
-	webpackDevMiddleware: config => {
-		config.watchOptions = {
-			poll: 1000,
-			aggregateTimeout: 300,
+	webpack: (config, { dev }) => {
+		if (dev) {
+			config.watchOptions = {
+				poll: 1000,
+				aggregateTimeout: 300,
+			};
 		}
-		return config
+		return config;
 	},
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

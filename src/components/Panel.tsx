@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 import Loader from "./Loader";
 import { Flex, Box, Text, Grid } from "@chakra-ui/react";
-import { TimeIcon } from "@chakra-ui/icons";
+import { IoMdTime } from "react-icons/io";
 import { formatDate } from "../lib/";
 
 interface PanelProps {
@@ -37,7 +37,7 @@ const Panel: React.FC<PanelProps> = ({
 					{date && (
 						<Box display="flex" justifyContent="flex-end">
 							<Text display="flex" alignItems="center">
-								<TimeIcon mr={2} /> {formatDate(date)}
+								<IoMdTime /> {formatDate(date)}
 							</Text>
 						</Box>
 					)}
