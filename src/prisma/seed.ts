@@ -8,7 +8,7 @@ async function main() {
 	for (const file of await fs.readdir(seedsPath)) {
 		const seed = require(path.join(seedsPath, file)).default;
 		// @ts-ignore
-		await prisma[seed.table].createMany({
+		await prisma[seed.table]?.createMany({
 			data: seed.data,
 		});
 	}

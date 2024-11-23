@@ -141,14 +141,14 @@ model towns {
 }
 
 model aac_news {
-    id         Int      @id @default(autoincrement())
-    title      String   @db.VarChar(255)
-    content    String   @db.VarChar(255)
-    createdAt  DateTime @default(now())
-    authorId   Int
-    author     accounts @relation(fields: [authorId], references: [id])
-    playerNick String?  @db.VarChar(255)
-    imageUrl   String?  @db.VarChar(255)
+    id         Int       @id @default(autoincrement())
+    title      String    @db.VarChar(255)
+    content    String    @db.VarChar(255)
+    createdAt  DateTime  @default(now())
+    authorId   Int?
+    author     accounts? @relation(fields: [authorId], references: [id])
+    playerNick String?   @db.VarChar(255)
+    imageUrl   String?   @db.VarChar(255)
 
     @@index([authorId], name: "idx_authorId")
 }

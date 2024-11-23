@@ -1,5 +1,4 @@
-version: "3.9"
-
+name: shibaac
 services:
   frontend:
     container_name: frontend
@@ -9,12 +8,14 @@ services:
     ports:
       - 3000:3000
     depends_on:
-      - database
+      - mysql
     command:
       - /bin/sh
       - -c
       - |
         npx prisma generate
+        npx prisma db push
+        npx prisma db seed
         npm run dev
     env_file: .env
     environment:
@@ -26,7 +27,7 @@ services:
       - /app/.next
     restart: unless-stopped
 
-  database:
+  mysql:
     image: mysql:8.0.32
     ports:
       - 3306:3306
@@ -35,21 +36,21 @@ services:
       MYSQL_DATABASE: shibaac
     volumes:
       - mysql-data:/var/lib/mysql
-      # - ./db.sql:/docker-entrypoint-initdb.d/db.sql
+      - ./schema.sql:/docker-entrypoint-initdb.d/db.sql
     restart: unless-stopped
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
-    container_name: phpmyadmin
+    container_name: pma
     ports:
       - 8080:80
     environment:
-      PMA_HOST: database
+      PMA_HOST: mysql
       MYSQL_USERNAME: root
       MYSQL_ROOT_PASSWORD: ""
       UPLOAD_LIMIT: 300M
     depends_on:
-      - database
+      - mysql
     restart: unless-stopped
 
 volumes:
