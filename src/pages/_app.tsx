@@ -3,6 +3,7 @@ import { UserContextWrapper } from "../hooks/useUser";
 import { ChakraProvider } from "@chakra-ui/react";
 import { Theme, Fonts } from "../layout/theme";
 import React from "react";
+import { trpc } from "../utils/trpc";
 
 // @ts-ignore
 BigInt.prototype.toJSON = function () {
@@ -10,7 +11,7 @@ BigInt.prototype.toJSON = function () {
 	return int ?? this.toString();
 };
 
-export default function MyApp({ Component, pageProps }) {
+const MyApp = ({ Component, pageProps }) => {
 	return (
 		<UserContextWrapper>
 			<ChakraProvider theme={Theme}>
@@ -21,4 +22,6 @@ export default function MyApp({ Component, pageProps }) {
 			</ChakraProvider>
 		</UserContextWrapper>
 	);
-}
+};
+
+export default trpc.withTRPC(MyApp);

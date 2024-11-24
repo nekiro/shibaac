@@ -1,5 +1,6 @@
 {
 	"name": "shibaac",
+	"version": "0.0.1",
 	"private": true,
 	"scripts": {
 		"dev": "next dev",
@@ -25,6 +26,11 @@
 		"@emotion/styled": "^11.13.5",
 		"@prisma/client": "^5.22.0",
 		"@stripe/stripe-js": "^5.2.0",
+		"@tanstack/react-query": "^4.36.1",
+		"@trpc/client": "^10.45.2",
+		"@trpc/next": "^10.45.2",
+		"@trpc/react-query": "^10.45.2",
+		"@trpc/server": "^10.45.2",
 		"@types/jsonwebtoken": "^9.0.7",
 		"@types/multer": "^1.4.12",
 		"@types/nodemailer": "^6.4.17",
@@ -52,7 +58,8 @@
 		"shibaac": "file:",
 		"speakeasy": "^2.0.0",
 		"stripe": "^17.4.0",
-		"yup": "^1.4.0"
+		"yup": "^1.4.0",
+		"zod": "^3.23.8"
 	},
 	"devDependencies": {
 		"@testing-library/jest-dom": "^6.6.3",

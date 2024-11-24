@@ -25,7 +25,7 @@ const Head = ({ title = "shibaac", description = "Automatic Account Creator" }: 
 					description: description,
 					//url: properties.canonical,
 					locale: "en",
-					site_name: "SHIBAac",
+					site_name: "shibaac",
 				}}
 			/>
 		</>

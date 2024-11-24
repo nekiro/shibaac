@@ -5,14 +5,8 @@ import Head from "../../layout/Head";
 import { fetchApi } from "../../lib/request";
 import { withSessionSsr } from "../../lib/session";
 import { CKEditorComponent } from "../../components/Editor";
-import {
-	FormControl,
-	FormLabel,
-	Input,
-	Select,
-	Button,
-	VStack,
-} from "@chakra-ui/react";
+import { FormControl, FormLabel, Input, Select, Button, VStack } from "@chakra-ui/react";
+import { trpc } from "@util/trpc";
 
 interface Player {
 	id: number;
@@ -35,6 +29,7 @@ export default function CreateNews({ user }: any) {
 	const [isClient, setIsClient] = useState(false);
 
 	const router = useRouter();
+	const createNews = trpc.news.create.useMutation();
 
 	const fetchData = useCallback(async () => {
 		const response = await fetchApi("GET", `/api/account/${user.id}`);
@@ -53,19 +48,15 @@ export default function CreateNews({ user }: any) {
 	const handleSubmit = async (e: any) => {
 		e.preventDefault();
 
-		const findNameWithId = info?.players.find(
-			(player) => player.name === playerNick
-		);
+		const findNameWithId = info?.players.find((player) => player.name === playerNick);
 
 		try {
-			await fetchApi("POST", "/api/news", {
-				data: {
-					title,
-					content,
-					playerNick,
-					imageUrl,
-					authorId: findNameWithId?.id,
-				},
+			createNews.mutate({
+				title,
+				content,
+				playerNick,
+				imageUrl,
+				authorId: findNameWithId?.id,
 			});
 
 			router.push("/");
@@ -82,25 +73,15 @@ export default function CreateNews({ user }: any) {
 					<VStack spacing={4} w="100%">
 						<FormControl id="title">
 							<FormLabel>Title</FormLabel>
-							<Input
-								type="text"
-								value={title}
-								onChange={(e) => setTitle(e.target.value)}
-							/>
+							<Input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
 						</FormControl>
 						<FormControl id="content">
 							<FormLabel>Content</FormLabel>
-							{isClient && (
-								<CKEditorComponent setValue={setContent} value={content} />
-							)}
+							{isClient && <CKEditorComponent setValue={setContent} value={content} />}
 						</FormControl>
 						<FormControl id="author">
 							<FormLabel>Author</FormLabel>
-							<Select
-								placeholder="Select"
-								value={playerNick}
-								onChange={(e) => setPlayerNick(e.target.value)}
-							>
+							<Select placeholder="Select" value={playerNick} onChange={(e) => setPlayerNick(e.target.value)}>
 								{info?.players?.map((player, index) => (
 									<option key={index} value={player.name}>
 										{player.name}
@@ -110,11 +91,7 @@ export default function CreateNews({ user }: any) {
 						</FormControl>
 						<FormControl id="image-url">
 							<FormLabel>Image URL</FormLabel>
-							<Input
-								type="text"
-								value={imageUrl}
-								onChange={(e) => setImageUrl(e.target.value)}
-							/>
+							<Input type="text" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
 						</FormControl>
 						<Button colorScheme="blue" type="submit">
 							Create

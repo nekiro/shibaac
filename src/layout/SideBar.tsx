@@ -6,25 +6,22 @@ import Link from "../components/Link";
 import { Box, LayoutProps } from "@chakra-ui/react";
 import StripedTable from "../components/StrippedTable";
 import { type ProtocolStatusCache } from "../cache/protocolStatus";
-import { players } from ".prisma/client";
+import { trpc } from "@util/trpc";
 
 const SideBar = (props: LayoutProps) => {
 	const [serverStatus, setServerStatus] = useState<ProtocolStatusCache>();
-	const [topPlayers, setTopPlayers] = useState<players[]>();
+
+	const topPlayers = trpc.player.top5.useQuery();
 	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
 		const fetchData = async () => {
 			setIsLoading(true);
 
-			const [players, status] = await Promise.all([
-				fetchApi<{ players: any[] }>("GET", `/api/player/top5`),
-				fetchApi<{ status: ProtocolStatusCache }>("GET", `/api/status`),
-			]);
+			const [status] = await Promise.all([fetchApi<{ status: ProtocolStatusCache }>("GET", `/api/status`)]);
 
-			if (players.success && status.success) {
+			if (status.success) {
 				setIsLoading(false);
-				setTopPlayers(players.players || []);
 				setServerStatus(status.status);
 			}
 		};
@@ -34,7 +31,7 @@ const SideBar = (props: LayoutProps) => {
 
 	return (
 		<Box minWidth="15em" {...props}>
-			<Panel header="Server Status" isLoading={isLoading}>
+			<Panel header="Server Status" isLoading={isLoading || !topPlayers.data}>
 				<table className="table table-condensed table-content table-striped">
 					<tbody>
 						<tr>
@@ -51,14 +48,14 @@ const SideBar = (props: LayoutProps) => {
 				<StripedTable
 					head={[{ text: "Name" }, { text: "Level" }]}
 					body={
-						topPlayers && topPlayers.length > 0
-							? topPlayers.map((player, index) => [
+						topPlayers.data && topPlayers.data.length > 0
+							? topPlayers.data.map((player, index) => [
 									{
 										text: `${index + 1}. ${player.name}`,
 										href: `/character/${player.name}`,
 									},
 									{
-										text: player.level,
+										text: player.level.toString(),
 									},
 								])
 							: [

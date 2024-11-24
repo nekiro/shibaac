@@ -1,13 +1,13 @@
 import React from "react";
 import Link from "next/link";
-import { Button as ChakraButton } from "@chakra-ui/react";
+import { Button as ChakraButton, ButtonProps as ChakraButtonProps } from "@chakra-ui/react";
 
 const btnTypeToColor = { danger: "red", primary: "violet" };
 
 export type ButtonType = "button" | "submit" | "reset";
 export type ButtonColorType = "danger" | "primary";
 
-export interface ButtonProps {
+export interface ButtonProps extends ChakraButtonProps {
 	value: string;
 	size?: string;
 	type?: ButtonType;

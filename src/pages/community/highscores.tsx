@@ -3,15 +3,7 @@ import Panel from "../../components/Panel";
 import Head from "../../layout/Head";
 import { fetchApi } from "../../lib/request";
 import StrippedTable from "../../components/StrippedTable";
-import {
-	Box,
-	Button,
-	ButtonGroup,
-	Flex,
-	Heading,
-	Text,
-} from "@chakra-ui/react";
-
+import { Box, Button, ButtonGroup, Flex, Heading, Text } from "@chakra-ui/react";
 import { PlayerData } from "../../shared/interfaces/PlayerData";
 
 export default function Highscores() {
@@ -116,9 +108,7 @@ export default function Highscores() {
 								<Button
 									key={index}
 									onClick={() => handleCategoryChange(category.value)}
-									colorScheme={
-										filter.category === category.value ? "purple" : "gray"
-									}
+									colorScheme={filter.category === category.value ? "purple" : "gray"}
 								>
 									{category.label}
 								</Button>
@@ -131,9 +121,7 @@ export default function Highscores() {
 								<Button
 									key={index}
 									onClick={() => handleVocationChange(vocation.value)}
-									colorScheme={
-										filter.vocation === vocation.value ? "purple" : "gray"
-									}
+									colorScheme={filter.vocation === vocation.value ? "purple" : "gray"}
 								>
 									{vocation.label}
 								</Button>
@@ -142,14 +130,7 @@ export default function Highscores() {
 					</Flex>
 				</Box>
 				<StrippedTable
-					head={[
-						{ text: "Rank" },
-						{ text: "Name" },
-						{ text: "Vocation" },
-						{ text: "World" },
-						{ text: "Level" },
-						{ text: "Points" },
-					]}
+					head={[{ text: "Rank" }, { text: "Name" }, { text: "Vocation" }, { text: "World" }, { text: "Level" }, { text: "Points" }]}
 					body={
 						highscores && highscores.length > 0
 							? highscores.map((player, index) => [
@@ -159,7 +140,7 @@ export default function Highscores() {
 									{ text: "" /*World info*/ },
 									{ text: player.level },
 									{ text: "" /*Points info*/ },
-							  ])
+								])
 							: [
 									[
 										{
@@ -167,7 +148,7 @@ export default function Highscores() {
 											colspan: 6,
 										},
 									],
-							  ]
+								]
 					}
 				/>
 			</Panel>

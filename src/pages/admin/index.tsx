@@ -1,51 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Link from "next/link";
-import { fetchApi } from "../../lib/request";
 import Head from "../../layout/Head";
 import Panel from "../../components/Panel";
 import { withSessionSsr } from "../../lib/session";
-import {
-	Button,
-	Table,
-	Thead,
-	Tbody,
-	Tr,
-	Th,
-	Td,
-	Link as ChakraLink,
-	VStack,
-} from "@chakra-ui/react";
-
-interface INewsList {
-	authorId: number;
-	content: string;
-	createdAt: string;
-	id: number;
-	imageUrl: string;
-	playerNick: string;
-	title: string;
-}
+import { Button, Table, Thead, Tbody, Tr, Th, Td, Link as ChakraLink, VStack } from "@chakra-ui/react";
+import { trpc } from "@util/trpc";
 
 function AdminPanel() {
-	const [newsList, setNewsList] = useState<INewsList[]>([]);
-
-	useEffect(() => {
-		const fetchNews = async () => {
-			try {
-				const response = await fetchApi("GET", "/api/news");
-				setNewsList(response.data.news);
-			} catch (error) {
-				console.error(error);
-			}
-		};
-
-		fetchNews();
-	}, []);
+	const news = trpc.news.all.useQuery();
+	const deleteNews = trpc.news.delete.useMutation();
 
 	async function handleDelete(newsId: number) {
 		try {
-			await fetchApi("DELETE", `/api/news/${newsId}`);
-			setNewsList((prevList) => prevList.filter((news) => news.id !== newsId));
+			await deleteNews.mutateAsync({ id: newsId });
+			news.refetch();
 		} catch (error) {
 			console.error(error);
 		}
@@ -73,8 +41,8 @@ function AdminPanel() {
 						</Tr>
 					</Thead>
 					<Tbody>
-						{newsList.map((news, index) => (
-							<Tr key={index}>
+						{news.data?.map((news, index) => (
+							<Tr key={news.id}>
 								<Td>{news.id}</Td>
 								<Td>{news.title}</Td>
 								<Td>{news.playerNick}</Td>
@@ -87,11 +55,7 @@ function AdminPanel() {
 												</Button>
 											</ChakraLink>
 										</Link>
-										<Button
-											colorScheme="red"
-											size="sm"
-											onClick={() => handleDelete(news.id)}
-										>
+										<Button colorScheme="red" size="sm" onClick={() => handleDelete(news.id)}>
 											Delete
 										</Button>
 									</VStack>
@@ -104,6 +68,7 @@ function AdminPanel() {
 		</>
 	);
 }
+
 export const getServerSideProps = withSessionSsr(async function ({ req }) {
 	const { user } = req.session;
 	if (!user) {

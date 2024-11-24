@@ -1,41 +1,25 @@
 import sanitize from "sanitize-html";
 import Panel from "../components/Panel";
-import React, { useState, useEffect, useCallback } from "react";
-import { fetchApi } from "../lib/request";
+import React from "react";
+import { trpc } from "@util/trpc";
 
 export default function Index() {
-	const [news, setNews] = useState<any>(null);
-	const [isLoading, setIsLoading] = useState(false);
+	const news = trpc.news.all.useQuery();
 
-	const fetchNews = useCallback(async () => {
-		try {
-			setIsLoading(true);
-			const response = await fetchApi("GET", "/api/news");
-
-			if (response.success) {
-				setNews(response.data);
-			}
-		} catch (error) {
-			console.error("Houve um problema", error);
-		} finally {
-			setIsLoading(false);
+	if (!news.data || news.error) {
+		if (news.error) {
+			// TODO: properly handle errors
+			console.error(news.error);
 		}
-	}, []);
-
-	useEffect(() => {
-		fetchNews();
-	}, [fetchNews]);
-
-	if (!news) {
-		return <Panel isLoading={isLoading}></Panel>;
+		return <Panel isLoading={true} />;
 	}
 
 	// TODO: paginate?
 
 	return (
 		<>
-			{news.map((post) => (
-				<Panel key={post.title} header={post.title} date={post.createdAt}>
+			{news.data.map((post) => (
+				<Panel key={`news-${post.id}`} header={post.title} date={post.createdAt}>
 					<div dangerouslySetInnerHTML={{ __html: sanitize(post.content) }} />
 				</Panel>
 			))}
