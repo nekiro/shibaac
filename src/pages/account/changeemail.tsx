@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 import Panel from "../../components/Panel";
-import FormWrapper, {
-	FormButton,
-	FormField,
-} from "../../components/FormWrapper";
+import FormWrapper, { FormButton, FormField } from "../../components/FormWrapper";
 import { fetchApi, FetchResult } from "../../lib/request";
 import { withSessionSsr } from "../../lib/session";
 import { changeEmailSchema } from "../../schemas/ChangeEmail";
@@ -27,9 +24,9 @@ const buttons: FormButton[] = [
 ];
 
 export default function ChangeEmail() {
-	const [response, setResponse] = useState<FetchResult | null>(null);
+	const [response, setResponse] = useState<FetchResult | undefined>(undefined);
 
-	const onSubmit = async (values, { resetForm }) => {
+	const onSubmit = async (values: any, { resetForm }: any) => {
 		const response = await fetchApi("POST", "/api/account/changeemail", {
 			data: {
 				email: values.newEmail,
@@ -43,13 +40,7 @@ export default function ChangeEmail() {
 
 	return (
 		<Panel header="Change Email">
-			<FormWrapper
-				validationSchema={changeEmailSchema}
-				onSubmit={onSubmit}
-				fields={fields}
-				buttons={buttons}
-				response={response}
-			/>
+			<FormWrapper validationSchema={changeEmailSchema} onSubmit={onSubmit} fields={fields} buttons={buttons} response={response} />
 		</Panel>
 	);
 }

@@ -62,9 +62,7 @@ export const post = async (req: NextApiRequest, res: NextApiResponse) => {
 				break;
 
 			default:
-				return res
-					.status(400)
-					.json({ success: false, message: "Invalid recovery type." });
+				return res.status(400).json({ success: false, message: "Invalid recovery type." });
 		}
 
 		if (!account) {
@@ -93,9 +91,7 @@ export const post = async (req: NextApiRequest, res: NextApiResponse) => {
 		});
 	} catch (error) {
 		console.error(error);
-		res
-			.status(500)
-			.json({ success: false, message: error && error?.errors[0] });
+		res.status(500).json({ success: false, message: error && (error as any)?.errors[0] });
 	} finally {
 		await prisma.$disconnect();
 	}

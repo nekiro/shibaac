@@ -69,24 +69,24 @@ export default function Highscores() {
 		{ label: "No Vocation", value: "0" },
 	];
 
-	const getCategoryLabel = (categoryValue) => {
+	const getCategoryLabel = (categoryValue: any) => {
 		const category = categories.find((cat) => cat.value === categoryValue);
 		return category ? category.label : categoryValue;
 	};
 
-	const getVocationLabel = (vocationValue) => {
+	const getVocationLabel = (vocationValue: any) => {
 		const vocation = vocations.find((voc) => voc.value === vocationValue);
 		return vocation ? vocation.label : vocationValue;
 	};
 
-	const handleCategoryChange = (categoryValue) => {
+	const handleCategoryChange = (categoryValue: any) => {
 		setFilter((prevFilter) => ({
 			...prevFilter,
 			category: categoryValue,
 		}));
 	};
 
-	const handleVocationChange = (vocationValue) => {
+	const handleVocationChange = (vocationValue: any) => {
 		setFilter((prevFilter) => ({
 			...prevFilter,
 			vocation: vocationValue,
@@ -145,7 +145,7 @@ export default function Highscores() {
 									[
 										{
 											text: "There is no data to show",
-											colspan: 6,
+											// colspan: 6,
 										},
 									],
 								]

@@ -1,11 +1,11 @@
-import React from "react";
+import React, { PropsWithChildren } from "react";
 import Head from "./Head";
 import NavBar from "./NavBar";
 import SideBar from "./SideBar";
 import Footer from "./Footer";
 import { Box, Image, Flex } from "@chakra-ui/react";
 
-const Layout = ({ children }) => {
+const Layout = ({ children }: PropsWithChildren) => {
 	return (
 		<Box w={{ base: "95%", md: "70%" }} marginX={"auto"} marginY={{ base: "1em", md: 0 }}>
 			<Head />
@@ -16,7 +16,7 @@ const Layout = ({ children }) => {
 					{children}
 					<Footer />
 				</Box>
-				<SideBar order={{ base: 1, md: 2 }} />
+				<SideBar /*order={{ base: 1, md: 2 }}*/ />
 			</Flex>
 		</Box>
 	);

@@ -9,15 +9,7 @@ import { withSessionSsr } from "../../lib/session";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import Image from "next/image";
 
-import {
-	Grid,
-	useToast,
-	Box,
-	Text,
-	Button,
-	Heading,
-	Image as ChakraImage,
-} from "@chakra-ui/react";
+import { Grid, useToast, Box, Text, Button, Heading, Image as ChakraImage } from "@chakra-ui/react";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!);
 
@@ -44,8 +36,7 @@ interface Account {
 
 export default function BuyCoins({ user }: any) {
 	const [selectedCard, setSelectedCard] = useState<Package | null>(null);
-	const [selectedPaymentMethod, setSelectedPaymentMethod] =
-		useState<PaymentMethod | null>(null);
+	const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod | null>(null);
 	const [isPicPayAvailable, setIsPicPayAvailable] = useState(false);
 	const [mercadoPagoMethods, setMercadoPagoMethods] = useState([]);
 	const [paymentTypeMethod, setPaymentTypeMethod] = useState();
@@ -82,18 +73,10 @@ export default function BuyCoins({ user }: any) {
 	useEffect(() => {
 		const fetchMercadoPagoMethods = async () => {
 			try {
-				const paymentMethodsResult = await fetchApi(
-					"GET",
-					"/api/checkout/mercadopago-checkout"
-				);
+				const paymentMethodsResult = await fetchApi("GET", "/api/checkout/mercadopago-checkout");
 
-				if (
-					paymentMethodsResult.success &&
-					Array.isArray(paymentMethodsResult.data)
-				) {
-					const activeMethods = paymentMethodsResult.data.filter(
-						(method: any) => method.status === "active"
-					);
+				if (paymentMethodsResult.success && Array.isArray(paymentMethodsResult.data)) {
+					const activeMethods = paymentMethodsResult.data.filter((method: any) => method.status === "active");
 					setMercadoPagoMethods(activeMethods);
 				}
 			} catch (error) {
@@ -125,10 +108,7 @@ export default function BuyCoins({ user }: any) {
 		setSelectedPaymentMethod(method);
 	};
 
-	const createMercadoPagoPayload = (
-		selectedCard: Package | null,
-		email: string
-	) => {
+	const createMercadoPagoPayload = (selectedCard: Package | null, email: string) => {
 		if (!selectedCard) {
 			throw new Error("Pacote não selecionado");
 		}
@@ -204,13 +184,9 @@ export default function BuyCoins({ user }: any) {
 			} else if (selectedPaymentMethod.name === "MercadoPago") {
 				const payload = createMercadoPagoPayload(selectedCard, email);
 
-				const result = await fetchApi(
-					"POST",
-					"/api/checkout/mercadopago-checkout",
-					{
-						data: payload,
-					}
-				);
+				const result = await fetchApi("POST", "/api/checkout/mercadopago-checkout", {
+					data: payload,
+				});
 
 				if (!result.success) {
 					console.error("Erro no pagamento", result.message);
@@ -238,22 +214,16 @@ export default function BuyCoins({ user }: any) {
 		}
 	};
 
-	const handlePaymentMethodChange = (
-		event: React.ChangeEvent<HTMLSelectElement>
-	) => {
-		setPaymentTypeMethod(event.target.value);
+	const handlePaymentMethodChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+		// setPaymentTypeMethod(event.target.value);
 	};
 
 	return (
 		<>
 			<Head title="Donate"></Head>
 			<Panel header="Informações da Conta">
-				<StrippedTable
-					head={[
-						{ text: "Account" },
-						{ text: "E-mail" },
-						{ text: "Tibia Coins" },
-					]}
+				{/* <StrippedTable
+					head={[{ text: "Account" }, { text: "E-mail" }, { text: "Tibia Coins" }]}
 					body={[
 						[
 							{
@@ -268,19 +238,15 @@ export default function BuyCoins({ user }: any) {
 											border: "none",
 										}}
 									>
-										{isNameVisible ? (
-											<AiOutlineEyeInvisible />
-										) : (
-											<AiOutlineEye />
-										)}
+										{isNameVisible ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
 									</button>
 								),
 							},
-							{ text: account?.email },
-							{ text: account?.coins },
+							// { text: account?.email },
+							// { text: account?.coins },
 						],
 					]}
-				/>
+				/> */}
 			</Panel>
 
 			<Panel header="Buy Coins">
@@ -308,19 +274,10 @@ export default function BuyCoins({ user }: any) {
 								textAlign="center"
 								borderWidth={2}
 								borderRadius="md"
-								borderColor={
-									selectedCard?.id === pkg.id ? "purple.500" : "transparent"
-								}
+								borderColor={selectedCard?.id === pkg.id ? "purple.500" : "transparent"}
 								onClick={() => handleCardClick(pkg)}
 							>
-								<ChakraImage
-									src={pkg.image}
-									alt={`${pkg.coins} Coins`}
-									w="128px"
-									h="64px"
-									m="auto"
-									objectFit="cover"
-								/>
+								<ChakraImage src={pkg.image} alt={`${pkg.coins} Coins`} w="128px" h="64px" m="auto" objectFit="cover" />
 								<Text mt={2}>{`${pkg.coins} Coins por $${pkg.price}`}</Text>
 							</Box>
 						))}
@@ -348,8 +305,7 @@ export default function BuyCoins({ user }: any) {
 										textAlign: "center",
 										width: "196px",
 										height: "240px",
-										opacity:
-											method.name === "PicPay" && !isPicPayAvailable ? 0.5 : 1,
+										opacity: method.name === "PicPay" && !isPicPayAvailable ? 0.5 : 1,
 									}}
 									onClick={() => handlePaymentMethodClick(method)}
 								>
@@ -361,13 +317,7 @@ export default function BuyCoins({ user }: any) {
 											margin: "0 auto 10px",
 										}}
 									>
-										<Image
-											src={method.image}
-											alt={method.name}
-											width={172}
-											height={172}
-											objectFit="cover"
-										/>
+										<Image src={method.image} alt={method.name} width={172} height={172} objectFit="cover" />
 									</div>
 									<p>{method.name}</p>
 								</div>
@@ -388,11 +338,11 @@ export default function BuyCoins({ user }: any) {
 										}}
 									>
 										<option value="">Selecione um método de pagamento</option>
-										{mercadoPagoMethods.map((method) => (
+										{/* {mercadoPagoMethods.map((method) => (
 											<option key={method.id} value={method.id}>
 												{method.name}
 											</option>
-										))}
+										))} */}
 									</select>
 
 									<input
@@ -428,12 +378,7 @@ export default function BuyCoins({ user }: any) {
 							<Button type="button" colorScheme="red" onClick={() => {}} mr={2}>
 								Voltar
 							</Button>
-							<Button
-								type="button"
-								colorScheme="purple"
-								onClick={handleCheckout}
-								ml={2}
-							>
+							<Button type="button" colorScheme="purple" onClick={handleCheckout} ml={2}>
 								Fazer Pagamento
 							</Button>
 						</Box>

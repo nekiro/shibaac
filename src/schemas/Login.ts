@@ -6,4 +6,4 @@ export const loginSchema = Yup.object().shape({
 	twoFAToken: Yup.string(),
 });
 
-export type Login = Yup.TypeOf<typeof loginSchema>;
+export type Login = Yup.InferType<typeof loginSchema>;

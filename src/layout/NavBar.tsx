@@ -29,7 +29,11 @@ const navigationItems = [
 	{ text: "Shopping", href: "/shop" },
 ];
 
-const MobileNavigation = ({ user }) => {
+interface MobileNavigationProps {
+	user: any;
+}
+
+const MobileNavigation = ({ user }: MobileNavigationProps) => {
 	return (
 		<Flex bgColor="violet.400" height="fit-content" marginBottom="1.5em" flexDir="row" borderRadius="md">
 			<Menu>
@@ -81,7 +85,11 @@ const MobileNavigation = ({ user }) => {
 	);
 };
 
-const DesktopNavigation = ({ user }) => {
+interface DesktopNavigationProps {
+	user: any;
+}
+
+const DesktopNavigation = ({ user }: DesktopNavigationProps) => {
 	const router = useRouter();
 
 	return (
@@ -138,6 +146,8 @@ const NavBar = () => {
 			fallback: "md",
 		},
 	);
+
+	if (!NavComponent) return null;
 
 	return <NavComponent user={user} />;
 };

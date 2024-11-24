@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import Panel from "../../components/Panel";
 import Head from "../../layout/Head";
 import StrippedTable from "../../components/StrippedTable";
-import FormWrapper from "../../components/FormWrapper";
+import FormWrapper, { FormField } from "../../components/FormWrapper";
 import { withSessionSsr } from "../../lib/session";
 import { fetchApi } from "../../lib/request";
 import Link from "next/link";
@@ -24,40 +24,10 @@ import {
 
 type Button = {
 	type?: "submit" | "button" | "reset";
-	btnType?:
-		| "primary"
-		| "default"
-		| "secondary"
-		| "danger"
-		| "warning"
-		| "info"
-		| "light"
-		| "dark";
+	btnType?: "primary" | "default" | "secondary" | "danger" | "warning" | "info" | "light" | "dark";
 	href?: string;
 	value: string;
 };
-
-type Option = {
-	label: string;
-	value: string | number;
-	text: string;
-};
-
-type Field = {
-	type: string;
-	name: string;
-	placeholder?: string;
-	label: {
-		text: string;
-		size: number;
-	};
-	size: number;
-	options?: Option[];
-};
-
-interface FormValues {
-	[key: string]: string;
-}
 
 type ApiResponse = {
 	message: string;
@@ -87,7 +57,7 @@ export type FormButton = {
 export default function Guilds({ user }: any) {
 	const [guilds, setGuilds] = useState<any>([]);
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [response, setResponse] = useState<ApiResponse | null>(null);
+	const [response, setResponse] = useState<ApiResponse | undefined>(undefined);
 	const [info, setInfo] = useState<Account | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -127,18 +97,13 @@ export default function Guilds({ user }: any) {
 		fetchGuilds();
 	}, [fetchGuilds]);
 
-	const onSubmit = async (
-		values: FormValues,
-		{ resetForm }: { resetForm: () => void }
-	) => {
-		const leaderOption = fields[0].options?.find(
-			(option) => option.value === Number(values.leader)
-		);
+	const onSubmit = async (values: any, { resetForm }: any) => {
+		// const leaderOption = fields[0].options?.find((option) => option.value === Number(values.leader));
 
 		const response = await fetchApi("POST", "/api/community/guilds", {
 			data: {
-				leader_id: leaderOption ? leaderOption.value : null,
-				leader_name: leaderOption ? leaderOption.label : null,
+				// leader_id: leaderOption ? leaderOption.value : null,
+				// leader_name: leaderOption ? leaderOption.label : null,
 				guild_name: values.guild_name,
 			},
 		});
@@ -160,34 +125,30 @@ export default function Guilds({ user }: any) {
 		setIsModalOpen(false);
 	};
 
-	const fields: Field[] = [
+	const fields: FormField[] = [
 		{
 			type: "select",
 			name: "leader",
-			label: { text: "Character Name", size: 3 },
-			size: 9,
-			options: info
-				? [
-						{ label: "<Selecione>", value: "", text: "<Selecione>" },
-						...info.players.map((player) => ({
-							label: player.name,
-							value: player.id,
-							text: player.name,
-						})),
-				  ]
-				: [{ label: "<Selecione>", value: "", text: "<Selecione>" }],
+			label: { text: "Character Name" },
+			// options: info
+			// 	? [
+			// 			{ label: "<Selecione>", value: "", text: "<Selecione>" },
+			// 			...info.players.map((player) => ({
+			// 				label: player.name,
+			// 				value: player.id,
+			// 				text: player.name,
+			// 			})),
+			// 		]
+			// 	: [{ label: "<Selecione>", value: "", text: "<Selecione>" }],
 		},
 		{
 			type: "text",
 			name: "guild_name",
-			label: { text: "Guild Name", size: 3 },
-			size: 9,
+			label: { text: "Guild Name" },
 		},
 	];
 
-	const buttons: FormButton[] = [
-		{ type: "submit", btnType: "primary", value: "Submit" },
-	];
+	const buttons: FormButton[] = [{ type: "submit", btnType: "primary", value: "Submit" }];
 
 	if (!guilds) {
 		return (
@@ -204,33 +165,20 @@ export default function Guilds({ user }: any) {
 			<Panel header="Guilds">
 				<Flex justifyContent="space-between" alignItems="center" mb="2">
 					<Box></Box>
-					<Button
-						size="sm"
-						colorScheme="purple"
-						onClick={() => handleCreateGuild()}
-					>
+					<Button size="sm" colorScheme="purple" onClick={() => handleCreateGuild()}>
 						<i className="fa fa-lock"></i> Create Guild
 					</Button>
 				</Flex>
 				<StrippedTable
-					head={[
-						{ text: "Logo" },
-						{ text: "Nome" },
-						{ text: "Membros" },
-						{ text: "Nível Médio" },
-					]}
+					head={[{ text: "Logo" }, { text: "Nome" }, { text: "Membros" }, { text: "Nível Médio" }]}
 					body={
 						guilds && guilds.length > 0
-							? guilds.map((guild, index) => [
+							? guilds.map((guild: any) => [
 									{
 										text: (
 											<Avatar
-												src={
-													guild.logoUrl
-														? `${baseUrl}/${guild.logoUrl}`
-														: `/images/guild-logo-default.gif`
-												}
-												alt="Guild Logo"
+												src={guild.logoUrl ? `${baseUrl}/${guild.logoUrl}` : `/images/guild-logo-default.gif`}
+												// alt="Guild Logo"
 												width="50"
 												height="50"
 											/>
@@ -238,11 +186,7 @@ export default function Guilds({ user }: any) {
 									},
 									{
 										text: (
-											<Link
-												href={`/community/guilds/${encodeURIComponent(
-													guild.name
-												)}`}
-											>
+											<Link href={`/community/guilds/${encodeURIComponent(guild.name)}`}>
 												<a>{guild.name}</a>
 											</Link>
 										),
@@ -253,7 +197,7 @@ export default function Guilds({ user }: any) {
 									{
 										text: guild.level,
 									},
-							  ])
+								])
 							: [
 									[
 										{
@@ -261,7 +205,7 @@ export default function Guilds({ user }: any) {
 											colspan: 4,
 										},
 									],
-							  ]
+								]
 					}
 				/>
 			</Panel>
@@ -273,13 +217,7 @@ export default function Guilds({ user }: any) {
 						<ModalHeader>Create guild</ModalHeader>
 						<ModalCloseButton />
 						<ModalBody>
-							<FormWrapper
-								validationSchema={""}
-								onSubmit={onSubmit}
-								fields={fields}
-								buttons={buttons}
-								response={response}
-							/>
+							<FormWrapper validationSchema={""} onSubmit={onSubmit} fields={fields} buttons={buttons} response={response} />
 						</ModalBody>
 					</ModalContent>
 				</Modal>

@@ -11,18 +11,16 @@ const apiHandler =
 		const method = req.method?.toLowerCase() as string;
 
 		// check handler supports HTTP method
-		const callback = handler[method] as NextApiHandler;
+		const callback = (handler as any)[method] as NextApiHandler;
 		if (!callback) {
-			return res
-				.status(405)
-				.json({ success: false, message: `Method Not Allowed` });
+			return res.status(405).json({ success: false, message: `Method Not Allowed` });
 		}
 
 		try {
 			await callback(req, res);
 		} catch (err) {
 			console.log(err);
-			res.status(500).json({ success: false, message: err.message });
+			res.status(500).json({ success: false, message: (err as Error).message });
 		}
 	};
 

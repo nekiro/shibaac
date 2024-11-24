@@ -17,7 +17,7 @@ import {
 import Panel from "../../components/Panel";
 import { fetchApi } from "../../lib/request";
 
-const Step1 = ({ setSelectedOption }) => {
+const Step1 = ({ setSelectedOption }: any) => {
 	return (
 		<>
 			<Heading w="100%" textAlign={"center"} fontWeight="normal" mb="2%">
@@ -32,25 +32,18 @@ const Step1 = ({ setSelectedOption }) => {
 						<Stack spacing={4} direction="column" align="start">
 							<Radio value="1">
 								Lost your PASSWORD? Click here.
-								<FormHelperText>
-									(Your password will be reset and the new password will be sent
-									to your registered email)
-								</FormHelperText>
+								<FormHelperText>(Your password will be reset and the new password will be sent to your registered email)</FormHelperText>
 							</Radio>
 							<Radio value="2">
-								Recover account using RECOVERY KEY, details will be sent to your
-								registered email. Click here.
+								Recover account using RECOVERY KEY, details will be sent to your registered email. Click here.
 								<FormHelperText>
-									(This method will recover your account by resetting the
-									password and will disable the Two-Factor Authentication)
+									(This method will recover your account by resetting the password and will disable the Two-Factor Authentication)
 								</FormHelperText>
 							</Radio>
 							<Radio value="3">
-								Recover account using RECOVERY KEY and ACCOUNT NAME OR EMAIL,
-								details will be appear on screen. Click here.
+								Recover account using RECOVERY KEY and ACCOUNT NAME OR EMAIL, details will be appear on screen. Click here.
 								<FormHelperText>
-									(This method will recover your account by resetting the
-									password and will disable the Two-Factor Authentication)
+									(This method will recover your account by resetting the password and will disable the Two-Factor Authentication)
 								</FormHelperText>
 							</Radio>
 						</Stack>
@@ -61,14 +54,8 @@ const Step1 = ({ setSelectedOption }) => {
 	);
 };
 
-const Step2 = ({ selectedOption, refs }) => {
-	const {
-		emailRef,
-		characterNameRef,
-		accountNameRef,
-		recoveryKeyRef,
-		accountOrEmailRef,
-	} = refs;
+const Step2 = ({ selectedOption, refs }: any) => {
+	const { emailRef, characterNameRef, accountNameRef, recoveryKeyRef, accountOrEmailRef } = refs;
 
 	return (
 		<>
@@ -120,9 +107,8 @@ const Step3 = () => {
 				Thank You!
 			</Heading>
 			<Box textAlign={"center"} mt={4}>
-				Your request for account recovery has been received. An email with
-				further instructions has been sent to your registered email address.
-				Please check your email to complete the recovery process.
+				Your request for account recovery has been received. An email with further instructions has been sent to your registered email address. Please
+				check your email to complete the recovery process.
 			</Box>
 		</>
 	);
@@ -131,15 +117,15 @@ const Step3 = () => {
 export default function Lost() {
 	const [step, setStep] = useState(1);
 	const [progress, setProgress] = useState(0);
-	const [selectedOption, setSelectedOption] = useState();
+	const [selectedOption, setSelectedOption] = useState<string | null>();
 
 	const toast = useToast();
 
-	const emailRef = useRef();
-	const characterNameRef = useRef();
-	const accountNameRef = useRef();
-	const recoveryKeyRef = useRef();
-	const accountOrEmailRef = useRef();
+	const emailRef = useRef<HTMLInputElement>();
+	const characterNameRef = useRef<HTMLInputElement>();
+	const accountNameRef = useRef<HTMLInputElement>();
+	const recoveryKeyRef = useRef<HTMLInputElement>();
+	const accountOrEmailRef = useRef<HTMLInputElement>();
 
 	const next = useCallback(async () => {
 		if (step === 1 && selectedOption === null) {
@@ -158,16 +144,11 @@ export default function Lost() {
 			let requestBody = {};
 
 			if (selectedOption === "1") {
-				if (
-					!emailRef.current?.value ||
-					!characterNameRef.current?.value ||
-					!accountNameRef.current?.value
-				) {
+				if (!emailRef.current?.value || !characterNameRef.current?.value || !accountNameRef.current?.value) {
 					toast({
 						position: "top",
 						title: "Error.",
-						description:
-							"Please fill out all required fields for this recovery option.",
+						description: "Please fill out all required fields for this recovery option.",
 						status: "error",
 						duration: 9000,
 						isClosable: true,
@@ -199,15 +180,11 @@ export default function Lost() {
 					type: selectedOption,
 				};
 			} else if (selectedOption === "3") {
-				if (
-					!recoveryKeyRef.current?.value ||
-					!accountOrEmailRef.current?.value
-				) {
+				if (!recoveryKeyRef.current?.value || !accountOrEmailRef.current?.value) {
 					toast({
 						position: "top",
 						title: "Error.",
-						description:
-							"Please fill out all required fields for this recovery option.",
+						description: "Please fill out all required fields for this recovery option.",
 						status: "error",
 						duration: 9000,
 						isClosable: true,
@@ -265,8 +242,7 @@ export default function Lost() {
 			toast({
 				position: "top",
 				title: "Thank You!",
-				description:
-					"Your account recovery request has been submitted successfully. Please check your email for further instructions.",
+				description: "Your account recovery request has been submitted successfully. Please check your email for further instructions.",
 				status: "success",
 				duration: 9000,
 				isClosable: true,
@@ -295,35 +271,15 @@ export default function Lost() {
 				<Progress colorScheme="teal" size="lg" value={progress} />
 			</Box>
 			<Box width={"50%"} mx={"auto"}>
-				{step === 1 && (
-					<Step1 refs={refs} setSelectedOption={setSelectedOption} />
-				)}
+				{step === 1 && <Step1 refs={refs} setSelectedOption={setSelectedOption} />}
 				{step === 2 && <Step2 selectedOption={selectedOption} refs={refs} />}
-				{step === 3 && <Step3 refs={refs} />}
+				{step === 3 && <Step3 />}
 			</Box>
-			<Box
-				width={"50%"}
-				mx={"auto"}
-				my={"2%"}
-				d={"flex"}
-				justifyContent={"space-between"}
-			>
-				<Button
-					w="7rem"
-					isDisabled={step === 1}
-					onClick={prev}
-					colorScheme="teal"
-					variant="outline"
-				>
+			<Box width={"50%"} mx={"auto"} my={"2%"} justifyContent={"space-between"}>
+				<Button w="7rem" isDisabled={step === 1} onClick={prev} colorScheme="teal" variant="outline">
 					Prev
 				</Button>
-				<Button
-					w="7rem"
-					isDisabled={step === 3}
-					onClick={next}
-					colorScheme="teal"
-					variant="outline"
-				>
+				<Button w="7rem" isDisabled={step === 3} onClick={next} colorScheme="teal" variant="outline">
 					Next
 				</Button>
 			</Box>

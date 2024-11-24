@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 import Panel from "../../components/Panel";
-import FormWrapper, {
-	FormButton,
-	FormField,
-} from "../../components/FormWrapper";
+import FormWrapper, { FormButton, FormField } from "../../components/FormWrapper";
 import { fetchApi, FetchResult } from "../../lib/request";
 import { withSessionSsr } from "../../lib/session";
 import { changePasswordSchema } from "../../schemas/ChangePassword";
@@ -34,9 +31,9 @@ const buttons: FormButton[] = [
 ];
 
 export default function ChangePassword() {
-	const [response, setResponse] = useState<FetchResult | null>(null);
+	const [response, setResponse] = useState<FetchResult | undefined>(undefined);
 
-	const onSubmit = async (values, { resetForm }) => {
+	const onSubmit = async (values: any, { resetForm }: any) => {
 		const response = await fetchApi("POST", "/api/account/changepassword", {
 			data: {
 				newPassword: values.newPassword,
@@ -51,17 +48,10 @@ export default function ChangePassword() {
 	return (
 		<Panel header="Change Password">
 			<Text align="center" margin="10px">
-				Please enter your current password and a new password. For your
-				security, please enter the new password twice.
+				Please enter your current password and a new password. For your security, please enter the new password twice.
 			</Text>
 
-			<FormWrapper
-				validationSchema={changePasswordSchema}
-				onSubmit={onSubmit}
-				fields={fields}
-				buttons={buttons}
-				response={response}
-			/>
+			<FormWrapper validationSchema={changePasswordSchema} onSubmit={onSubmit} fields={fields} buttons={buttons} response={response} />
 		</Panel>
 	);
 }

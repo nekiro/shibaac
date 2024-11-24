@@ -1,11 +1,8 @@
 import React, { useState } from "react";
 import Panel from "../../components/Panel";
 import { withSessionSsr } from "../../lib/session";
-import { fetchApi } from "../../lib/request";
-import FormWrapper, {
-	FormButton,
-	FormField,
-} from "../../components/FormWrapper";
+import { fetchApi, FetchResult } from "../../lib/request";
+import FormWrapper, { FormButton, FormField } from "../../components/FormWrapper";
 import { createCharacterSchema } from "../../schemas/CreateCharacter";
 import { Select, Text } from "@chakra-ui/react";
 
@@ -53,9 +50,9 @@ const initialValues = {
 };
 
 export default function CreateCharacter() {
-	const [response, setResponse] = useState(null);
+	const [response, setResponse] = useState<FetchResult | undefined>(undefined);
 
-	const onSubmit = async (values, { resetForm }) => {
+	const onSubmit = async (values: any, { resetForm }: any) => {
 		const response = await fetchApi("POST", "/api/account/createcharacter", {
 			data: {
 				name: values.name,
@@ -72,8 +69,7 @@ export default function CreateCharacter() {
 		<Panel header="Create Character">
 			<Text align="center" margin="10px">
 				Please choose a name, vocation and sex for your character. <br />
-				In any case the name must not violate the naming conventions stated in
-				the Rules or your character might get deleted or name locked.
+				In any case the name must not violate the naming conventions stated in the Rules or your character might get deleted or name locked.
 			</Text>
 
 			<FormWrapper

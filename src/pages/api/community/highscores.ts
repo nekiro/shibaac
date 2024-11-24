@@ -2,17 +2,9 @@ import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../prisma";
 import apiHandler from "../../../middleware/apiHandler";
 
-export const get = async function handler(
-	req: NextApiRequest,
-	res: NextApiResponse
-) {
+export const get = async function handler(req: NextApiRequest, res: NextApiResponse) {
 	try {
-		const {
-			vocation = "all",
-			category = "Experience",
-			page = "1",
-			per_page = "900",
-		} = req.query;
+		const { vocation = "all", category = "Experience", page = "1", per_page = "900" } = req.query;
 
 		let filterVocation = vocation === "all" ? "all" : Number(vocation);
 		let highscoresPlayer;
@@ -41,21 +33,21 @@ export const get = async function handler(
 			highscoresPlayer = await prisma.players.findMany({
 				skip: pagination.offset,
 				take: pagination.limit,
-				orderBy: order,
+				// orderBy: order,
 				where: {
 					...categoryFilter,
 				},
 			});
-		} else if (!isNaN(filterVocation)) {
-			highscoresPlayer = await prisma.players.findMany({
-				skip: pagination.offset,
-				take: pagination.limit,
-				orderBy: order,
-				where: {
-					vocation: filterVocation,
-					...categoryFilter,
-				},
-			});
+			// } else if (!isNaN(filterVocation)) {
+			// 	highscoresPlayer = await prisma.players.findMany({
+			// 		skip: pagination.offset,
+			// 		take: pagination.limit,
+			// 		orderBy: order,
+			// 		where: {
+			// 			vocation: filterVocation,
+			// 			...categoryFilter,
+			// 		},
+			// 	});
 		} else {
 			return res.status(400).json({ error: "Invalid vocation value" });
 		}
@@ -70,9 +62,7 @@ export const get = async function handler(
 			return newPlayer;
 		});
 
-		return res
-			.status(200)
-			.json({ success: true, args: { data: highscoresPlayer } });
+		return res.status(200).json({ success: true, args: { data: highscoresPlayer } });
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ success: false, error: "Internal server error" });

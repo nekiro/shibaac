@@ -10,17 +10,7 @@ import { withSessionSsr } from "../../../lib/session";
 import { CgUserRemove } from "react-icons/cg";
 import Image from "next/image";
 
-import {
-	Box,
-	Button as ChakraButton,
-	Tab,
-	TabList,
-	TabPanel,
-	TabPanels,
-	Tabs,
-	useToast,
-	VStack,
-} from "@chakra-ui/react";
+import { Box, Button as ChakraButton, Tab, TabList, TabPanel, TabPanels, Tabs, useToast, VStack } from "@chakra-ui/react";
 
 export type FormButton = {
 	type?: "submit" | "button" | "reset";
@@ -107,9 +97,7 @@ const fields: Field[] = [
 	},
 ];
 
-const buttons: FormButton[] = [
-	{ type: "submit", btnType: "primary", value: "Submit" },
-];
+const buttons: FormButton[] = [{ type: "submit", btnType: "primary", value: "Submit" }];
 
 export default function Guild({ user }: any) {
 	const router = useRouter();
@@ -128,10 +116,7 @@ export default function Guild({ user }: any) {
 	const fetchGuildData = useCallback(async () => {
 		if (name) {
 			try {
-				const response = await fetchApi(
-					"GET",
-					`/api/community/guilds/${encodeURIComponent(name)}`
-				);
+				const response = await fetchApi("GET", `/api/community/guilds/${encodeURIComponent(String(name))}`);
 
 				setGuild(response.data);
 			} catch (error) {
@@ -147,10 +132,7 @@ export default function Guild({ user }: any) {
 	const fetchGuildInvites = useCallback(async () => {
 		try {
 			if (guild?.id) {
-				const response = await fetchApi(
-					"GET",
-					`/api/community/guilds/inviteplayer/?guildId=${guild.id}`
-				);
+				const response = await fetchApi("GET", `/api/community/guilds/inviteplayer/?guildId=${guild.id}`);
 
 				setGuildInvites(response.data);
 			}
@@ -163,20 +145,13 @@ export default function Guild({ user }: any) {
 		fetchGuildInvites();
 	}, [fetchGuildInvites]);
 
-	const onSubmit = async (
-		values: FormValues,
-		{ resetForm }: { resetForm: () => void }
-	) => {
-		const response = await fetchApi(
-			"POST",
-			"/api/community/guilds/inviteplayer",
-			{
-				data: {
-					player_invite: values.player_invite,
-					guild_id: guild?.id,
-				},
-			}
-		);
+	const onSubmit = async (values: FormValues, { resetForm }: { resetForm: () => void }) => {
+		const response = await fetchApi("POST", "/api/community/guilds/inviteplayer", {
+			data: {
+				player_invite: values.player_invite,
+				guild_id: guild?.id,
+			},
+		});
 
 		if (response.success) {
 			toast({
@@ -203,10 +178,7 @@ export default function Guild({ user }: any) {
 
 	const handleDeleteInvite = async (inviteId: number) => {
 		try {
-			const response = await fetchApi(
-				"DELETE",
-				`/api/community/guilds/inviteplayer?inviteId=${inviteId}&guildId=${guild?.id}`
-			);
+			const response = await fetchApi("DELETE", `/api/community/guilds/inviteplayer?inviteId=${inviteId}&guildId=${guild?.id}`);
 
 			if (response.success) {
 				setResponse({
@@ -256,15 +228,10 @@ export default function Guild({ user }: any) {
 	};
 
 	const handleAcceptInvite = async (inviteId: number) => {
-		const findIdByAccept = guildInvites.find(
-			(invite) => invite.player_id === inviteId
-		);
+		const findIdByAccept = guildInvites.find((invite) => invite.player_id === inviteId);
 
 		try {
-			const response = await fetchApi(
-				"POST",
-				`/api/community/guilds/acceptinvite?inviteId=${inviteId}&player_name=${findIdByAccept?.player.name}`
-			);
+			const response = await fetchApi("POST", `/api/community/guilds/acceptinvite?inviteId=${inviteId}&player_name=${findIdByAccept?.player.name}`);
 
 			if (response.success) {
 				setResponse({
@@ -303,10 +270,7 @@ export default function Guild({ user }: any) {
 
 	const handleLeaveGuild = async (memberId: number) => {
 		try {
-			const response = await fetchApi(
-				"POST",
-				`/api/community/guilds/leaveguild?guildId=${guild?.id}&memberId=${memberId}`
-			);
+			const response = await fetchApi("POST", `/api/community/guilds/leaveguild?guildId=${guild?.id}&memberId=${memberId}`);
 
 			if (response.success) {
 				toast({
@@ -331,9 +295,7 @@ export default function Guild({ user }: any) {
 	};
 
 	const handleExpelMember = async (playerId: number) => {
-		const findLeader = guild?.guild_membership.filter(
-			(member) => member.rank_id === 1
-		);
+		const findLeader = guild?.guild_membership.filter((member) => member.rank_id === 1);
 
 		if (!findLeader || findLeader.length === 0) {
 			toast({
@@ -349,10 +311,7 @@ export default function Guild({ user }: any) {
 		const leaderId = findLeader[0]?.player_id;
 
 		try {
-			const response = await fetchApi(
-				"POST",
-				`/api/community/guilds/expelMember?guildId=${guild?.id}&playerId=${playerId}&leaderId=${leaderId}`
-			);
+			const response = await fetchApi("POST", `/api/community/guilds/expelMember?guildId=${guild?.id}&playerId=${playerId}&leaderId=${leaderId}`);
 
 			if (response.success) {
 				toast({
@@ -382,7 +341,7 @@ export default function Guild({ user }: any) {
 			const reader = new FileReader();
 
 			reader.onload = (e) => {
-				setPreviewUrl(e.target.result);
+				// setPreviewUrl(e.target.result);
 			};
 
 			reader.readAsDataURL(e.target.files[0]);
@@ -400,11 +359,7 @@ export default function Guild({ user }: any) {
 		formData.append("logo", file);
 
 		try {
-			await fetchApi(
-				"PATCH",
-				`/api/community/guilds/updateLogoGuild?guildId=${guild?.id}`,
-				{ data: formData, multipart: true }
-			);
+			await fetchApi("PATCH", `/api/community/guilds/updateLogoGuild?guildId=${guild?.id}`, { data: formData, multipart: true });
 
 			fetchGuildData();
 
@@ -423,11 +378,7 @@ export default function Guild({ user }: any) {
 		<Panel header="Guild Page">
 			<VStack spacing={4} align="start">
 				<Box borderWidth={1} borderRadius="lg" p={4} width="full">
-					<Tabs
-						variant="enclosed"
-						index={activeTab === "members" ? 0 : 1}
-						onChange={handleTabChange}
-					>
+					<Tabs variant="enclosed" index={activeTab === "members" ? 0 : 1} onChange={handleTabChange}>
 						<TabList>
 							<Tab>Members</Tab>
 							<Tab>Configuration</Tab>
@@ -437,51 +388,26 @@ export default function Guild({ user }: any) {
 							<TabPanel>
 								{activeTab === "members" && (
 									<Panel header="Guild Information">
-										<StrippedTable
-											head={[
-												{ text: "Classification" },
-												{ text: "Name" },
-												{ text: "Status" },
-												{ text: "Level/Vocations" },
-												{ text: "Actions" },
-											]}
+										{/* <StrippedTable
+											head={[{ text: "Classification" }, { text: "Name" }, { text: "Status" }, { text: "Level/Vocations" }, { text: "Actions" }]}
 											body={
-												guild?.guild_membership &&
-												guild.guild_membership.length > 0
+												guild?.guild_membership && guild.guild_membership.length > 0
 													? guild.guild_membership.map((member, index) => [
 															{ text: RankGuild[member.rank_id] },
 															{ text: member.nick },
 															{ text: member.online ? "Online" : "Offline" },
 															{
-																text: member.player
-																	? `${member.player.level}/${
-																			vocationIdToName[member.player.vocation]
-																	  }`
-																	: "N/A",
+																text: member.player ? `${member.player.level}/${vocationIdToName[member.player.vocation]}` : "N/A",
 															},
 															{
 																text: (
 																	<>
-																		{user.id === guild.ownerid &&
-																		user.id !== member.player_id ? (
-																			<CgUserRemove
-																				size={24}
-																				cursor="pointer"
-																				color="red"
-																				onClick={() =>
-																					handleExpelMember(member.player_id)
-																				}
-																			/>
+																		{user.id === guild.ownerid && user.id !== member.player_id ? (
+																			<CgUserRemove size={24} cursor="pointer" color="red" onClick={() => handleExpelMember(member.player_id)} />
 																		) : (
 																			user.id === member.player_id &&
 																			user.id !== guild.ownerid && (
-																				<ChakraButton
-																					onClick={() =>
-																						handleLeaveGuild(member.player_id)
-																					}
-																					type="button"
-																					colorScheme="red"
-																				>
+																				<ChakraButton onClick={() => handleLeaveGuild(member.player_id)} type="button" colorScheme="red">
 																					Leave Guild
 																				</ChakraButton>
 																			)
@@ -489,7 +415,7 @@ export default function Guild({ user }: any) {
 																	</>
 																),
 															},
-													  ])
+														])
 													: [
 															[
 																{
@@ -497,9 +423,9 @@ export default function Guild({ user }: any) {
 																	colspan: 5,
 																},
 															],
-													  ]
+														]
 											}
-										/>
+										/> */}
 									</Panel>
 								)}
 							</TabPanel>
@@ -515,16 +441,12 @@ export default function Guild({ user }: any) {
 													height: "100px",
 												}}
 											>
-												<Image
-													src={
-														guild.logoUrl
-															? `${baseUrl}/${guild.logoUrl}`
-															: `/images/guild-logo-default.gif`
-													}
+												{/* <Image
+													src={guild.logoUrl ? `${baseUrl}/${guild.logoUrl}` : `/images/guild-logo-default.gif`}
 													alt={`${guild.name} logo`}
 													layout="fill"
 													objectFit="cover"
-												/>
+												/> */}
 											</div>
 										</div>
 
@@ -541,21 +463,12 @@ export default function Guild({ user }: any) {
 													}}
 												>
 													<h3>Preview</h3>
-													<Image
-														src={previewUrl}
-														alt="Preview"
-														layout="fill"
-														objectFit="cover"
-													/>
+													<Image src={previewUrl} alt="Preview" layout="fill" objectFit="cover" />
 												</div>
 											)}
 										</div>
 
-										<ChakraButton
-											colorScheme="purple"
-											size="sm"
-											onClick={handleUpload}
-										>
+										<ChakraButton colorScheme="purple" size="sm" onClick={handleUpload}>
 											Upload Logo
 										</ChakraButton>
 									</Panel>
@@ -566,77 +479,48 @@ export default function Guild({ user }: any) {
 				</Box>
 
 				<Box borderWidth={1} borderRadius="lg" p={4} width="full">
-					<StrippedTable
-						head={[
-							{ text: "Player Name" },
-							{ text: "Level/Vocation" },
-							{ text: "Invite Date" },
-							{ text: "Actions" },
-						]}
+					{/* <StrippedTable
+						head={[{ text: "Player Name" }, { text: "Level/Vocation" }, { text: "Invite Date" }, { text: "Actions" }]}
 						body={
 							guildInvites && guildInvites.length > 0
 								? guildInvites.map((invite, index) => [
 										{
-											text: (
-												<Link href={`/character/${invite.player.name}`}>
-													{invite.player.name}
-												</Link>
-											),
+											text: <Link href={`/character/${invite.player.name}`}>{invite.player.name}</Link>,
 										},
 										{
-											text: `${invite.player.level} - ${
-												vocationIdToName[invite.player.vocation]
-											}`,
+											text: `${invite.player.level} - ${vocationIdToName[invite.player.vocation]}`,
 										},
 										{ text: new Date(invite.date).toLocaleString() },
 										{
 											text: (
 												<>
-													{user.id === guild.ownerid ? (
-														<ChakraButton
-															onClick={() =>
-																handleDeleteInvite(invite.player_id)
-															}
-															colorScheme="red"
-															type="button"
-														>
+													{user.id === guild?.ownerid ? (
+														<ChakraButton onClick={() => handleDeleteInvite(invite.player_id)} colorScheme="red" type="button">
 															Delete
 														</ChakraButton>
 													) : invite.player_id === user.id ? (
-														<ChakraButton
-															onClick={() =>
-																handleAcceptInvite(invite.player_id)
-															}
-															colorScheme="green"
-															type="button"
-														>
+														<ChakraButton onClick={() => handleAcceptInvite(invite.player_id)} colorScheme="green" type="button">
 															Aceitar
 														</ChakraButton>
 													) : null}
 												</>
 											),
 										},
-								  ])
+									])
 								: [
 										[
 											{
 												text: "There is no data to show",
-												colspan: 6,
+												// colspan: 6,
 											},
 										],
-								  ]
+									]
 						}
-					/>
+					/> */}
 
-					{user.id === guild?.ownerid ? (
-						<FormWrapper
-							validationSchema={""}
-							onSubmit={onSubmit}
-							fields={fields}
-							buttons={buttons}
-							response={response}
-						/>
-					) : null}
+					{/* {user.id === guild?.ownerid ? (
+						<FormWrapper validationSchema={""} onSubmit={onSubmit} fields={fields} buttons={buttons} response={response} />
+					) : null} */}
 				</Box>
 			</VStack>
 		</Panel>

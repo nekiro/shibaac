@@ -7,10 +7,7 @@ import { User, withSessionSsr } from "../../lib/session";
 import { useUser } from "../../hooks/useUser";
 import { loginSchema } from "../../schemas/Login";
 import { fetchApi, FetchResult } from "../../lib/request";
-import FormWrapper, {
-	FormField,
-	FormButton,
-} from "../../components/FormWrapper";
+import FormWrapper, { FormField, FormButton } from "../../components/FormWrapper";
 import { Text } from "@chakra-ui/react";
 import { FormikHelpers } from "formik";
 
@@ -33,23 +30,16 @@ const buttons: FormButton[] = [
 export default function Login() {
 	const { setUser } = useUser();
 	const router = useRouter();
-	const [response, setResponse] = useState<FetchResult | null>(null);
+	const [response, setResponse] = useState<FetchResult | undefined>(undefined);
 
-	const onSubmit = async (
-		values: any,
-		{ resetForm }: FormikHelpers<object>
-	) => {
-		const response = await fetchApi<{ account: User }>(
-			"POST",
-			"/api/account/login",
-			{
-				data: {
-					name: values.name,
-					password: values.password,
-					twoFAToken: values.twoFAToken,
-				},
-			}
-		);
+	const onSubmit = async (values: any, { resetForm }: FormikHelpers<object>) => {
+		const response = await fetchApi<{ account: User }>("POST", "/api/account/login", {
+			data: {
+				name: values.name,
+				password: values.password,
+				twoFAToken: values.twoFAToken,
+			},
+		});
 
 		setResponse(response);
 		resetForm();
@@ -72,13 +62,7 @@ export default function Login() {
 					if you do not have one yet.
 				</Text>
 
-				<FormWrapper
-					validationSchema={loginSchema}
-					onSubmit={onSubmit}
-					fields={fields}
-					buttons={buttons}
-					response={response}
-				/>
+				<FormWrapper validationSchema={loginSchema} onSubmit={onSubmit} fields={fields} buttons={buttons} response={response} />
 			</Panel>
 		</>
 	);

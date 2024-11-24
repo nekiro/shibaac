@@ -1,8 +1,8 @@
-import * as Yup from "yup";
+import * as yup from "yup";
 
-export const changeEmailSchema = Yup.object().shape({
-	newEmail: Yup.string().email("Must be a valid email.").required("Required"),
-	password: Yup.string().required("Required"),
+export const changeEmailSchema = yup.object().shape({
+	newEmail: yup.string().email("Must be a valid email.").required("Required"),
+	password: yup.string().required("Required"),
 });
 
-export type ChangeEmail = Yup.TypeOf<typeof changeEmailSchema>;
+export type ChangeEmail = yup.InferType<typeof changeEmailSchema>;

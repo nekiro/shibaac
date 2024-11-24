@@ -11,7 +11,7 @@ BigInt.prototype.toJSON = function () {
 	return int ?? this.toString();
 };
 
-const MyApp = ({ Component, pageProps }) => {
+const MyApp = ({ Component, pageProps }: any) => {
 	return (
 		<UserContextWrapper>
 			<ChakraProvider theme={Theme}>

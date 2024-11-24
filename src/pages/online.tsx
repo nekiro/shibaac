@@ -42,7 +42,7 @@ export default function Online() {
           There are currently {state.players ? state.players.length : 0} players
           online on {state.status ? state.status.name : '...'}
         </Label> */}
-				{state.players?.length > 0 && (
+				{/* {state.players?.length > 0 && (
 					<StrippedTable
 						head={[{ text: "Name" }, { text: "Level" }, { text: "Vocation" }]}
 						body={players.data?.map((player) => [
@@ -51,7 +51,7 @@ export default function Online() {
 							{ text: vocationIdToName[player.vocation] },
 						])}
 					/>
-				)}
+				)} */}
 			</Panel>
 		</>
 	);

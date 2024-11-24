@@ -4,10 +4,7 @@ import Head from "../../layout/Head";
 import { withSessionSsr } from "../../lib/session";
 import { fetchApi, FetchResult } from "../../lib/request";
 import { registerSchema } from "../../schemas/Register";
-import FormWrapper, {
-	FormButton,
-	FormField,
-} from "../../components/FormWrapper";
+import FormWrapper, { FormButton, FormField } from "../../components/FormWrapper";
 
 const fields: FormField[] = [
 	{
@@ -38,9 +35,9 @@ const buttons: FormButton[] = [
 ];
 
 export default function Register() {
-	const [response, setResponse] = useState<FetchResult | null>(null);
+	const [response, setResponse] = useState<FetchResult | undefined>(undefined);
 
-	const onSubmit = async (values: any, { resetForm }) => {
+	const onSubmit = async (values: any, { resetForm }: any) => {
 		const response = await fetchApi("POST", "/api/account/register", {
 			data: {
 				name: values.name,
@@ -57,13 +54,7 @@ export default function Register() {
 		<>
 			<Head title="Register" />
 			<Panel header="Register">
-				<FormWrapper
-					validationSchema={registerSchema}
-					onSubmit={onSubmit}
-					fields={fields}
-					buttons={buttons}
-					response={response}
-				/>
+				<FormWrapper validationSchema={registerSchema} onSubmit={onSubmit} fields={fields} buttons={buttons} response={response} />
 			</Panel>
 		</>
 	);

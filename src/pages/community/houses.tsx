@@ -4,16 +4,7 @@ import Head from "../../layout/Head";
 import StrippedTable from "../../components/StrippedTable";
 import { fetchApi } from "../../lib/request";
 import { withSessionSsr } from "../../lib/session";
-import {
-	Box,
-	Text,
-	FormControl,
-	FormLabel,
-	Select,
-	Input,
-	Button,
-	useToast,
-} from "@chakra-ui/react";
+import { Box, Text, FormControl, FormLabel, Select, Input, Button, useToast } from "@chakra-ui/react";
 import { House } from "../../shared/interfaces/Houses";
 
 interface Player {
@@ -59,49 +50,45 @@ export default function HousePage({ user }: any) {
 		fetchHouses();
 	}, [fetchHouses]);
 
-	const handleBidChange = (e) => {
+	const handleBidChange = (e: any) => {
 		const { name, value } = e.target;
 		setBid((prev) => ({ ...prev, [name]: value }));
 	};
 
-	const handleBidSubmit = async (e) => {
+	const handleBidSubmit = async (e: any) => {
 		e.preventDefault();
-		if (bid.character && bid.amount >= 1000) {
-			try {
-				const response = await fetchApi(
-					"POST",
-					`/api/houses/${selectedHouse?.id}`,
-					{
-						data: {
-							houseId: selectedHouse?.id,
-							characterId: Number(bid.character),
-							bid: Number(bid.amount),
-						},
-					}
-				);
+		// if (bid.character && bid.amount >= 1000) {
+		// 	try {
+		// 		const response = await fetchApi("POST", `/api/houses/${selectedHouse?.id}`, {
+		// 			data: {
+		// 				houseId: selectedHouse?.id,
+		// 				characterId: Number(bid.character),
+		// 				bid: Number(bid.amount),
+		// 			},
+		// 		});
 
-				if (response.success) {
-					toast({
-						position: "top",
-						title: response.message,
-						status: "success",
-						duration: 9000,
-						isClosable: true,
-					});
+		// 		if (response.success) {
+		// 			toast({
+		// 				position: "top",
+		// 				title: response.message,
+		// 				status: "success",
+		// 				duration: 9000,
+		// 				isClosable: true,
+		// 			});
 
-					setBid({ character: "", amount: "" });
+		// 			setBid({ character: "", amount: "" });
 
-					await fetchHouses();
+		// 			await fetchHouses();
 
-					const updatedHouse = houses.find((h) => h.id === selectedHouse?.id);
-					setSelectedHouse(updatedHouse);
-				}
-			} catch (error) {
-				console.error("Bid submission failed", error);
-			}
-		} else {
-			console.log("Invalid bid");
-		}
+		// 			const updatedHouse = houses.find((h) => h.id === selectedHouse?.id);
+		// 			// setSelectedHouse(updatedHouse);
+		// 		}
+		// 	} catch (error) {
+		// 		console.error("Bid submission failed", error);
+		// 	}
+		// } else {
+		// 	console.log("Invalid bid");
+		// }
 	};
 
 	return (
@@ -112,17 +99,13 @@ export default function HousePage({ user }: any) {
 					<Box width="50%" marginRight="4">
 						<Text fontSize="2xl">List Houses</Text>
 
-						<StrippedTable
+						{/* <StrippedTable
 							head={[{ text: "Name" }, { text: "Size" }, { text: "Owner" }]}
 							body={
 								houses && houses.length > 0
 									? houses.map((house) => [
 											{
-												text: (
-													<span onClick={() => setSelectedHouse(house)}>
-														{house.name}
-													</span>
-												),
+												text: <span onClick={() => setSelectedHouse(house)}>{house.name}</span>,
 											},
 											{
 												text: house.size,
@@ -130,7 +113,7 @@ export default function HousePage({ user }: any) {
 											{
 												text: house.owner,
 											},
-									  ])
+										])
 									: [
 											[
 												{
@@ -138,18 +121,16 @@ export default function HousePage({ user }: any) {
 													colspan: 3,
 												},
 											],
-									  ]
+										]
 							}
-						/>
+						/> */}
 					</Box>
 					{selectedHouse && (
 						<Box width="50%">
 							<Text fontSize="3xl">{selectedHouse.name}</Text>
 							<Text>
 								Owner:
-								{selectedHouse.owner === 0
-									? " Available for an auction!"
-									: selectedHouse.owner}
+								{selectedHouse.owner === 0 ? " Available for an auction!" : selectedHouse.owner}
 							</Text>
 							<Text>Town: Venore</Text>
 							<Text>Size: {selectedHouse.size} square meters</Text>
@@ -157,18 +138,11 @@ export default function HousePage({ user }: any) {
 							<Text>Monthly rent: {selectedHouse.rent * 1000} gold coins</Text>
 							<Text>Last bid: {selectedHouse.bid} gold coins</Text>
 							<Text>Highest Bidder: {selectedHouse.highest_bidder}</Text>
-							<Text>
-								Last bid date:{" "}
-								{new Date(selectedHouse.last_bid * 1000).toLocaleString()}
-							</Text>
+							<Text>Last bid date: {new Date(selectedHouse.last_bid * 1000).toLocaleString()}</Text>
 							<form onSubmit={handleBidSubmit}>
 								<FormControl mb="3">
 									<FormLabel>Character</FormLabel>
-									<Select
-										name="character"
-										onChange={handleBidChange}
-										value={bid.character}
-									>
+									<Select name="character" onChange={handleBidChange} value={bid.character}>
 										<option value="">Selecione</option>
 										{account?.players.map((player) => (
 											<option value={player.id} key={player.id}>
@@ -179,19 +153,12 @@ export default function HousePage({ user }: any) {
 								</FormControl>
 								<FormControl mb="3">
 									<FormLabel>Bid on gold</FormLabel>
-									<Input
-										type="number"
-										min="1000"
-										name="amount"
-										value={bid.amount}
-										onChange={handleBidChange}
-									/>
+									<Input type="number" min="1000" name="amount" value={bid.amount} onChange={handleBidChange} />
 								</FormControl>
 								<Button type="submit">Dar Bid</Button>
 							</form>
 							<Text mt="3" color="red.500">
-								Caution! When you bid a house, is NOT possible to cancel the
-								bid!
+								Caution! When you bid a house, is NOT possible to cancel the bid!
 							</Text>
 						</Box>
 					)}

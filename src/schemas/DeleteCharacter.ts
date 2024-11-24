@@ -5,4 +5,4 @@ export const deleteCharacterSchema = Yup.object().shape({
 	name: Yup.string().required("Required"),
 });
 
-export type DeleteCharacter = Yup.TypeOf<typeof deleteCharacterSchema>;
+export type DeleteCharacter = Yup.InferType<typeof deleteCharacterSchema>;

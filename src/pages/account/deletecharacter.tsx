@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import Panel from "../../components/Panel";
 import { withSessionSsr } from "../../lib/session";
-import { fetchApi, FetchResult } from "../../lib/request";
+import { fetchApi } from "../../lib/request";
 import FormWrapper, { FormButton } from "../../components/FormWrapper";
 import { deleteCharacterSchema } from "../../schemas/DeleteCharacter";
 import { Select, Text } from "@chakra-ui/react";
@@ -11,7 +11,11 @@ const buttons: FormButton[] = [
 	{ href: "/account", value: "Back" },
 ];
 
-export default function DeleteCharacter({ user }) {
+interface DeleteCharacterProps {
+	user: { id: number };
+}
+
+export default function DeleteCharacter({ user }: DeleteCharacterProps) {
 	const [response, setResponse] = useState<any>(null);
 	const [data, setData] = useState<any>(null);
 
@@ -25,7 +29,7 @@ export default function DeleteCharacter({ user }) {
 						name: "name",
 						label: { text: "Name", size: 3 },
 						size: 9,
-						options: response.account.players.map((char) => ({
+						options: response.account.players.map((char: any) => ({
 							value: char.name,
 							text: char.name,
 						})),
@@ -53,7 +57,7 @@ export default function DeleteCharacter({ user }) {
 		return <Panel isLoading={true} />;
 	}
 
-	const onSubmit = async (values, { resetForm }) => {
+	const onSubmit = async (values: any, { resetForm }: any) => {
 		const response = await fetchApi("POST", "/api/account/deletecharacter", {
 			data: {
 				name: values.name,

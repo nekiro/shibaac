@@ -28,7 +28,7 @@ export interface FormWrapperProps {
 	onSubmit: (values: unknown, formikHelpers: FormikHelpers<object>) => void | Promise<void>;
 	fields: FormField[];
 	buttons: FormButton[];
-	response: FetchResult | null;
+	response?: FetchResult;
 	validateOnMount?: boolean;
 }
 

@@ -19,24 +19,18 @@ export type ResponseData = {
 	args?: any;
 };
 
-export const fetchApi = async <T = any>(
-	method: FetchMethods,
-	url: string,
-	options?: FetchOptions
-): Promise<FetchResult & T> => {
+export const fetchApi = async <T = any>(method: FetchMethods, url: string, options?: FetchOptions): Promise<FetchResult & T> => {
 	const _options: RequestInit = {
 		method,
 		headers: {
-			...options?.headers,
+			...(options?.headers as any),
 		},
 	};
 
 	let urlWithParams = url;
 
 	if (options?.params) {
-		const params = new URLSearchParams(
-			options.params as Record<string, string>
-		).toString();
+		const params = new URLSearchParams(options.params as Record<string, string>).toString();
 		urlWithParams = `${url}?${params}`;
 	}
 
@@ -51,10 +45,7 @@ export const fetchApi = async <T = any>(
 		_options.body = JSON.stringify(options.data);
 	}
 
-	const response: Response = await fetch(
-		`${process.env.NEXT_PUBLIC_API_URL}${urlWithParams}`,
-		_options
-	);
+	const response: Response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${urlWithParams}`, _options);
 
 	const data = (await response.json()) as ResponseData;
 

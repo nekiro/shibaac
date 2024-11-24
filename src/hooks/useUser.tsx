@@ -1,6 +1,5 @@
-import { useEffect, useState, createContext, useContext } from "react";
+import React, { useEffect, useState, createContext, useContext } from "react";
 import { fetchApi } from "../lib/request";
-import React from "react";
 import { User } from "../lib/session";
 
 export type UserContext = {
@@ -13,7 +12,11 @@ const context = createContext<UserContext>({
 	setUser: (user: User | null) => user,
 });
 
-export const UserContextWrapper = ({ children }) => {
+interface UserContextWrapperProps {
+	children: React.ReactNode;
+}
+
+export const UserContextWrapper = ({ children }: UserContextWrapperProps) => {
 	const [user, setUserState] = useState<User | null>(null);
 
 	const setUser = (user: User | null) => setUserState(user);
@@ -31,9 +34,7 @@ export const UserContextWrapper = ({ children }) => {
 		fetchUser();
 	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-	return (
-		<context.Provider value={{ user, setUser }}>{children}</context.Provider>
-	);
+	return <context.Provider value={{ user, setUser }}>{children}</context.Provider>;
 };
 
 export const useUser = (): UserContext => {

@@ -28,7 +28,11 @@ import { Toggle } from "../../components/Toggle";
 
 // TODO: use proper types
 
-export default function Account({ user }) {
+export interface AccountProps {
+	user: { id: number };
+}
+
+export default function Account({ user }: AccountProps) {
 	const [info, setInfo] = useState<any>(null);
 	const [is2FAEnabled, setIs2FAEnabled] = useState(false);
 	const [qrCodeDataURL, setQRCodeDataURL] = useState(null);
@@ -50,15 +54,11 @@ export default function Account({ user }) {
 		try {
 			setIsLoading(true);
 
-			const response = await fetchApi(
-				"POST",
-				"/api/account/two-factor/enable-2fa",
-				{
-					data: {
-						isTwoFA: !is2FAEnabled,
-					},
-				}
-			);
+			const response = await fetchApi("POST", "/api/account/two-factor/enable-2fa", {
+				data: {
+					isTwoFA: !is2FAEnabled,
+				},
+			});
 
 			if (response.success) {
 				setIs2FAEnabled((prevState) => !prevState);
@@ -78,7 +78,7 @@ export default function Account({ user }) {
 		}
 	};
 
-	const showQRCode = (dataURL) => {
+	const showQRCode = (dataURL: any) => {
 		setQRCodeDataURL(dataURL);
 	};
 
@@ -103,10 +103,7 @@ export default function Account({ user }) {
 							[
 								{ text: "Creation Date" },
 								{
-									text:
-										info.creation > 0
-											? timestampToDate(info.creation)
-											: "Unknown",
+									text: info.creation > 0 ? timestampToDate(info.creation) : "Unknown",
 								},
 							],
 							//{ name: 'Last Login', value: '11/02/2021' },
@@ -134,26 +131,10 @@ export default function Account({ user }) {
 					)}
 
 					<Wrap>
-						<Button
-							value="Change Password"
-							btnColorType="primary"
-							href="/account/changepassword"
-						/>
-						<Button
-							value="Change Email"
-							btnColorType="primary"
-							href="/account/changeemail"
-						/>
-						<Button
-							value="Create Character"
-							btnColorType="primary"
-							href="/account/createcharacter"
-						/>
-						<Button
-							value="Delete Character"
-							btnColorType="primary"
-							href="/account/deletecharacter"
-						/>
+						<Button value="Change Password" btnColorType="primary" href="/account/changepassword" />
+						<Button value="Change Email" btnColorType="primary" href="/account/changeemail" />
+						<Button value="Create Character" btnColorType="primary" href="/account/createcharacter" />
+						<Button value="Delete Character" btnColorType="primary" href="/account/deletecharacter" />
 						{isLoading && <Spinner />}
 
 						<Box display="flex" alignItems="center" my={4}>
@@ -168,18 +149,11 @@ export default function Account({ user }) {
 									<ModalCloseButton />
 									<ModalBody>
 										<Center>
-											<Image
-												src={qrCodeDataURL}
-												alt="QR Code"
-												boxSize="100px"
-											/>
+											<Image src={qrCodeDataURL} alt="QR Code" boxSize="100px" />
 										</Center>
 									</ModalBody>
 									<ModalFooter>
-										<ChakraButton
-											variant="ghost"
-											onClick={() => setIsOpenModal(false)}
-										>
+										<ChakraButton variant="ghost" onClick={() => setIsOpenModal(false)}>
 											Close
 										</ChakraButton>
 									</ModalFooter>
@@ -217,7 +191,7 @@ export default function Account({ user }) {
 							{ text: "Profession" },
 							// { text: 'Edit' }
 						]}
-						body={info.players.map((player) => [
+						body={info.players.map((player: any) => [
 							{ href: `/character/${player.name}`, text: player.name },
 							{ text: player.level },
 							{ text: vocationIdToName[player.vocation] },
