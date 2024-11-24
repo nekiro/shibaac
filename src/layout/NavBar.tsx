@@ -94,9 +94,11 @@ const DesktopNavigation = ({ user }) => {
 				<form
 					onSubmit={(event) => {
 						event.preventDefault();
-						if (event.target.search.value) {
-							router.push(`/character/${event.target.search.value}`);
-							event.target.reset();
+						const form = event.currentTarget;
+						const searchValue = (form.elements.namedItem("search") as any)?.value;
+						if (searchValue) {
+							router.push(`/character/${searchValue}`);
+							form.reset();
 						}
 					}}
 				>
