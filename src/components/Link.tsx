@@ -2,10 +2,15 @@ import React from "react";
 import { Link as ChakraLink } from "@chakra-ui/react";
 import NextLink from "next/link";
 
-const Link = ({ href, text }) => {
+export interface LinkProps {
+	href: string;
+	text?: string;
+}
+
+const Link = ({ href, text }: LinkProps) => {
 	return (
 		<NextLink href={href} passHref>
-			<ChakraLink color="violet.500">{text ? text : href}</ChakraLink>
+			<ChakraLink color="violet.500">{text ?? href}</ChakraLink>
 		</NextLink>
 	);
 };

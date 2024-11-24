@@ -7,7 +7,7 @@ import { vocationIdToName } from "../lib";
 import Label from "../components/Label";
 
 export default function Online() {
-	const [state, setState] = useState(null);
+	const [state, setState] = useState<any>(null);
 
 	const fetchData = useCallback(async () => {
 		const players = await fetchApi("GET", `/api/player/online`);
@@ -34,10 +34,8 @@ export default function Online() {
 			<Head title="Online" />
 			<Panel header="Online List">
 				<Label colorScheme="violet" fontSize="sm">
-					Overall Maximum: {state.status ? state.status.maxOnlineCount : "0"}{" "}
-					players. There are currently{" "}
-					{state.players ? state.players.length : 0} players online on{" "}
-					{state.status ? state.status.name : "..."}
+					Overall Maximum: {state.status ? state.status.maxOnlineCount : "0"} players. There are currently {state.players ? state.players.length : 0}{" "}
+					players online on {state.status ? state.status.name : "..."}
 				</Label>
 
 				{/* <Label colorScheme="violet" fontSize="sm">

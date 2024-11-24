@@ -1,7 +1,8 @@
-import Layout from "src/layout";
-import { UserContextWrapper } from "src/hooks/useUser";
+import Layout from "../layout";
+import { UserContextWrapper } from "../hooks/useUser";
 import { ChakraProvider } from "@chakra-ui/react";
-import { Theme, Fonts } from "src/layout/theme";
+import { Theme, Fonts } from "../layout/theme";
+import React from "react";
 
 // @ts-ignore
 BigInt.prototype.toJSON = function () {

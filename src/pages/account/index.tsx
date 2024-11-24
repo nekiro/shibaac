@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
-import Panel from "src/components/Panel";
-import Head from "src/layout/Head";
-import { fetchApi } from "src/lib/request";
-import { withSessionSsr } from "src/lib/session";
+import Panel from "../../components/Panel";
+import Head from "../../layout/Head";
+import { fetchApi } from "../../lib/request";
+import { withSessionSsr } from "../../lib/session";
 import Button from "../../components/Button";
 import StripedTable from "../../components/StrippedTable";
 import {
@@ -23,15 +23,17 @@ import {
 	Text,
 	Wrap,
 } from "@chakra-ui/react";
-import { vocationIdToName } from "../../lib";
+import { timestampToDate, vocationIdToName } from "../../lib";
 import { Toggle } from "../../components/Toggle";
 
+// TODO: use proper types
+
 export default function Account({ user }) {
-	const [info, setInfo] = useState(null);
+	const [info, setInfo] = useState<any>(null);
 	const [is2FAEnabled, setIs2FAEnabled] = useState(false);
 	const [qrCodeDataURL, setQRCodeDataURL] = useState(null);
 	const [isOpenModal, setIsOpenModal] = useState(false);
-	const [error, setError] = useState(null);
+	const [error, setError] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 
 	const fetchData = useCallback(async () => {
@@ -134,22 +136,22 @@ export default function Account({ user }) {
 					<Wrap>
 						<Button
 							value="Change Password"
-							btnType="primary"
+							btnColorType="primary"
 							href="/account/changepassword"
 						/>
 						<Button
 							value="Change Email"
-							btnType="primary"
+							btnColorType="primary"
 							href="/account/changeemail"
 						/>
 						<Button
 							value="Create Character"
-							btnType="primary"
+							btnColorType="primary"
 							href="/account/createcharacter"
 						/>
 						<Button
 							value="Delete Character"
-							btnType="primary"
+							btnColorType="primary"
 							href="/account/deletecharacter"
 						/>
 						{isLoading && <Spinner />}

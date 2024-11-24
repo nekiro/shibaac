@@ -1,22 +1,22 @@
 import React, { useEffect, useState, useCallback } from "react";
 import Panel from "../../components/Panel";
 import { withSessionSsr } from "../../lib/session";
-import { fetchApi } from "../../lib/request";
-import FormWrapper from "../../components/FormWrapper";
-import { deleteCharacterSchema } from "src/schemas/DeleteCharacter";
+import { fetchApi, FetchResult } from "../../lib/request";
+import FormWrapper, { FormButton } from "../../components/FormWrapper";
+import { deleteCharacterSchema } from "../../schemas/DeleteCharacter";
 import { Select, Text } from "@chakra-ui/react";
 
-const buttons = [
-	{ type: "submit", btnType: "primary", value: "Submit" },
+const buttons: FormButton[] = [
+	{ type: "submit", btnColorType: "primary", value: "Submit" },
 	{ href: "/account", value: "Back" },
 ];
 
 export default function DeleteCharacter({ user }) {
-	const [response, setResponse] = useState(null);
-	const [data, setData] = useState(null);
+	const [response, setResponse] = useState<any>(null);
+	const [data, setData] = useState<any>(null);
 
 	const fetchCharacters = useCallback(async () => {
-		const response = await fetchApi("GET", `/api/account/${user.id}`);
+		const response = await fetchApi<any>("GET", `/api/account/${user.id}`);
 		if (response.success) {
 			setData({
 				fields: [

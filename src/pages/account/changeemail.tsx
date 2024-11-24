@@ -1,32 +1,33 @@
 import React, { useState } from "react";
-import Panel from "src/components/Panel";
-import FormWrapper from "src/components/FormWrapper";
-import { fetchApi } from "../../lib/request";
-import { withSessionSsr } from "src/lib/session";
-import { changeEmailSchema } from "src/schemas/ChangeEmail";
+import Panel from "../../components/Panel";
+import FormWrapper, {
+	FormButton,
+	FormField,
+} from "../../components/FormWrapper";
+import { fetchApi, FetchResult } from "../../lib/request";
+import { withSessionSsr } from "../../lib/session";
+import { changeEmailSchema } from "../../schemas/ChangeEmail";
 
-const fields = [
+const fields: FormField[] = [
 	{
 		type: "email",
 		name: "newEmail",
-		label: { text: "E-mail Address", size: 2 },
-		size: 10,
+		label: { text: "E-mail Address" },
 	},
 	{
 		type: "password",
 		name: "password",
-		label: { text: "Password", size: 2 },
-		size: 10,
+		label: { text: "Password" },
 	},
 ];
 
-const buttons = [
-	{ type: "submit", btnType: "primary", value: "Submit" },
+const buttons: FormButton[] = [
+	{ type: "submit", btnColorType: "primary", value: "Submit" },
 	{ href: "/account", value: "Back" },
 ];
 
 export default function ChangeEmail() {
-	const [response, setResponse] = useState(null);
+	const [response, setResponse] = useState<FetchResult | null>(null);
 
 	const onSubmit = async (values, { resetForm }) => {
 		const response = await fetchApi("POST", "/api/account/changeemail", {

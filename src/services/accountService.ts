@@ -10,10 +10,7 @@ export const getAccountByIdIncludeDefault: Prisma.accountsInclude = {
 
 export const getAccountById = async (
 	accountId: number,
-	include:
-		| Prisma.accountsInclude
-		| null
-		| undefined = getAccountByIdIncludeDefault
+	include: Prisma.accountsInclude | null | undefined = getAccountByIdIncludeDefault,
 ): Account => {
 	try {
 		const account = await prisma.accounts.findFirst({
@@ -29,10 +26,7 @@ export const getAccountById = async (
 	}
 };
 
-export const getAccountByName = async (
-	accountName: string,
-	include?: Prisma.accountsInclude
-): Account => {
+export const getAccountByName = async (accountName: string, include?: Prisma.accountsInclude): Account => {
 	try {
 		const account = await prisma.accounts.findFirst({
 			where: {
@@ -47,15 +41,12 @@ export const getAccountByName = async (
 	}
 };
 
-export const getAccountBy = async (
-	where?: Prisma.accountsWhereInput,
-	select?: Prisma.accountsSelect
-): Account => {
+export const getAccountBy = async (where?: Prisma.accountsWhereInput, select?: Prisma.accountsSelect): Account => {
 	try {
-		const account = (await prisma.accounts.findFirst({
+		const account = await prisma.accounts.findFirst({
 			where,
 			select,
-		})) as Account;
+		});
 
 		return account;
 	} catch (err) {
@@ -63,11 +54,7 @@ export const getAccountBy = async (
 	}
 };
 
-export const createAccount = async (
-	name: string,
-	password: string,
-	email: string
-): Account => {
+export const createAccount = async (name: string, password: string, email: string): Account => {
 	const timestampInSeconds = Math.floor(Date.now() / 1000);
 
 	try {

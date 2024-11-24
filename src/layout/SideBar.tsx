@@ -18,7 +18,7 @@ const SideBar = (props: LayoutProps) => {
 			setIsLoading(true);
 
 			const [players, status] = await Promise.all([
-				fetchApi<{ players: player[] }>("GET", `/api/player/top5`),
+				fetchApi<{ players: any[] }>("GET", `/api/player/top5`),
 				fetchApi<{ status: ProtocolStatusCache }>("GET", `/api/status`),
 			]);
 
@@ -38,23 +38,10 @@ const SideBar = (props: LayoutProps) => {
 				<table className="table table-condensed table-content table-striped">
 					<tbody>
 						<tr>
-							<td>
-								{serverStatus?.online ? (
-									<Label colorScheme="green">ONLINE</Label>
-								) : (
-									<Label colorScheme="red">OFFLINE</Label>
-								)}
-							</td>
+							<td>{serverStatus?.online ? <Label colorScheme="green">ONLINE</Label> : <Label colorScheme="red">OFFLINE</Label>}</td>
 						</tr>
 						<tr>
-							<td>
-								{serverStatus && (
-									<Link
-										href="/online"
-										text={`${serverStatus.onlineCount} players online`}
-									/>
-								)}
-							</td>
+							<td>{serverStatus && <Link href="/online" text={`${serverStatus.onlineCount} players online`} />}</td>
 						</tr>
 					</tbody>
 				</table>
@@ -73,7 +60,7 @@ const SideBar = (props: LayoutProps) => {
 									{
 										text: player.level,
 									},
-							  ])
+								])
 							: [
 									[
 										{
@@ -81,7 +68,7 @@ const SideBar = (props: LayoutProps) => {
 											colspan: 2,
 										},
 									],
-							  ]
+								]
 					}
 				/>
 			</Panel>

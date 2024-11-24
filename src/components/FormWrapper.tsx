@@ -19,7 +19,7 @@ export interface FormField {
 	name: string;
 	label: { text: string };
 	placeholder?: string;
-	as?: JSX.Element;
+	as?: any;
 	options?: { value: string; text: string }[];
 }
 

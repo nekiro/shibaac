@@ -1,24 +1,27 @@
 import React, { useState } from "react";
-import Panel from "src/components/Panel";
-import { withSessionSsr } from "src/lib/session";
-import { fetchApi } from "src/lib/request";
-import FormWrapper from "src/components/FormWrapper";
-import { createCharacterSchema } from "src/schemas/CreateCharacter";
+import Panel from "../../components/Panel";
+import { withSessionSsr } from "../../lib/session";
+import { fetchApi } from "../../lib/request";
+import FormWrapper, {
+	FormButton,
+	FormField,
+} from "../../components/FormWrapper";
+import { createCharacterSchema } from "../../schemas/CreateCharacter";
 import { Select, Text } from "@chakra-ui/react";
 
-const fields = [
+const fields: FormField[] = [
 	{
 		type: "text",
 		name: "name",
 		placeholder: "3 to 29 characters",
-		label: { text: "Name", size: 3 },
-		size: 9,
+		label: { text: "Name" },
 	},
 	{
+		type: "select",
 		as: Select,
 		name: "vocation",
-		label: { text: "Vocation", size: 3 },
-		size: 9,
+		label: { text: "Vocation" },
+
 		options: [
 			{ value: "1", text: "Sorcerer" },
 			{ value: "2", text: "Druid" },
@@ -27,10 +30,10 @@ const fields = [
 		],
 	},
 	{
+		type: "select",
 		as: Select,
 		name: "sex",
-		label: { text: "Sex", size: 3 },
-		size: 9,
+		label: { text: "Sex" },
 		options: [
 			{ value: "0", text: "Female" },
 			{ value: "1", text: "Male" },
@@ -38,8 +41,8 @@ const fields = [
 	},
 ];
 
-const buttons = [
-	{ type: "submit", btnType: "primary", value: "Submit" },
+const buttons: FormButton[] = [
+	{ type: "submit", btnColorType: "primary", value: "Submit" },
 	{ href: "/account", value: "Back" },
 ];
 

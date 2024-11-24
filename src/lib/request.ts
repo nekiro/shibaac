@@ -19,7 +19,7 @@ export type ResponseData = {
 	args?: any;
 };
 
-export const fetchApi = async <T = void>(
+export const fetchApi = async <T = any>(
 	method: FetchMethods,
 	url: string,
 	options?: FetchOptions

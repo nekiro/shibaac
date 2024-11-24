@@ -1,10 +1,10 @@
 import sanitize from "sanitize-html";
 import Panel from "../components/Panel";
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { fetchApi } from "../lib/request";
 
 export default function Index() {
-	const [news, setNews] = useState(null);
+	const [news, setNews] = useState<any>(null);
 	const [isLoading, setIsLoading] = useState(false);
 
 	const fetchNews = useCallback(async () => {

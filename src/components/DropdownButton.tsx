@@ -5,22 +5,15 @@ import { IoChevronDown } from "react-icons/io5";
 import { Menu, MenuButton, MenuList, MenuItem, Button } from "@chakra-ui/react";
 
 export interface DropdownButtonProps {
-	hasMenu: boolean;
+	hasMenu?: boolean;
 	text: string;
 	href?: string;
 	list?: { text: string; url: string; isActive?: boolean }[];
 }
 
-const DropdownButton = ({
-	hasMenu = false,
-	text,
-	href,
-	list,
-}: DropdownButtonProps) => {
+const DropdownButton = ({ hasMenu = false, text, href, list }: DropdownButtonProps) => {
 	const router = useRouter();
-	const isActive = hasMenu
-		? list?.some((item) => router.asPath.startsWith(item.url))
-		: router.asPath === href;
+	const isActive = hasMenu ? list?.some((item) => router.asPath.startsWith(item.url)) : router.asPath === href;
 
 	if (hasMenu) {
 		return (

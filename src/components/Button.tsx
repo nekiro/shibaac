@@ -13,9 +13,9 @@ export interface ButtonProps {
 	type?: ButtonType;
 	href?: string;
 	btnColorType?: ButtonColorType;
-	isLoading: boolean;
-	isActive: boolean;
-	loadingText: string;
+	isLoading?: boolean;
+	isActive?: boolean;
+	loadingText?: string;
 }
 
 const Button = ({
@@ -24,8 +24,8 @@ const Button = ({
 	btnColorType = "primary",
 	size = "md",
 	href,
-	isLoading,
-	isActive,
+	isLoading = false,
+	isActive = false,
 	loadingText,
 }: ButtonProps) => {
 	const btn = (

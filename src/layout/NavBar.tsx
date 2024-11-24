@@ -1,19 +1,7 @@
 import React from "react";
 import { useRouter } from "next/router";
 import { useUser } from "../hooks/useUser";
-import {
-	Flex,
-	Spacer,
-	Box,
-	Menu,
-	MenuButton,
-	MenuList,
-	MenuItem,
-	MenuGroup,
-	IconButton,
-	Link,
-	useBreakpointValue,
-} from "@chakra-ui/react";
+import { Flex, Spacer, Box, Menu, MenuButton, MenuList, MenuItem, MenuGroup, IconButton, Link, useBreakpointValue } from "@chakra-ui/react";
 import DropdownButton from "../components/DropdownButton";
 import TextInput from "../components/TextInput";
 import { RxHamburgerMenu } from "react-icons/rx";
@@ -43,13 +31,7 @@ const navigationItems = [
 
 const MobileNavigation = ({ user }) => {
 	return (
-		<Flex
-			bgColor="violet.400"
-			height="fit-content"
-			marginBottom="1.5em"
-			flexDir="row"
-			borderRadius="md"
-		>
+		<Flex bgColor="violet.400" height="fit-content" marginBottom="1.5em" flexDir="row" borderRadius="md">
 			<Menu>
 				<MenuButton
 					as={IconButton}
@@ -103,21 +85,9 @@ const DesktopNavigation = ({ user }) => {
 	const router = useRouter();
 
 	return (
-		<Flex
-			bgColor="violet.400"
-			height="fit-content"
-			marginBottom="1.5em"
-			flexDir="row"
-			borderRadius="md"
-		>
+		<Flex bgColor="violet.400" height="fit-content" marginBottom="1.5em" flexDir="row" borderRadius="md">
 			{navigationItems.map((item) => (
-				<DropdownButton
-					key={item.text}
-					text={item.text}
-					hasMenu={item.hasMenu}
-					list={item.menuItems}
-					href={item.href}
-				/>
+				<DropdownButton key={item.text} text={item.text} hasMenu={item.hasMenu} list={item.menuItems} href={item.href} />
 			))}
 
 			<Box alignSelf="center">
@@ -164,7 +134,7 @@ const NavBar = () => {
 		},
 		{
 			fallback: "md",
-		}
+		},
 	);
 
 	return <NavComponent user={user} />;
