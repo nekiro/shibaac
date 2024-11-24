@@ -1,47 +1,46 @@
 import React, { useState } from "react";
-import Panel from "src/components/Panel";
-import Head from "src/layout/Head";
-import { withSessionSsr } from "src/lib/session";
-import { fetchApi } from "src/lib/request";
-import FormWrapper from "src/components/FormWrapper";
-import { registerSchema } from "src/schemas/Register";
+import Panel from "../../components/Panel";
+import Head from "../../layout/Head";
+import { withSessionSsr } from "../../lib/session";
+import { fetchApi, FetchResult } from "../../lib/request";
+import { registerSchema } from "../../schemas/Register";
+import FormWrapper, {
+	FormButton,
+	FormField,
+} from "../../components/FormWrapper";
 
-const fields = [
+const fields: FormField[] = [
 	{
 		type: "text",
 		name: "name",
-		label: { text: "Account Name", size: 3 },
-		size: 9,
+		label: { text: "Account Name" },
 	},
 	{
 		type: "password",
 		name: "password",
-		label: { text: "Password", size: 3 },
-		size: 9,
+		label: { text: "Password" },
 	},
 	{
 		type: "password",
 		name: "repeatPassword",
-		label: { text: "Repeat Password", size: 3 },
-		size: 9,
+		label: { text: "Repeat Password" },
 	},
 	{
 		type: "email",
 		name: "email",
-		label: { text: "Email Address", size: 3 },
-		size: 9,
+		label: { text: "Email Address" },
 	},
 ];
 
-const buttons = [
-	{ type: "submit", btnType: "primary", value: "Submit" },
-	{ value: "Reset" },
+const buttons: FormButton[] = [
+	{ type: "submit", btnColorType: "primary", value: "Submit" },
+	{ value: "Reset", btnColorType: "danger" },
 ];
 
 export default function Register() {
-	const [response, setResponse] = useState(null);
+	const [response, setResponse] = useState<FetchResult | null>(null);
 
-	const onSubmit = async (values, { resetForm }) => {
+	const onSubmit = async (values: any, { resetForm }) => {
 		const response = await fetchApi("POST", "/api/account/register", {
 			data: {
 				name: values.name,

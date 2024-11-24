@@ -7,16 +7,16 @@ const btnTypeToColor = { danger: "red", primary: "violet" };
 export type ButtonType = "button" | "submit" | "reset";
 export type ButtonColorType = "danger" | "primary";
 
-type ButtonProps = {
+export interface ButtonProps {
 	value: string;
 	size?: string;
 	type?: ButtonType;
 	href?: string;
-	btnColorType: ButtonColorType;
+	btnColorType?: ButtonColorType;
 	isLoading: boolean;
 	isActive: boolean;
 	loadingText: string;
-};
+}
 
 const Button = ({
 	value,

@@ -14,23 +14,23 @@ import Button, { ButtonType, ButtonColorType } from "./Button";
 import { CustomSelect } from "./CustomSelect";
 import { FetchResult } from "../lib/request";
 
-export type FormField = {
+export interface FormField {
 	type: string;
 	name: string;
 	label: { text: string };
 	placeholder?: string;
-	as?: any;
+	as?: JSX.Element;
 	options?: { value: string; text: string }[];
-};
+}
 
-export type FormButton = {
+export interface FormButton {
 	type?: ButtonType;
-	btnColorType: ButtonColorType;
+	btnColorType?: ButtonColorType;
 	value: string;
 	href?: string;
-};
+}
 
-type FormWrapperProps = {
+export interface FormWrapperProps {
 	initialValues?: object;
 	validationSchema: {};
 	onSubmit: (
@@ -40,7 +40,8 @@ type FormWrapperProps = {
 	fields: FormField[];
 	buttons: FormButton[];
 	response: FetchResult | null;
-};
+	validateOnMount?: boolean;
+}
 
 const FormWrapper = ({
 	initialValues = {},
@@ -49,6 +50,7 @@ const FormWrapper = ({
 	fields,
 	buttons,
 	response,
+	validateOnMount = false,
 }: FormWrapperProps) => {
 	const toast = useToast();
 
@@ -62,7 +64,6 @@ const FormWrapper = ({
 				position: "top",
 				title: response.message,
 				id: "forms-response-toast",
-				position: "top",
 				status: response.success ? "success" : "error",
 				isClosable: true,
 				duration: 10000,
@@ -70,18 +71,12 @@ const FormWrapper = ({
 		}
 	}, [response, toast]);
 
-	if (Object.keys(initialValues).length === 0) {
-		fields.forEach((field) => {
-			initialValues[field.name] = "";
-		});
-	}
-
 	return (
 		<Formik
 			initialValues={initialValues}
 			validationSchema={validationSchema}
 			onSubmit={onSubmit}
-			validateOnMount={true}
+			validateOnMount={validateOnMount}
 		>
 			{({ errors, isValid, isSubmitting }) => (
 				<Form>
