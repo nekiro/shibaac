@@ -1,10 +1,14 @@
 import React from "react";
-import { Select } from "@chakra-ui/react";
+import { Select, SelectProps } from "@chakra-ui/react";
 
-export const CustomSelect = ({ field, ...props }) => {
+export interface CustomSelectProps extends SelectProps {
+	options: { value: string; text: string }[];
+}
+
+export const CustomSelect = ({ options, ...props }: CustomSelectProps) => {
 	return (
-		<Select {...field} {...props}>
-			{props.options.map((option) => (
+		<Select {...props}>
+			{options.map((option) => (
 				<option key={option.value} value={option.value}>
 					{option.text}
 				</option>

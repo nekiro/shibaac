@@ -1,14 +1,6 @@
 import React, { useEffect } from "react";
 import { Formik, Form, Field, FormikHelpers } from "formik";
-import {
-	VStack,
-	FormControl,
-	FormLabel,
-	Container,
-	FormErrorMessage,
-	Wrap,
-	useToast,
-} from "@chakra-ui/react";
+import { VStack, FormControl, FormLabel, Container, FormErrorMessage, Wrap, useToast } from "@chakra-ui/react";
 import TextInput from "./TextInput";
 import Button, { ButtonType, ButtonColorType } from "./Button";
 import { CustomSelect } from "./CustomSelect";
@@ -33,33 +25,18 @@ export interface FormButton {
 export interface FormWrapperProps {
 	initialValues?: object;
 	validationSchema: {};
-	onSubmit: (
-		values: unknown,
-		formikHelpers: FormikHelpers<object>
-	) => void | Promise<void>;
+	onSubmit: (values: unknown, formikHelpers: FormikHelpers<object>) => void | Promise<void>;
 	fields: FormField[];
 	buttons: FormButton[];
 	response: FetchResult | null;
 	validateOnMount?: boolean;
 }
 
-const FormWrapper = ({
-	initialValues = {},
-	validationSchema,
-	onSubmit,
-	fields,
-	buttons,
-	response,
-	validateOnMount = false,
-}: FormWrapperProps) => {
+const FormWrapper = ({ initialValues = {}, validationSchema, onSubmit, fields, buttons, response, validateOnMount = false }: FormWrapperProps) => {
 	const toast = useToast();
 
 	useEffect(() => {
-		if (
-			response &&
-			response.message?.length > 0 &&
-			!toast.isActive("forms-response-toast")
-		) {
+		if (response && response.message?.length > 0 && !toast.isActive("forms-response-toast")) {
 			toast({
 				position: "top",
 				title: response.message,
@@ -72,12 +49,7 @@ const FormWrapper = ({
 	}, [response, toast]);
 
 	return (
-		<Formik
-			initialValues={initialValues}
-			validationSchema={validationSchema}
-			onSubmit={onSubmit}
-			validateOnMount={validateOnMount}
-		>
+		<Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit} validateOnMount={validateOnMount}>
 			{({ errors, isValid, isSubmitting }) => (
 				<Form>
 					<Container alignContent={"center"} padding={2}>
@@ -89,22 +61,11 @@ const FormWrapper = ({
 											{field.label.text}
 										</FormLabel>
 										{field.type === "select" ? (
-											<Field
-												name={field.name}
-												as={CustomSelect}
-												options={field.options}
-											/>
+											<Field name={field.name} as={CustomSelect} options={field.options} />
 										) : (
-											<Field
-												as={TextInput}
-												type={field.type}
-												name={field.name}
-												placeholder={field.placeholder}
-											/>
+											<Field as={TextInput} type={field.type} name={field.name} placeholder={field.placeholder} />
 										)}
-										<FormErrorMessage fontSize="sm">
-											{errors[field.name] as string}
-										</FormErrorMessage>
+										<FormErrorMessage fontSize="sm">{(errors as any)[field.name] as string}</FormErrorMessage>
 									</FormControl>
 								))}
 
