@@ -33,10 +33,7 @@ export const updateCache = async () => {
 
 	try {
 		const socket = new PromiseSocket(new net.Socket());
-		await socket.connect(
-			parseInt(process.env.STATUS_PORT as string),
-			process.env.STATUS_HOST as string
-		);
+		await socket.connect(parseInt(process.env.STATUS_PORT as string), process.env.STATUS_HOST as string);
 
 		await socket.write(
 			// ASCII characters
@@ -45,7 +42,7 @@ export const updateCache = async () => {
 			// 0xFF -> protocol identifier (protocol status)
 			// 0xFF -> status byte
 			// 0x69 0x6E 0x66 0x6F (info) -> string
-			Buffer.from([0x06, 0x00, 0xff, 0xff, 0x69, 0x6e, 0x66, 0x6f])
+			Buffer.from([0x06, 0x00, 0xff, 0xff, 0x69, 0x6e, 0x66, 0x6f]),
 		);
 
 		// wait 1s for response
@@ -59,7 +56,7 @@ export const updateCache = async () => {
 		cache.uptime = doc.tsqp.serverinfo.uptime;
 		cache.online = true;
 		cache.name = doc.tsqp.serverinfo.servername;
-	} catch ({ code }) {
+	} catch ({ code }: any) {
 		if (code === "ECONNREFUSED") {
 			cache.online = false;
 		}
