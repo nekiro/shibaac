@@ -6,11 +6,9 @@ async function main() {
 	const seedsPath = path.join(__dirname, "/seeds");
 
 	for (const file of await fs.readdir(seedsPath)) {
-		const seed = require(path.join(seedsPath, file)).default;
-		// @ts-ignore
-		await prisma[seed.table]?.createMany({
-			data: seed.data,
-		});
+		const runner = require(path.join(seedsPath, file)).default;
+		await runner();
+		console.log(`🌱  Seeded ${file}`);
 	}
 }
 

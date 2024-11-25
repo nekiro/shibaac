@@ -31,7 +31,7 @@ model accounts {
     email           String  @unique() @db.VarChar(255)
     creation        Int     @default(0)
     twoFASecret     String?
-    twoFAEnabled    Boolean
+    twoFAEnabled    Boolean @default(false)
 
     account_bans account_bans?
     players      players[]
