@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
-import Panel from "../components/Panel";
-import Label from "../components/Label";
-import { fetchApi } from "../lib/request";
-import Link from "../components/Link";
-import { Box, LayoutProps } from "@chakra-ui/react";
-import StripedTable from "../components/StrippedTable";
+import Panel from "@component/Panel";
+import Label from "@component/Label";
+import { fetchApi } from "@lib/request";
+import Link from "@component/Link";
+import { Box, BoxProps } from "@chakra-ui/react";
+import StripedTable from "@component/StrippedTable";
 import { type ProtocolStatusCache } from "../cache/protocolStatus";
 import { trpc } from "@util/trpc";
+
+export interface LayoutProps extends BoxProps {}
 
 const SideBar = (props: LayoutProps) => {
 	const [serverStatus, setServerStatus] = useState<ProtocolStatusCache>();
@@ -32,16 +34,8 @@ const SideBar = (props: LayoutProps) => {
 	return (
 		<Box minWidth="15em" {...props}>
 			<Panel header="Server Status" isLoading={isLoading || !topPlayers.data}>
-				<table className="table table-condensed table-content table-striped">
-					<tbody>
-						<tr>
-							<td>{serverStatus?.online ? <Label colorScheme="green">ONLINE</Label> : <Label colorScheme="red">OFFLINE</Label>}</td>
-						</tr>
-						<tr>
-							<td>{serverStatus && <Link href="/online" text={`${serverStatus.onlineCount} players online`} />}</td>
-						</tr>
-					</tbody>
-				</table>
+				{serverStatus?.online ? <Label colorScheme="green">ONLINE</Label> : <Label colorScheme="red">OFFLINE</Label>}
+				{serverStatus && <Link marginLeft="10px" href="/online" text={`${serverStatus.onlineCount} players online`} />}
 			</Panel>
 
 			<Panel header="Top 5 Level" isLoading={isLoading}>

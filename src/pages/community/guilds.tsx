@@ -170,7 +170,7 @@ export default function Guilds({ user }: any) {
 					</Button>
 				</Flex>
 				<StrippedTable
-					head={[{ text: "Logo" }, { text: "Nome" }, { text: "Membros" }, { text: "Nível Médio" }]}
+					head={[{ text: "Logo" }, { text: "Name" }, { text: "Members" }, { text: "Level" }]}
 					body={
 						guilds && guilds.length > 0
 							? guilds.map((guild: any) => [

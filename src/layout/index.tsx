@@ -16,7 +16,7 @@ const Layout = ({ children }: PropsWithChildren) => {
 					{children}
 					<Footer />
 				</Box>
-				<SideBar /*order={{ base: 1, md: 2 }}*/ />
+				<SideBar order={{ base: 1, md: 2 }} />
 			</Flex>
 		</Box>
 	);

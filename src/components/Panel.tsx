@@ -1,10 +1,10 @@
 import React, { ReactNode } from "react";
 import Loader from "./Loader";
-import { Flex, Box, Text, Grid } from "@chakra-ui/react";
+import { Flex, Box, Text, Grid, FlexProps } from "@chakra-ui/react";
 import { IoMdTime } from "react-icons/io";
-import { formatDate } from "../lib/";
+import { formatDate } from "@lib/.";
 
-interface PanelProps {
+export interface PanelProps extends FlexProps {
 	header?: string;
 	date?: string | null;
 	identifier?: string | null;
@@ -12,13 +12,7 @@ interface PanelProps {
 	isLoading?: boolean;
 }
 
-const Panel: React.FC<PanelProps> = ({
-	header = "Loading...",
-	date = null,
-	identifier = null,
-	children,
-	isLoading = false,
-}) => {
+const Panel = ({ header = "Loading...", date, identifier, children, isLoading = false, ...props }: PanelProps) => {
 	return (
 		<Flex
 			key={identifier}
@@ -30,6 +24,7 @@ const Panel: React.FC<PanelProps> = ({
 			mb="20px"
 			bgColor="#fff"
 			borderRadius="md"
+			{...props}
 		>
 			<Flex bg="#f5f5f5" border="1px" borderColor="#ddd" borderRadius="md">
 				<Grid margin="10px" width="100%" templateColumns="1fr auto">

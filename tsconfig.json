@@ -24,6 +24,12 @@
 		"paths": {
 			"@util/*": [
 				"src/utils/*"
+			],
+			"@component/*": [
+				"src/components/*"
+			],
+			"@lib/*": [
+				"src/lib/*"
 			]
 		},
 	},
