@@ -1,9 +1,9 @@
 import React from "react";
-import Link from "next/link";
 import Head from "../../layout/Head";
-import Panel from "../../components/Panel";
+import Panel from "@component/Panel";
+import Link from "@component/Link";
 import { withSessionSsr } from "../../lib/session";
-import { Button, Table, Thead, Tbody, Tr, Th, Td, Link as ChakraLink, VStack } from "@chakra-ui/react";
+import { Button, Table, Thead, Tbody, Tr, Th, Td, VStack } from "@chakra-ui/react";
 import { trpc } from "@util/trpc";
 
 function AdminPanel() {
@@ -23,14 +23,11 @@ function AdminPanel() {
 		<>
 			<Head title="Admin Panel" />
 			<Panel header="Admin Panel">
-				<Link href="/admin/createnews" passHref>
-					<ChakraLink>
-						<Button colorScheme="purple" mb={3}>
-							Create News
-						</Button>
-					</ChakraLink>
+				<Link href="/admin/createnews">
+					<Button colorScheme="purple" mb={3}>
+						Create News
+					</Button>
 				</Link>
-
 				<Table variant="simple">
 					<Thead>
 						<Tr>
@@ -48,12 +45,10 @@ function AdminPanel() {
 								<Td>{news.playerNick}</Td>
 								<Td>
 									<VStack spacing={2} direction="row">
-										<Link href={`/admin/editNews/${news.id}`} passHref>
-											<ChakraLink>
-												<Button colorScheme="teal" size="sm">
-													Edit
-												</Button>
-											</ChakraLink>
+										<Link href={`/admin/editNews/${news.id}`}>
+											<Button colorScheme="teal" size="sm">
+												Edit
+											</Button>
 										</Link>
 										<Button colorScheme="red" size="sm" onClick={() => handleDelete(news.id)}>
 											Delete

@@ -7,13 +7,11 @@ export interface LinkProps extends ChakraLinkProps {
 	text?: string;
 }
 
-const Link = ({ href, text, ...props }: LinkProps) => {
+const Link = ({ href, text, children, ...props }: LinkProps) => {
 	return (
-		<NextLink href={href} passHref>
-			<ChakraLink color="violet.500" {...props}>
-				{text ?? href}
-			</ChakraLink>
-		</NextLink>
+		<ChakraLink as={NextLink} href={href} passHref color="violet.500" {...props}>
+			{text ?? children}
+		</ChakraLink>
 	);
 };
 
