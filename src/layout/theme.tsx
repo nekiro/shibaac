@@ -20,6 +20,10 @@ export const Fonts = () => (
 );
 
 export const Theme = extendTheme({
+	config: {
+		initialColorMode: "dark",
+		useSystemColorMode: false,
+	},
 	colors: {
 		violet: {
 			50: "#f7ebff",
@@ -49,7 +53,7 @@ export const Theme = extendTheme({
 				fontSize: "15px",
 				bg: mode(
 					"linear-gradient(to right top,#2a1036,#361149,#43105d,#4f0f71,#5b0b87)",
-					"linear-gradient(to right top,#2a1036,#361149,#43105d,#4f0f71,#5b0b87)"
+					"linear-gradient(to right top,#2a1036,#361149,#43105d,#4f0f71,#5b0b87)",
 				)(props),
 			},
 		}),
