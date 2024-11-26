@@ -9,7 +9,7 @@ const Layout = ({ children }: PropsWithChildren) => {
 	return (
 		<Box w={{ base: "95%", md: "70%" }} marginX={"auto"} marginY={{ base: "1em", md: 0 }}>
 			<Head />
-			<Image width="15%" marginLeft="auto" marginRight="auto" marginBottom="15px" marginTop="15px" src="/images/header.png" alt="shibaac" />
+			<Image width="230px" marginLeft="auto" marginRight="auto" marginBottom="15px" marginTop="15px" src="/images/header.png" alt="shibaac" />
 			<NavBar />
 			<Flex flexDirection={{ base: "column", md: "row" }}>
 				<Box flexGrow="1" marginRight={{ base: 0, md: "3em" }} order={{ base: 2, md: 1 }}>
