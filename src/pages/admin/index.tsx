@@ -38,7 +38,7 @@ function AdminPanel() {
 						</Tr>
 					</Thead>
 					<Tbody>
-						{news.data?.map((news, index) => (
+						{news.data?.map((news) => (
 							<Tr key={news.id}>
 								<Td>{news.id}</Td>
 								<Td>{news.title}</Td>

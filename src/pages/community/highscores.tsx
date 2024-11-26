@@ -1,114 +1,65 @@
-import React, { useState, useEffect } from "react";
-import Panel from "../../components/Panel";
+import React, { useState } from "react";
+import Panel from "@component/Panel";
 import Head from "../../layout/Head";
-import { fetchApi } from "../../lib/request";
-import StrippedTable from "../../components/StrippedTable";
+import StrippedTable from "@component/StrippedTable";
 import { Box, Button, ButtonGroup, Flex, Heading, Text } from "@chakra-ui/react";
-import { PlayerData } from "../../shared/interfaces/PlayerData";
+import { getVocationNameById, Vocation } from "src/shared/enums/Vocation";
+import { trpc } from "@util/trpc";
+import { Skill } from "src/shared/enums/Skill";
+import { getSkillKeyByValue } from "../../shared/enums/Skill";
+
+const vocations: { label: string; value: Vocation | "all" }[] = [
+	{ label: "All", value: "all" },
+	{ label: "Sorcerer", value: Vocation.Sorcerer },
+	{ label: "Druid", value: Vocation.Druid },
+	{ label: "Paladin", value: Vocation.Paladin },
+	{ label: "Knight", value: Vocation.Knight },
+	{ label: "None", value: Vocation.None },
+];
+
+const categories = [
+	{ label: "Experience", value: Skill.Experience },
+	{ label: "Magic", value: Skill.Magic },
+	{ label: "Shield", value: Skill.Shield },
+	{ label: "Distance", value: Skill.Distance },
+	{ label: "Club", value: Skill.Club },
+	{ label: "Sword", value: Skill.Sword },
+	{ label: "Axe", value: Skill.Axe },
+	{ label: "Fist", value: Skill.Fist },
+	{ label: "Fishing", value: Skill.Fishing },
+];
 
 export default function Highscores() {
-	const [highscores, setHighscores] = useState<PlayerData[]>([]);
-	const [isLoading, setIsLoading] = useState(false);
-	const [filter, setFilter] = useState({
-		category: "level",
+	const [filter, setFilter] = useState<{ skill: Skill; vocation: Vocation | "all" }>({
+		skill: Skill.Experience,
 		vocation: "all",
 	});
-
-	useEffect(() => {
-		const fetchHighscores = async () => {
-			try {
-				setIsLoading(true);
-
-				const response = await fetchApi("GET", "/api/community/highscores", {
-					params: { vocation: filter.vocation, category: filter.category },
-					headers: { page: 1 },
-				});
-
-				if (response.success) {
-					setHighscores(response.data);
-				} else {
-					setHighscores([]);
-				}
-			} catch (error) {
-				console.error(error);
-			} finally {
-				setIsLoading(false);
-			}
-		};
-
-		fetchHighscores();
-	}, [filter]);
-
-	if (!highscores) {
-		return (
-			<>
-				<Head title="Highscores" />
-				<Panel header="Highscores" isLoading={isLoading}></Panel>
-			</>
-		);
-	}
-
-	const categories = [
-		{ label: "Experience", value: "level" },
-		{ label: "Magic", value: "maglevel" },
-		{ label: "Shield", value: "skill_shielding" },
-		{ label: "Distance", value: "skill_dist" },
-		{ label: "Club", value: "skill_club" },
-		{ label: "Sword", value: "skill_sword" },
-		{ label: "Axe", value: "skill_axe" },
-		{ label: "Fist", value: "skill_fist" },
-		{ label: "Fishing", value: "skill_fishing" },
-	];
-
-	const vocations = [
-		{ label: "All", value: "all" },
-		{ label: "Sorcerer", value: "2" },
-		{ label: "Druid", value: "1" },
-		{ label: "Paladin", value: "3" },
-		{ label: "Knight", value: "4" },
-		{ label: "No Vocation", value: "0" },
-	];
-
-	const getCategoryLabel = (categoryValue: any) => {
-		const category = categories.find((cat) => cat.value === categoryValue);
-		return category ? category.label : categoryValue;
-	};
-
-	const getVocationLabel = (vocationValue: any) => {
-		const vocation = vocations.find((voc) => voc.value === vocationValue);
-		return vocation ? vocation.label : vocationValue;
-	};
-
-	const handleCategoryChange = (categoryValue: any) => {
-		setFilter((prevFilter) => ({
-			...prevFilter,
-			category: categoryValue,
-		}));
-	};
-
-	const handleVocationChange = (vocationValue: any) => {
-		setFilter((prevFilter) => ({
-			...prevFilter,
-			vocation: vocationValue,
-		}));
-	};
+	const highscores = trpc.community.highscores.useInfiniteQuery(
+		{ vocation: filter.vocation, skill: filter.skill },
+		{ getNextPageParam: (lastPage) => lastPage.nextCursor },
+	);
 
 	return (
 		<>
 			<Head title="Highscores" />
-			<Panel header={`Rankings for ${getCategoryLabel(filter.category)}`}>
+			<Panel header="Highscores">
 				<Box textAlign="center" mb={4}>
 					<Heading as="h2" size="lg" mb={2}>
-						Rankings for {getCategoryLabel(filter.category)}
+						Rankings for {getSkillKeyByValue(filter.skill)}
 					</Heading>
-					<Text mb={2}>Vocation: {getVocationLabel(filter.vocation)}</Text>
+					<Text mb={2}>Vocation: {filter.vocation === "all" ? "all" : getVocationNameById(filter.vocation)}</Text>
 					<Flex justify="center" mb={4}>
 						<ButtonGroup variant="outline" spacing={2}>
-							{categories.map((category, index) => (
+							{categories.map((category) => (
 								<Button
-									key={index}
-									onClick={() => handleCategoryChange(category.value)}
-									colorScheme={filter.category === category.value ? "purple" : "gray"}
+									key={category.label}
+									onClick={() => {
+										setFilter((prevFilter) => ({
+											...prevFilter,
+											skill: category.value,
+										}));
+									}}
+									colorScheme={filter.skill === category.value ? "purple" : "gray"}
 								>
 									{category.label}
 								</Button>
@@ -117,10 +68,10 @@ export default function Highscores() {
 					</Flex>
 					<Flex justify="center" mb={4}>
 						<ButtonGroup variant="outline" spacing={2}>
-							{vocations.map((vocation, index) => (
+							{vocations.map((vocation) => (
 								<Button
-									key={index}
-									onClick={() => handleVocationChange(vocation.value)}
+									key={vocation.label}
+									onClick={() => setFilter((prevFilter) => ({ ...prevFilter, vocation: vocation.value }))}
 									colorScheme={filter.vocation === vocation.value ? "purple" : "gray"}
 								>
 									{vocation.label}
@@ -129,17 +80,17 @@ export default function Highscores() {
 						</ButtonGroup>
 					</Flex>
 				</Box>
+
 				<StrippedTable
-					head={[{ text: "Rank" }, { text: "Name" }, { text: "Vocation" }, { text: "World" }, { text: "Level" }, { text: "Points" }]}
+					isLoading={highscores.isLoading}
+					head={[{ text: "Rank" }, { text: "Name" }, { text: "Vocation" }, { text: "Level" }]}
 					body={
-						highscores && highscores.length > 0
-							? highscores.map((player, index) => [
+						highscores.data
+							? highscores.data.pages[0].players.map((player, index) => [
 									{ text: `${index + 1}` },
 									{ text: player.name, href: `/character/${player.name}` },
-									{ text: getVocationLabel(player.vocation) },
-									{ text: "" /*World info*/ },
+									{ text: getVocationNameById(player.vocation) },
 									{ text: player.level },
-									{ text: "" /*Points info*/ },
 								])
 							: [
 									[
