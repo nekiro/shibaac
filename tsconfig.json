@@ -30,7 +30,10 @@
 			],
 			"@lib/*": [
 				"src/lib/*"
-			]
+			],
+			"@shared/*": [
+				"src/shared/*"
+			],
 		},
 	},
 	"include": [

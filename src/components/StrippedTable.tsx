@@ -5,7 +5,7 @@ import Loader from "./Loader";
 
 export interface StripedTableProps {
 	head?: { text: string }[];
-	body: { text: string | number; href?: string }[][];
+	body?: { text: string | number; href?: string }[][];
 	isLoading?: boolean;
 }
 
@@ -27,7 +27,7 @@ const StripedTable = ({ head, body, isLoading }: StripedTableProps) => {
 			)}
 
 			<Tbody>
-				{body.length === 0 ? (
+				{!body || body.length === 0 ? (
 					<Tr>
 						<Td>
 							<Text>No data.</Text>

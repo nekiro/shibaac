@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Panel from "@component/Panel";
 import Label from "@component/Label";
-import { fetchApi } from "@lib/request";
 import Link from "@component/Link";
 import { Box, BoxProps, Flex } from "@chakra-ui/react";
 import StripedTable from "@component/StrippedTable";
-import { type ProtocolStatusCache } from "../cache/protocolStatus";
 import { trpc } from "@util/trpc";
 
 export interface LayoutProps extends BoxProps {}
@@ -27,24 +25,16 @@ const SideBar = (props: LayoutProps) => {
 				<StripedTable
 					head={[{ text: "Name" }, { text: "Level" }]}
 					body={
-						topPlayers.data && topPlayers.data.length > 0
-							? topPlayers.data.map((player, index) => [
-									{
-										text: `${index + 1}. ${player.name}`,
-										href: `/character/${player.name}`,
-									},
-									{
-										text: player.level.toString(),
-									},
-								])
-							: [
-									[
-										{
-											text: "There is no data to show",
-											// colspan: 2,
-										},
-									],
-								]
+						topPlayers.data &&
+						topPlayers.data.map((player, index) => [
+							{
+								text: `${index + 1}. ${player.name}`,
+								href: `/character/${player.name}`,
+							},
+							{
+								text: player.level.toString(),
+							},
+						])
 					}
 				/>
 			</Panel>
