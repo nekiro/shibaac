@@ -1,21 +1,18 @@
 import { useRouter } from "next/router";
-import { useEffect, useCallback } from "react";
-import { useUser } from "../../hooks/useUser";
-import { fetchApi } from "../../lib/request";
+import { useEffect } from "react";
+import { useUser } from "@hook/useUser";
+import { trpc } from "@util/trpc";
 
 export default function Logout() {
 	const router = useRouter();
 	const { setUser } = useUser();
-
-	const postLogout = async () => {
-		await fetchApi("POST", "/api/account/logout");
-		setUser(null);
-		router.push("/");
-	};
+	const logout = trpc.account.logout.useMutation();
 
 	useEffect(() => {
-		postLogout();
-	});
+		logout.mutate();
+		setUser(null);
+		router.push("/");
+	}, []);
 
 	return null;
 }

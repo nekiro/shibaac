@@ -90,4 +90,7 @@ export const accountRouter = router({
 
 		return account;
 	}),
+	logout: procedure.mutation(async ({ ctx }) => {
+		ctx.session.destroy();
+	}),
 });

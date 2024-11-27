@@ -15,7 +15,7 @@ export const useFormFeedback = (): UseFormFeedbackReturnType => {
 			id: "notification",
 			status,
 			isClosable: true,
-			duration: 10000,
+			duration: 5000,
 		});
 	};
 
@@ -29,7 +29,7 @@ export const useFormFeedback = (): UseFormFeedbackReturnType => {
 				id: "notification",
 				status: "error",
 				isClosable: true,
-				duration: 10000,
+				duration: 5000,
 			});
 		}
 	};
