@@ -89,14 +89,18 @@ export default function CreateCharacter() {
 						<FormField key={"vocation"} error={errors.vocation?.message} name={"vocation"} label="Vocation">
 							<Select {...register("vocation")}>
 								{Object.entries(Vocation).map(([key, value]) => (
-									<option value={value}>{key}</option>
+									<option key={key} value={value}>
+										{key}
+									</option>
 								))}
 							</Select>
 						</FormField>
 						<FormField key={"sex"} error={errors.sex?.message} name={"sex"} label="Sex">
 							<Select {...register("sex")}>
 								{Object.entries(Sex).map(([key, value]) => (
-									<option value={value}>{key}</option>
+									<option key={key} value={value}>
+										{key}
+									</option>
 								))}
 							</Select>
 						</FormField>
