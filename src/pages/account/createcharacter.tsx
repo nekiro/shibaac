@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import Panel from "../../components/Panel";
 import { withSessionSsr } from "../../lib/session";
 import { fetchApi, FetchResult } from "../../lib/request";
-import FormWrapper, { FormButton, FormField } from "../../components/FormWrapper";
+import FormWrapper, { FormButton } from "../../components/FormWrapper";
 import { createCharacterSchema } from "../../schemas/CreateCharacter";
 import { Select, Text } from "@chakra-ui/react";
 
-const fields: FormField[] = [
+const fields = [
 	{
 		type: "text",
 		name: "name",

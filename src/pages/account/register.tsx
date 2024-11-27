@@ -1,60 +1,97 @@
-import React, { useState } from "react";
-import Panel from "../../components/Panel";
+import React from "react";
+import Panel from "@component/Panel";
 import Head from "../../layout/Head";
-import { withSessionSsr } from "../../lib/session";
-import { fetchApi, FetchResult } from "../../lib/request";
-import { registerSchema } from "../../schemas/Register";
-import FormWrapper, { FormButton, FormField } from "../../components/FormWrapper";
+import { withSessionSsr } from "@lib/session";
+import { trpc } from "@util/trpc";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import TextInput from "@component/TextInput";
+import { Container, VStack, Wrap } from "@chakra-ui/react";
+import Button from "@component/Button";
+import { FormField } from "@component/FormField";
+import { useFormFeedback } from "@hook/useFormFeedback";
 
-const fields: FormField[] = [
+const fields = [
 	{
 		type: "text",
 		name: "name",
-		label: { text: "Account Name" },
+		label: "Account Name",
 	},
 	{
 		type: "password",
 		name: "password",
-		label: { text: "Password" },
+		label: "Password",
 	},
 	{
 		type: "password",
 		name: "repeatPassword",
-		label: { text: "Repeat Password" },
+		label: "Repeat Password",
 	},
 	{
 		type: "email",
 		name: "email",
-		label: { text: "Email Address" },
+		label: "Email Address",
 	},
 ];
 
-const buttons: FormButton[] = [
-	{ type: "submit", btnColorType: "primary", value: "Submit" },
-	{ value: "Reset", btnColorType: "danger" },
-];
+const schema = z
+	.object({
+		name: z.string().min(5, { message: "Account name must be at least 5 characters long" }),
+		password: z.string().min(6, { message: "Password must be at least 6 characters long" }),
+		repeatPassword: z.string(),
+		email: z.string().email({ message: "Invalid email address" }),
+	})
+	.refine((data) => data.password === data.repeatPassword, {
+		message: "Passwords don't match",
+		path: ["repeatPassword"],
+	});
 
 export default function Register() {
-	const [response, setResponse] = useState<FetchResult | undefined>(undefined);
+	const {
+		register,
+		handleSubmit,
+		reset,
+		formState: { errors, isValid, isSubmitting },
+	} = useForm<z.infer<typeof schema>>({
+		resolver: zodResolver(schema),
+	});
+	const { handleResponse, showResponse } = useFormFeedback();
+	const createAccount = trpc.account.create.useMutation();
 
-	const onSubmit = async (values: any, { resetForm }: any) => {
-		const response = await fetchApi("POST", "/api/account/register", {
-			data: {
+	const onSubmit: SubmitHandler<z.infer<typeof schema>> = async (values) => {
+		handleResponse(async () => {
+			await createAccount.mutateAsync({
 				name: values.name,
 				password: values.password,
 				email: values.email,
-			},
+			});
+
+			showResponse("Account created successfuly", "success");
 		});
 
-		setResponse(response);
-		resetForm();
+		reset();
 	};
 
 	return (
 		<>
 			<Head title="Register" />
 			<Panel header="Register">
-				<FormWrapper validationSchema={registerSchema} onSubmit={onSubmit} fields={fields} buttons={buttons} response={response} />
+				<form onSubmit={handleSubmit(onSubmit)}>
+					<Container alignContent={"center"} padding={2}>
+						<VStack spacing={5}>
+							{fields.map((field) => (
+								<FormField key={field.name} error={(errors as any)[field.name]?.message} name={field.name} label={field.label}>
+									<TextInput type={field.type} {...register(field.name as any)} />
+								</FormField>
+							))}
+							<Wrap spacing={2} padding="10px">
+								<Button isLoading={isSubmitting} isActive={!isValid} loadingText="Submitting" type="submit" value="Submit" btnColorType="primary" />
+								<Button value="Reset" btnColorType="danger" />
+							</Wrap>
+						</VStack>
+					</Container>
+				</form>
 			</Panel>
 		</>
 	);

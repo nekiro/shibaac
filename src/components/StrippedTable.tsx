@@ -5,7 +5,7 @@ import Loader from "./Loader";
 
 export interface StripedTableProps {
 	head?: { text: string }[];
-	body?: { text: string | number; href?: string }[][];
+	body?: { text?: string | number; href?: string; component?: JSX.Element }[][];
 	isLoading?: boolean;
 }
 
@@ -37,7 +37,9 @@ const StripedTable = ({ head, body, isLoading }: StripedTableProps) => {
 					body.map((row, index) => (
 						<Tr key={`${index}`}>
 							{row.map((data, dataIndex) => (
-								<Td key={`${data.text} ${dataIndex}`}>{data.href ? <Link href={data.href} text={String(data.text)} /> : data.text}</Td>
+								<Td key={`${data.text} ${dataIndex}`}>
+									{data.component ? data.component : data.href ? <Link href={data.href} text={String(data.text)} /> : data.text}
+								</Td>
 							))}
 						</Tr>
 					))

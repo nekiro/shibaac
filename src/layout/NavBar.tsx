@@ -26,7 +26,7 @@ const navigationItems = [
 		text: "Library",
 	},
 	{ text: "Donate", href: "/donate" },
-	{ text: "Shopping", href: "/shop" },
+	{ text: "Store", href: "/shop" },
 ];
 
 interface MobileNavigationProps {

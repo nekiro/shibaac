@@ -24,6 +24,7 @@ const DropdownButton = ({ hasMenu = false, text, href, list }: DropdownButtonPro
 					as={Button}
 					pt="25px"
 					pb="25px"
+					borderRadius={0}
 					rightIcon={<IoChevronDown />}
 					fontWeight="normal"
 					_hover={{ bgColor: "rgba(255, 255, 255, 0.3)" }}
@@ -56,6 +57,7 @@ const DropdownButton = ({ hasMenu = false, text, href, list }: DropdownButtonPro
 					bg={isActive ? "#c3a6d9" : "transparent"}
 					pt="25px"
 					pb="25px"
+					borderRadius={0}
 					fontWeight="normal"
 					_hover={{ bgColor: "rgba(255, 255, 255, 0.3)" }}
 					_active={{ bgColor: " rgba(255, 255, 255, 0.3)" }}

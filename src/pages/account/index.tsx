@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import Panel from "../../components/Panel";
 import Head from "../../layout/Head";
 import { fetchApi } from "../../lib/request";
-import { withSessionSsr } from "../../lib/session";
+import { User, withSessionSsr } from "../../lib/session";
 import Button from "../../components/Button";
 import StripedTable from "../../components/StrippedTable";
 import {
@@ -25,30 +25,31 @@ import {
 } from "@chakra-ui/react";
 import { timestampToDate, vocationIdToName } from "../../lib";
 import { Toggle } from "../../components/Toggle";
+import { trpc } from "@util/trpc";
 
 // TODO: use proper types
 
 export interface AccountProps {
-	user: { id: number };
+	user: User;
 }
 
+// TODO: move qrcode to separate view
+
 export default function Account({ user }: AccountProps) {
-	const [info, setInfo] = useState<any>(null);
+	const account = trpc.account.singleById.useQuery({ id: user.id });
+
 	const [is2FAEnabled, setIs2FAEnabled] = useState(false);
 	const [qrCodeDataURL, setQRCodeDataURL] = useState(null);
 	const [isOpenModal, setIsOpenModal] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 
-	const fetchData = useCallback(async () => {
-		const response = await fetchApi("GET", `/api/account/${user.id}`);
-		setInfo(response.account);
-		setIs2FAEnabled(response.account.twoFAEnabled);
-	}, [user]);
-
 	useEffect(() => {
-		fetchData();
-	}, [fetchData]);
+		if (!account.data) {
+			return;
+		}
+		setIs2FAEnabled(account.data.twoFAEnabled);
+	}, [account]);
 
 	const handleToggle = async () => {
 		try {
@@ -82,7 +83,7 @@ export default function Account({ user }: AccountProps) {
 		setQRCodeDataURL(dataURL);
 	};
 
-	if (!info) {
+	if (account.isLoading) {
 		return (
 			<>
 				<Head title="Account Management" />
@@ -91,6 +92,8 @@ export default function Account({ user }: AccountProps) {
 		);
 	}
 
+	const info = account.data!;
+
 	return (
 		<>
 			<Head title="Account Management" />
@@ -98,7 +101,7 @@ export default function Account({ user }: AccountProps) {
 				<Panel header="Informations">
 					<StripedTable
 						body={[
-							[{ text: "Account Name" }, { text: info.name }],
+							[{ text: "Account Name" }, { component: <Text>{info.name}</Text> }],
 							[{ text: "E-mail Address" }, { text: info.email }],
 							[
 								{ text: "Creation Date" },
@@ -131,10 +134,10 @@ export default function Account({ user }: AccountProps) {
 					)}
 
 					<Wrap>
-						<Button value="Change Password" btnColorType="primary" href="/account/changepassword" />
-						<Button value="Change Email" btnColorType="primary" href="/account/changeemail" />
-						<Button value="Create Character" btnColorType="primary" href="/account/createcharacter" />
-						<Button value="Delete Character" btnColorType="primary" href="/account/deletecharacter" />
+						<Button size="sm" value="Change Password" btnColorType="primary" href="/account/changepassword" />
+						<Button size="sm" value="Change Email" btnColorType="primary" href="/account/changeemail" />
+						<Button size="sm" value="Create Character" btnColorType="primary" href="/account/createcharacter" />
+						<Button size="sm" value="Delete Character" btnColorType="primary" href="/account/deletecharacter" />
 						{isLoading && <Spinner />}
 
 						<Box display="flex" alignItems="center" my={4}>

@@ -2,16 +2,11 @@ import { accounts, Prisma } from "@prisma/client";
 import prisma from "../prisma";
 import { sha1Encrypt } from "../lib/crypt";
 
-type Account = Promise<accounts | null>;
-
 export const getAccountByIdIncludeDefault: Prisma.accountsInclude = {
 	players: { select: { id: true, name: true, level: true, vocation: true } },
 };
 
-export const getAccountById = async (
-	accountId: number,
-	include: Prisma.accountsInclude | null | undefined = getAccountByIdIncludeDefault,
-): Account => {
+export const getAccountById = async (accountId: number, include: Prisma.accountsInclude | null | undefined = getAccountByIdIncludeDefault) => {
 	try {
 		const account = await prisma.accounts.findFirst({
 			where: {
@@ -26,7 +21,7 @@ export const getAccountById = async (
 	}
 };
 
-export const getAccountByName = async (accountName: string, include?: Prisma.accountsInclude): Account => {
+export const getAccountByName = async (accountName: string, include?: Prisma.accountsInclude) => {
 	try {
 		const account = await prisma.accounts.findFirst({
 			where: {
@@ -41,7 +36,7 @@ export const getAccountByName = async (accountName: string, include?: Prisma.acc
 	}
 };
 
-export const getAccountBy = async (where?: Prisma.accountsWhereInput, select?: Prisma.accountsSelect): Account => {
+export const getAccountBy = async (where?: Prisma.accountsWhereInput, select?: Prisma.accountsSelect) => {
 	try {
 		const account = await prisma.accounts.findFirst({
 			where,
@@ -54,7 +49,7 @@ export const getAccountBy = async (where?: Prisma.accountsWhereInput, select?: P
 	}
 };
 
-export const createAccount = async (name: string, password: string, email: string): Account => {
+export const createAccount = async (name: string, password: string, email: string) => {
 	const timestampInSeconds = Math.floor(Date.now() / 1000);
 
 	try {
