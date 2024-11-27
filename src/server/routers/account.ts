@@ -1,7 +1,8 @@
 import { z } from "zod";
-import { procedure, router } from "../trpc";
+import { procedure, protectedProcedure, router } from "../trpc";
 import prisma from "../../prisma";
 import { sha1Encrypt } from "@lib/crypt";
+import { TRPCError } from "@trpc/server";
 
 //TODO: accept query parameters to pull only required data
 //TODO: guard some these endpoints with authentication
@@ -93,4 +94,64 @@ export const accountRouter = router({
 	logout: procedure.mutation(async ({ ctx }) => {
 		ctx.session.destroy();
 	}),
+	deleteCharacter: protectedProcedure.input(z.object({ name: z.string(), password: z.string() })).mutation(async ({ input, ctx }) => {
+		const { name, password } = input;
+		const { session } = ctx;
+
+		const account = await prisma.accounts.findFirst({
+			where: {
+				id: session.user!.id,
+				password: await sha1Encrypt(password),
+			},
+			include: {
+				players: { select: { name: true, id: true } },
+			},
+		});
+
+		if (!account) {
+			throw new TRPCError({ code: "BAD_REQUEST", message: "Password doesn't match." });
+		}
+
+		const character = account.players.find((p) => p.name === name);
+		if (!character) {
+			throw new TRPCError({ code: "NOT_FOUND", message: "Couldn't find character." });
+		}
+
+		await prisma.players.delete({
+			where: {
+				id: character.id,
+			},
+		});
+
+		return character;
+	}),
+	createCharacter: protectedProcedure
+		.input(
+			z.object({
+				name: z.string(),
+				vocation: z.number(),
+				sex: z.number(),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			const { name, vocation, sex } = input;
+
+			let player = await prisma.players.findFirst({
+				where: { name },
+			});
+			if (player) {
+				throw new TRPCError({ code: "CONFLICT", message: "Character with such name exists." });
+			}
+
+			player = await prisma.players.create({
+				data: {
+					name,
+					account_id: ctx.session.user!.id,
+					vocation,
+					sex,
+				},
+			});
+
+			return player;
+		}),
 });

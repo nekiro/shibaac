@@ -1,68 +1,77 @@
-import React, { useState } from "react";
+import React from "react";
 import Panel from "../../components/Panel";
 import { withSessionSsr } from "../../lib/session";
-import { fetchApi, FetchResult } from "../../lib/request";
-import FormWrapper, { FormButton } from "../../components/FormWrapper";
-import { createCharacterSchema } from "../../schemas/CreateCharacter";
-import { Select, Text } from "@chakra-ui/react";
+import { Select, Text, Container, VStack, Wrap } from "@chakra-ui/react";
+import TextInput from "@component/TextInput";
+import Button from "@component/Button";
+import { FormField } from "@component/FormField";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SubmitHandler } from "react-hook-form";
+import { Vocation } from "@shared/enums/Vocation";
+import { trpc } from "@util/trpc";
+import { useFormFeedback } from "@hook/useFormFeedback";
+import { Sex } from "@shared/enums/Sex";
 
-const fields = [
-	{
-		type: "text",
-		name: "name",
-		placeholder: "3 to 29 characters",
-		label: { text: "Name" },
-	},
-	{
-		type: "select",
-		as: Select,
-		name: "vocation",
-		label: { text: "Vocation" },
+const bannedSequences = ["tutor", "cancer", "suck", "sux", "fuck"];
+const bannedWords = ["gm", "cm", "god"];
 
-		options: [
-			{ value: "1", text: "Sorcerer" },
-			{ value: "2", text: "Druid" },
-			{ value: "3", text: "Paladin" },
-			{ value: "4", text: "Knight" },
-		],
-	},
-	{
-		type: "select",
-		as: Select,
-		name: "sex",
-		label: { text: "Sex" },
-		options: [
-			{ value: "0", text: "Female" },
-			{ value: "1", text: "Male" },
-		],
-	},
-];
+// Names is valid when:
+// - doesn't contains banned words
+// - has minimum of 3 letters and maximum of 29 characters
+// - first letter is upper case alphabet character
+// - last letter is lower case alphabet character
+// - doesn't have more than 3 words
+// - contains only alphabet letters and spaces
 
-const buttons: FormButton[] = [
-	{ type: "submit", btnColorType: "primary", value: "Submit" },
-	{ href: "/account", value: "Back" },
-];
-
-const initialValues = {
-	name: "",
-	vocation: "1",
-	sex: "0",
-};
+const schema = z.object({
+	name: z
+		.string()
+		.min(3, { message: "Field is required and must be at least 3 characters long" })
+		.max(29, { message: "Field must be at most 29 characters long" })
+		.regex(/^[aA-zZ\s]+$/, { message: "Invalid letters, words or format. Use a-Z and spaces." })
+		.refine(
+			(value) => {
+				const sequences = bannedSequences.filter((str) => value.split(" ").join("").toLowerCase().includes(str.toLowerCase()));
+				return sequences.length === 0;
+			},
+			{ message: "Contains illegal words" },
+		)
+		.refine((value) => /^[A-Z]/.test(value.charAt(0)), { message: "First letter must be an A-Z capital letter." })
+		.refine((value) => /[a-z]$/.test(value.charAt(value.length - 1)), { message: "Last letter must be an a-z letter." })
+		.refine((value) => !/\s\s+/.test(value), { message: "Name can't have more than one space in a row." })
+		.refine((value) => value.split(" ").length <= 3, { message: "Name can't have more than three words." })
+		.refine(
+			(value) => {
+				const words = value.split(" ").filter((str) => bannedWords.includes(str.toLowerCase()));
+				return words.length === 0;
+			},
+			{ message: "Contains illegal words" },
+		),
+	vocation: z.nativeEnum(Vocation),
+	sex: z.nativeEnum(Sex),
+});
 
 export default function CreateCharacter() {
-	const [response, setResponse] = useState<FetchResult | undefined>(undefined);
+	const {
+		register,
+		handleSubmit,
+		reset,
+		formState: { errors, isValid, isSubmitting },
+	} = useForm<z.infer<typeof schema>>({
+		resolver: zodResolver(schema),
+	});
+	const createCharacter = trpc.account.createCharacter.useMutation();
+	const { handleResponse, showResponse } = useFormFeedback();
 
-	const onSubmit = async (values: any, { resetForm }: any) => {
-		const response = await fetchApi("POST", "/api/account/createcharacter", {
-			data: {
-				name: values.name,
-				vocation: values.vocation,
-				sex: values.sex,
-			},
+	const onSubmit: SubmitHandler<z.infer<typeof schema>> = async ({ name, vocation, sex }) => {
+		handleResponse(async () => {
+			await createCharacter.mutateAsync({ name, vocation, sex });
+			showResponse("Character created.", "success");
 		});
 
-		setResponse(response);
-		resetForm();
+		reset();
 	};
 
 	return (
@@ -71,15 +80,33 @@ export default function CreateCharacter() {
 				Please choose a name, vocation and sex for your character. <br />
 				In any case the name must not violate the naming conventions stated in the Rules or your character might get deleted or name locked.
 			</Text>
-
-			<FormWrapper
-				validationSchema={createCharacterSchema}
-				onSubmit={onSubmit}
-				fields={fields}
-				buttons={buttons}
-				response={response}
-				initialValues={initialValues}
-			/>
+			<form onSubmit={handleSubmit(onSubmit)}>
+				<Container alignContent={"center"} padding={2}>
+					<VStack spacing={5}>
+						<FormField key={"name"} error={errors.name?.message} name={"name"} label={"Name"}>
+							<TextInput type="name" {...register("name")} />
+						</FormField>
+						<FormField key={"vocation"} error={errors.vocation?.message} name={"vocation"} label="Vocation">
+							<Select {...register("vocation")}>
+								{Object.entries(Vocation).map(([key, value]) => (
+									<option value={value}>{key}</option>
+								))}
+							</Select>
+						</FormField>
+						<FormField key={"sex"} error={errors.sex?.message} name={"sex"} label="Sex">
+							<Select {...register("sex")}>
+								{Object.entries(Sex).map(([key, value]) => (
+									<option value={value}>{key}</option>
+								))}
+							</Select>
+						</FormField>
+						<Wrap spacing={2} padding="10px">
+							<Button isLoading={isSubmitting} isActive={!isValid} loadingText="Submitting" type="submit" value="Submit" btnColorType="primary" />
+							<Button value="Back" btnColorType="danger" href="/account" />
+						</Wrap>
+					</VStack>
+				</Container>
+			</form>
 		</Panel>
 	);
 }

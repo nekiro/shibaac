@@ -1,72 +1,49 @@
-import React, { useEffect, useState, useCallback } from "react";
-import Panel from "../../components/Panel";
-import { withSessionSsr } from "../../lib/session";
-import { fetchApi } from "../../lib/request";
-import FormWrapper, { FormButton } from "../../components/FormWrapper";
-import { deleteCharacterSchema } from "../../schemas/DeleteCharacter";
-import { Select, Text } from "@chakra-ui/react";
+import React from "react";
+import Panel from "@component/Panel";
+import { User, withSessionSsr } from "@lib/session";
+import { Select, Text, Container, VStack, Wrap } from "@chakra-ui/react";
+import { trpc } from "@util/trpc";
+import { useFormFeedback } from "@hook/useFormFeedback";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import TextInput from "@component/TextInput";
+import Button from "@component/Button";
+import { FormField } from "@component/FormField";
 
-const buttons: FormButton[] = [
-	{ type: "submit", btnColorType: "primary", value: "Submit" },
-	{ href: "/account", value: "Back" },
-];
+const schema = z.object({
+	name: z.string(),
+	password: z.string().min(6, { message: "Password must be at least 6 characters long" }),
+});
 
-interface DeleteCharacterProps {
-	user: { id: number };
+export interface DeleteCharacterProps {
+	user: User;
 }
 
 export default function DeleteCharacter({ user }: DeleteCharacterProps) {
-	const [response, setResponse] = useState<any>(null);
-	const [data, setData] = useState<any>(null);
+	const {
+		register,
+		handleSubmit,
+		reset,
+		formState: { errors, isValid, isSubmitting },
+	} = useForm<z.infer<typeof schema>>({
+		resolver: zodResolver(schema),
+	});
+	const account = trpc.account.singleById.useQuery({ id: user.id });
+	const deleteCharacter = trpc.account.deleteCharacter.useMutation();
+	const { showResponse, handleResponse } = useFormFeedback();
 
-	const fetchCharacters = useCallback(async () => {
-		const response = await fetchApi<any>("GET", `/api/account/${user.id}`);
-		if (response.success) {
-			setData({
-				fields: [
-					{
-						as: Select,
-						name: "name",
-						label: { text: "Name", size: 3 },
-						size: 9,
-						options: response.account.players.map((char: any) => ({
-							value: char.name,
-							text: char.name,
-						})),
-					},
-					{
-						type: "password",
-						name: "password",
-						label: { text: "Password", size: 3 },
-						size: 9,
-					},
-				],
-				initialValues: {
-					name: response.account.players[0]?.name,
-					password: "",
-				},
-			});
-		}
-	}, [user]);
-
-	useEffect(() => {
-		fetchCharacters();
-	}, [fetchCharacters]);
-
-	if (!data) {
+	if (account.isLoading) {
 		return <Panel isLoading={true} />;
 	}
 
-	const onSubmit = async (values: any, { resetForm }: any) => {
-		const response = await fetchApi("POST", "/api/account/deletecharacter", {
-			data: {
-				name: values.name,
-				password: values.password,
-			},
+	const onSubmit: SubmitHandler<z.infer<typeof schema>> = async ({ name, password }) => {
+		handleResponse(async () => {
+			await deleteCharacter.mutateAsync({ name, password });
+			showResponse("Character deleted.", "success");
 		});
 
-		setResponse(response);
-		resetForm();
+		reset();
 	};
 
 	return (
@@ -75,14 +52,24 @@ export default function DeleteCharacter({ user }: DeleteCharacterProps) {
 				To delete a character choose the character and enter your password.
 			</Text>
 
-			<FormWrapper
-				validationSchema={deleteCharacterSchema}
-				onSubmit={onSubmit}
-				fields={data.fields}
-				buttons={buttons}
-				response={response}
-				initialValues={data.initialValues}
-			/>
+			<form onSubmit={handleSubmit(onSubmit)}>
+				<Container alignContent={"center"} padding={2}>
+					<VStack spacing={5}>
+						<FormField key={"name"} error={errors.name?.message} name={"name"} label="Character Name">
+							<Select {...register("name")}>
+								{account.data?.players.map((character) => <option value={character.name}>{character.name}</option>)}
+							</Select>
+						</FormField>
+						<FormField key={"password"} error={errors.password?.message} name={"password"} label={"Current Password"}>
+							<TextInput type="password" {...register("password")} />
+						</FormField>
+						<Wrap spacing={2} padding="10px">
+							<Button isLoading={isSubmitting} isActive={!isValid} loadingText="Submitting" type="submit" value="Submit" btnColorType="primary" />
+							<Button value="Back" btnColorType="danger" href="/account" />
+						</Wrap>
+					</VStack>
+				</Container>
+			</form>
 		</Panel>
 	);
 }

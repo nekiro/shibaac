@@ -19,7 +19,8 @@ This project aims to provide a fully featured, secure and fast AAC (Automatic Ac
 - Prisma (mysql)
 - Jest
 - Chakra UI
-- Yup
+- Zod
+- Trpc
 - Typescript
 
 ## Features
@@ -42,6 +43,5 @@ This project aims to provide a fully featured, secure and fast AAC (Automatic Ac
 - lost account interface
 - guilds
 - houses
-- use typescript where possible
 - db migrations
 - tests
