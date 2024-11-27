@@ -1,29 +1,41 @@
 import Panel from "src/components/Panel";
 import { useRouter } from "next/router";
-import FormWrapper, { FormField } from "src/components/FormWrapper";
-import { searchCharacterSchema } from "src/schemas/SearchCharacter";
-import { FormButton } from "../community/guilds";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Container, VStack } from "@chakra-ui/react";
+import TextInput from "@component/TextInput";
+import { FormField } from "@component/FormField";
 
-const fields: FormField[] = [
-	{
-		type: "text",
-		name: "name",
-		label: { text: "Character Name" },
-	},
-];
-
-const buttons: FormButton[] = [{ type: "submit", btnType: "primary", value: "Submit" }];
+const schema = z.object({
+	name: z.string(),
+});
 
 export default function Character() {
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<z.infer<typeof schema>>({
+		resolver: zodResolver(schema),
+	});
 	const router = useRouter();
 
-	const onSubmit = async (values: any) => {
-		router.push(`/character/${values.name}`);
+	const onSubmit: SubmitHandler<z.infer<typeof schema>> = async ({ name }) => {
+		router.push(`/character/${name}`);
 	};
 
 	return (
 		<Panel header="Search Character">
-			<FormWrapper validationSchema={searchCharacterSchema} onSubmit={onSubmit} fields={fields} buttons={buttons} />
+			<form onSubmit={handleSubmit(onSubmit)}>
+				<Container alignContent={"center"} padding={2}>
+					<VStack spacing={5}>
+						<FormField key={"name"} error={errors.name?.message} name="name" label="name">
+							<TextInput type="submit" {...register("name")} />
+						</FormField>
+					</VStack>
+				</Container>
+			</form>
 		</Panel>
 	);
 }
