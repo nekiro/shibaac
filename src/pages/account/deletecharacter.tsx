@@ -57,7 +57,11 @@ export default function DeleteCharacter({ user }: DeleteCharacterProps) {
 					<VStack spacing={5}>
 						<FormField key={"name"} error={errors.name?.message} name={"name"} label="Character Name">
 							<Select {...register("name")}>
-								{account.data?.players.map((character) => <option value={character.name}>{character.name}</option>)}
+								{account.data?.players.map((character) => (
+									<option key={character.name} value={character.name}>
+										{character.name}
+									</option>
+								))}
 							</Select>
 						</FormField>
 						<FormField key={"password"} error={errors.password?.message} name={"password"} label={"Current Password"}>
