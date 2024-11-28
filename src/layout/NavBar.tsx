@@ -1,10 +1,11 @@
 import React from "react";
 import { useRouter } from "next/router";
-import { useUser } from "../hooks/useUser";
 import { Flex, Spacer, Box, Menu, MenuButton, MenuList, MenuItem, MenuGroup, IconButton, Link, useBreakpointValue } from "@chakra-ui/react";
 import DropdownButton from "../components/DropdownButton";
 import TextInput from "../components/TextInput";
 import { RxHamburgerMenu } from "react-icons/rx";
+import { trpc } from "@util/trpc";
+import { User } from "@lib/session";
 
 const navigationItems = [
 	{ text: "Home", href: "/" },
@@ -30,7 +31,7 @@ const navigationItems = [
 ];
 
 interface MobileNavigationProps {
-	user: any;
+	user?: User;
 }
 
 const MobileNavigation = ({ user }: MobileNavigationProps) => {
@@ -135,7 +136,7 @@ const DesktopNavigation = ({ user }: DesktopNavigationProps) => {
 };
 
 const NavBar = () => {
-	const { user } = useUser();
+	const user = trpc.me.me.useQuery().data;
 
 	const NavComponent = useBreakpointValue(
 		{
@@ -149,7 +150,7 @@ const NavBar = () => {
 
 	if (!NavComponent) return null;
 
-	return <NavComponent user={user} />;
+	return <NavComponent user={user?.account} />;
 };
 
 export default NavBar;

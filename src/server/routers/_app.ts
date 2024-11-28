@@ -5,6 +5,7 @@ import { townRouter } from "./town";
 import { communityRouter } from "./community";
 import { statusRouter } from "./status";
 import { accountRouter } from "./account";
+import { meRouter } from "./me";
 
 export const appRouter = router({
 	news: newsRouter,
@@ -13,6 +14,7 @@ export const appRouter = router({
 	community: communityRouter,
 	status: statusRouter,
 	account: accountRouter,
+	me: meRouter,
 });
 
 // export type definition of API

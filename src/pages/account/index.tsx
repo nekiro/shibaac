@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useCallback } from "react";
-import Panel from "../../components/Panel";
+import React, { useEffect, useState } from "react";
+import Panel from "@component/Panel";
 import Head from "../../layout/Head";
-import { fetchApi } from "../../lib/request";
-import { User, withSessionSsr } from "../../lib/session";
-import Button from "../../components/Button";
-import StripedTable from "../../components/StrippedTable";
+import { fetchApi } from "@lib/request";
+import { User, withSessionSsr } from "@lib/session";
+import Button from "@component/Button";
+import StripedTable from "@component/StrippedTable";
 import {
 	Alert,
 	AlertIcon,

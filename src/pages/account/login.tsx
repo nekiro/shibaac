@@ -4,7 +4,6 @@ import Head from "../../layout/Head";
 import Link from "@component/Link";
 import { useRouter } from "next/router";
 import { withSessionSsr } from "@lib/session";
-import { useUser } from "@hook/useUser";
 import { Text, Container, VStack, Wrap } from "@chakra-ui/react";
 import { trpc } from "@util/trpc";
 import { useFormFeedback } from "@hook/useFormFeedback";
@@ -42,7 +41,6 @@ export default function Login() {
 	} = useForm<z.infer<typeof schema>>({
 		resolver: zodResolver(schema),
 	});
-	const { setUser } = useUser();
 	const router = useRouter();
 	const login = trpc.account.login.useMutation();
 	const { handleResponse, showResponse } = useFormFeedback();
@@ -51,8 +49,6 @@ export default function Login() {
 		handleResponse(async () => {
 			const account = await login.mutateAsync({ name, password });
 			if (account) {
-				setUser(account);
-
 				const redirectUrl = (router.query.redirect as string) || "/account";
 				router.push(redirectUrl);
 			}

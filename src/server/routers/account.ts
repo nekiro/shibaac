@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { procedure, protectedProcedure, router } from "../trpc";
+import { procedure, authProcedure, router } from "../trpc";
 import prisma from "../../prisma";
 import { sha1Encrypt } from "@lib/crypt";
 import { TRPCError } from "@trpc/server";
@@ -94,7 +94,7 @@ export const accountRouter = router({
 	logout: procedure.mutation(async ({ ctx }) => {
 		ctx.session.destroy();
 	}),
-	deleteCharacter: protectedProcedure.input(z.object({ name: z.string(), password: z.string() })).mutation(async ({ input, ctx }) => {
+	deleteCharacter: authProcedure.input(z.object({ name: z.string(), password: z.string() })).mutation(async ({ input, ctx }) => {
 		const { name, password } = input;
 		const { session } = ctx;
 
@@ -125,7 +125,7 @@ export const accountRouter = router({
 
 		return character;
 	}),
-	createCharacter: protectedProcedure
+	createCharacter: authProcedure
 		.input(
 			z.object({
 				name: z.string(),

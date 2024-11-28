@@ -1,5 +1,4 @@
 import Layout from "../layout";
-import { UserContextWrapper } from "../hooks/useUser";
 import { ChakraProvider } from "@chakra-ui/react";
 import { Theme, Fonts } from "../layout/theme";
 import React from "react";
@@ -13,14 +12,12 @@ BigInt.prototype.toJSON = function () {
 
 const MyApp = ({ Component, pageProps }: any) => {
 	return (
-		<UserContextWrapper>
-			<ChakraProvider theme={Theme}>
-				<Fonts />
-				<Layout>
-					<Component {...pageProps} />
-				</Layout>
-			</ChakraProvider>
-		</UserContextWrapper>
+		<ChakraProvider theme={Theme}>
+			<Fonts />
+			<Layout>
+				<Component {...pageProps} />
+			</Layout>
+		</ChakraProvider>
 	);
 };
 
