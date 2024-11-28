@@ -1,48 +1,69 @@
-import React, { useState } from "react";
-import Panel from "../../components/Panel";
-import FormWrapper, { FormButton, FormField } from "../../components/FormWrapper";
-import { fetchApi, FetchResult } from "../../lib/request";
-import { withSessionSsr } from "../../lib/session";
-import { changePasswordSchema } from "../../schemas/ChangePassword";
-import { Text } from "@chakra-ui/react";
+import React from "react";
+import Panel from "@component/Panel";
+import { withSessionSsr } from "@lib/session";
+import { trpc } from "@util/trpc";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { z } from "zod";
+import { Text, Container, VStack, Wrap } from "@chakra-ui/react";
+import TextInput from "@component/TextInput";
+import Button from "@component/Button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FormField } from "@component/FormField";
+import { useFormFeedback } from "@hook/useFormFeedback";
 
-const fields: FormField[] = [
+const fields = [
 	{
 		type: "password",
 		name: "newPassword",
 		placeholder: "6 to 30 characters",
-		label: { text: "New Password" },
+		label: "New Password",
 	},
 	{
 		type: "password",
 		name: "repeatNewPassword",
-		label: { text: "Repeat New Password" },
+		label: "Repeat New Password",
 	},
 	{
 		type: "password",
 		name: "password",
-		label: { text: "Password" },
+		label: "Password",
 	},
 ];
 
-const buttons: FormButton[] = [
-	{ type: "submit", btnColorType: "primary", value: "Submit" },
-	{ href: "/account", btnColorType: "danger", value: "Back" },
-];
+const schema = z
+	.object({
+		newPassword: z.string().min(6, { message: "Password must be at least 6 characters long" }),
+		repeatNewPassword: z.string().min(6, { message: "Password must be at least 6 characters long" }),
+		password: z.string().min(6, { message: "Password must be at least 6 characters long" }),
+	})
+	.refine((data) => data.newPassword === data.repeatNewPassword, {
+		message: "New passwords don't match",
+		path: ["repeatNewPassword"],
+	});
 
 export default function ChangePassword() {
-	const [response, setResponse] = useState<FetchResult | undefined>(undefined);
+	const {
+		register,
+		handleSubmit,
+		reset,
+		formState: { errors, isValid, isSubmitting },
+	} = useForm<z.infer<typeof schema>>({
+		resolver: zodResolver(schema),
+	});
+	const { handleResponse, showResponse } = useFormFeedback();
+	const changePassword = trpc.account.changePassword.useMutation();
 
-	const onSubmit = async (values: any, { resetForm }: any) => {
-		const response = await fetchApi("POST", "/api/account/changepassword", {
-			data: {
-				newPassword: values.newPassword,
-				password: values.password,
-			},
+	const onSubmit: SubmitHandler<z.infer<typeof schema>> = async ({ newPassword, password }) => {
+		handleResponse(async () => {
+			await changePassword.mutateAsync({
+				newPassword,
+				password,
+			});
+
+			showResponse("Password changed.", "success");
 		});
 
-		setResponse(response);
-		resetForm();
+		reset();
 	};
 
 	return (
@@ -51,7 +72,21 @@ export default function ChangePassword() {
 				Please enter your current password and a new password. For your security, please enter the new password twice.
 			</Text>
 
-			<FormWrapper validationSchema={changePasswordSchema} onSubmit={onSubmit} fields={fields} buttons={buttons} response={response} />
+			<form onSubmit={handleSubmit(onSubmit)}>
+				<Container alignContent={"center"} padding={2}>
+					<VStack spacing={5}>
+						{fields.map((field) => (
+							<FormField key={field.name} error={(errors as any)[field.name]?.message} name={field.name} label={field.label}>
+								<TextInput type={field.type} {...register(field.name as any)} />
+							</FormField>
+						))}
+						<Wrap spacing={2} padding="10px">
+							<Button isLoading={isSubmitting} isActive={!isValid} loadingText="Submitting" type="submit" value="Submit" btnColorType="primary" />
+							<Button value="Back" btnColorType="danger" href="/account" />
+						</Wrap>
+					</VStack>
+				</Container>
+			</form>
 		</Panel>
 	);
 }

@@ -154,4 +154,66 @@ export const accountRouter = router({
 
 			return player;
 		}),
+	changePassword: authProcedure
+		.input(
+			z.object({
+				newPassword: z.string(),
+				password: z.string(),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			const { newPassword, password } = input;
+			const { session } = ctx;
+
+			const account = await prisma.accounts.findFirst({
+				where: {
+					id: session.user!.id,
+					password: await sha1Encrypt(password),
+				},
+			});
+
+			if (!account) {
+				throw new TRPCError({ code: "BAD_REQUEST", message: "Password doesn't match." });
+			}
+
+			await prisma.accounts.update({
+				where: {
+					id: account.id,
+				},
+				data: {
+					password: await sha1Encrypt(newPassword),
+				},
+			});
+		}),
+	changeEmail: authProcedure
+		.input(
+			z.object({
+				newEmail: z.string().email(),
+				password: z.string(),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			const { newEmail, password } = input;
+			const { session } = ctx;
+
+			const account = await prisma.accounts.findFirst({
+				where: {
+					id: session.user!.id,
+					password: await sha1Encrypt(password),
+				},
+			});
+
+			if (!account) {
+				throw new TRPCError({ code: "BAD_REQUEST", message: "Password doesn't match." });
+			}
+
+			await prisma.accounts.update({
+				where: {
+					id: account.id,
+				},
+				data: {
+					email: newEmail,
+				},
+			});
+		}),
 });
