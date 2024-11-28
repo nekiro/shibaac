@@ -61,7 +61,7 @@ export const getServerSideProps = withSessionSsr(function ({ req }) {
 	if (!user) {
 		return {
 			redirect: {
-				destination: "/account/login",
+				destination: `/account/login?redirect=${encodeURIComponent(req.url!)}`,
 				permanent: false,
 			},
 		};

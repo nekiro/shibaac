@@ -11,6 +11,7 @@ import { Container, VStack, Wrap } from "@chakra-ui/react";
 import Button from "@component/Button";
 import { FormField } from "@component/FormField";
 import { useFormFeedback } from "@hook/useFormFeedback";
+import { useRouter } from "next/router";
 
 const fields = [
 	{
@@ -60,6 +61,7 @@ export default function Register() {
 	} = useForm<z.infer<typeof schema>>({
 		resolver: zodResolver(schema),
 	});
+	const router = useRouter();
 	const { handleResponse, showResponse } = useFormFeedback();
 	const createAccount = trpc.account.create.useMutation();
 
@@ -71,7 +73,8 @@ export default function Register() {
 				email: values.email,
 			});
 
-			showResponse("Account created successfuly", "success");
+			showResponse("Account created successfully. You can login now.", "success");
+			router.push("/account/login");
 		});
 
 		reset();

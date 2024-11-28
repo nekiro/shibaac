@@ -5,10 +5,14 @@ import { trpc } from "@util/trpc";
 
 export default function Logout() {
 	const router = useRouter();
-	const { setUser } = useUser();
+	const { setUser, user } = useUser();
 	const logout = trpc.account.logout.useMutation();
 
 	useEffect(() => {
+		if (!user) {
+			router.push("/");
+		}
+
 		logout.mutate();
 		setUser(null);
 		router.push("/");

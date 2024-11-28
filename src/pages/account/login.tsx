@@ -52,7 +52,9 @@ export default function Login() {
 			const account = await login.mutateAsync({ name, password });
 			if (account) {
 				setUser(account);
-				router.push("/account");
+
+				const redirectUrl = (router.query.redirect as string) || "/account";
+				router.push(redirectUrl);
 			}
 
 			showResponse("Logged in.", "success");
