@@ -5,8 +5,7 @@ import StrippedTable from "@component/StrippedTable";
 import { Box, Button, ButtonGroup, Flex, Heading, Text } from "@chakra-ui/react";
 import { getVocationNameById, Vocation } from "@shared/enums/Vocation";
 import { trpc } from "@util/trpc";
-import { Skill } from "@shared/enums/Skill";
-import { getSkillKeyByValue } from "@shared/enums/Skill";
+import { Skill, getSkillKeyByValue } from "@shared/enums/Skill";
 
 const vocations: { label: string; value: Vocation | "all" }[] = [
 	{ label: "All", value: "all" },
@@ -84,15 +83,12 @@ export default function Highscores() {
 				<StrippedTable
 					isLoading={highscores.isLoading}
 					head={[{ text: "Rank" }, { text: "Name" }, { text: "Vocation" }, { text: "Level" }]}
-					body={
-						highscores.data &&
-						highscores.data.pages[0].players.map((player, index) => [
-							{ text: `${index + 1}` },
-							{ text: player.name, href: `/character/${player.name}` },
-							{ text: getVocationNameById(player.vocation) },
-							{ text: player.level },
-						])
-					}
+					body={highscores.data?.pages[0].players.map((player, index) => [
+						{ text: `${index + 1}` },
+						{ text: player.name, href: `/character/${player.name}` },
+						{ text: getVocationNameById(player.vocation) },
+						{ text: player.level },
+					])}
 				/>
 			</Panel>
 		</>
