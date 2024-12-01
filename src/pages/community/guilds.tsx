@@ -6,21 +6,9 @@ import FormWrapper, { FormField } from "../../components/FormWrapper";
 import { withSessionSsr } from "../../lib/session";
 import { fetchApi } from "../../lib/request";
 import Link from "next/link";
-import { ButtonType, ButtonColorType } from "../../components/Button";
+import { ButtonType } from "../../components/Button";
 
-import {
-	Box,
-	Flex,
-	Button,
-	Link as ChakraLink,
-	Modal,
-	ModalOverlay,
-	ModalContent,
-	ModalHeader,
-	ModalCloseButton,
-	ModalBody,
-	Avatar,
-} from "@chakra-ui/react";
+import { Box, Flex, Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, Avatar } from "@chakra-ui/react";
 
 type Button = {
 	type?: "submit" | "button" | "reset";
