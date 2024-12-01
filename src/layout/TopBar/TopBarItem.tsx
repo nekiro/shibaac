@@ -6,7 +6,7 @@ export interface TopBarItemProps extends BoxProps {
 
 export const TopBarItem = ({ children, ...props }: TopBarItemProps) => {
 	return (
-		<Flex borderLeftWidth="1px" borderRightWidth="1px" borderColor="violet.400" paddingRight="15px" paddingLeft="15px" h="100%" {...props}>
+		<Flex borderColor="violet.400" paddingRight="15px" paddingLeft="15px" h="100%" {...props}>
 			{children}
 		</Flex>
 	);
