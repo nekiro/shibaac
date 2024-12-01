@@ -5,7 +5,11 @@
 <h1 align="center">SHIBAAC</h1>
 
 <a href="https://codecov.io/gh/nekiro/shibaac">
-  <img src="https://codecov.io/gh/nekiro/shibaac/branch/master/graph/badge.svg?token=LDXR6UDS55"/>
+  <img src="https://codecov.io/gh/nekiro/shibaac/branch/master/graph/badge.svg?token=LDXR6UDS55" />
+</a> <a href="https://github.com/nekiro/shibaac/actions/workflows/build.yml">
+  <img src="https://github.com/nekiro/shibaac/actions/workflows/build.yml/badge.svg" />
+</a> <a href="https://shibaac.vercel.app">
+  <img src="https://deploy-badge.vercel.app/vercel/shibaac"/>
 </a>
 
 This project aims to provide a fully featured, secure and fast AAC (Automatic Account Creator) for Open Tibia Servers.
@@ -14,14 +18,7 @@ This project aims to provide a fully featured, secure and fast AAC (Automatic Ac
 
 ## Technologies
 
-- Node.js
-- Next.js
-- Prisma (mysql)
-- Jest
-- Chakra UI
-- Zod
-- Trpc
-- Typescript
+![Tools](https://go-skill-icons.vercel.app/api/icons?i=ts,nextjs,prisma,react,jest,trpc&theme=dark)
 
 ## Features
 
