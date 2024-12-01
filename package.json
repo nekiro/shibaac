@@ -66,6 +66,7 @@
 	"devDependencies": {
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/react": "^16.0.1",
+		"@types/jest": "^29.5.14",
 		"@types/mercadopago": "^1.5.11",
 		"@types/node-cron": "^3.0.11",
 		"@types/react": "^18.3.12",

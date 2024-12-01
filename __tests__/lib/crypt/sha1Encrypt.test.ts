@@ -1,4 +1,4 @@
-import { sha1Encrypt } from "../../../lib/crypt";
+import { sha1Encrypt } from "@lib/crypt";
 import crypto from "crypto";
 
 describe("sha1Encrypt", () => {
@@ -23,9 +23,7 @@ describe("sha1Encrypt", () => {
 			digest: jest.fn().mockReturnValueOnce("foo"),
 		};
 
-		const createHashSpy = jest
-			.spyOn(crypto, "createHash")
-			.mockImplementationOnce(() => hashMock as unknown as crypto.Hash);
+		const createHashSpy = jest.spyOn(crypto, "createHash").mockImplementationOnce(() => hashMock as unknown as crypto.Hash);
 
 		const result = await sha1Encrypt(mockedInput);
 
