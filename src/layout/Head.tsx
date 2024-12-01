@@ -1,5 +1,4 @@
 import React from "react";
-
 import NextHead from "next/head";
 import { NextSeo } from "next-seo";
 
@@ -8,7 +7,7 @@ export interface HeadProps {
 	description?: string;
 }
 
-const Head = ({ title = "shibaac", description = "Automatic Account Creator" }: HeadProps) => {
+const Head = ({ title, description = "Automatic Account Creator" }: HeadProps) => {
 	return (
 		<>
 			<NextHead>
@@ -17,7 +16,7 @@ const Head = ({ title = "shibaac", description = "Automatic Account Creator" }: 
 				<link rel="icon" href={`/favicon.ico`} key="favicon" />
 			</NextHead>
 			<NextSeo
-				title={title}
+				title={`${process.env.NEXT_PUBLIC_SERVER_NAME} - ${title}`}
 				description={description}
 				//anonical={properties.canonical}
 				openGraph={{

@@ -10,7 +10,7 @@ const Layout = ({ children }: PropsWithChildren) => {
 	return (
 		<>
 			<TopBar />
-			<Head />
+			<Head title="Home" />
 			<Box w={{ base: "95%", md: "95%", xl: "65%", "2xl": "35%" }} marginX={"auto"} marginY={{ base: "1em", md: 0 }}>
 				<Image width="230px" marginLeft="auto" marginRight="auto" marginBottom="15px" marginTop="15px" src="/images/header.png" alt="shibaac" />
 				<NavBar />
