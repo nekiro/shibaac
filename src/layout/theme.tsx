@@ -1,23 +1,6 @@
 import { extendTheme } from "@chakra-ui/react";
 import { mode } from "@chakra-ui/theme-tools";
-import { Global } from "@emotion/react";
-import React from "react";
-
-export const Fonts = () => (
-	<Global
-		styles={`
-        @font-face {
-            font-family: Roboto;
-            src: url(/fonts/Roboto-Light.ttf);
-        }
-        @font-face {
-            font-family: Roboto;
-            src: url(/fonts/Roboto-Bold.ttf);
-            font-weight: bold;
-        }
-    `}
-	/>
-);
+import "@fontsource/dm-sans";
 
 export const Theme = extendTheme({
 	config: {
@@ -49,7 +32,7 @@ export const Theme = extendTheme({
 				margin: "0px",
 				backgroundRepeat: "no-repeat",
 				backgroundAttachment: "fixed",
-				fontFamily: "Roboto",
+				fontFamily: "DM Sans",
 				fontSize: "15px",
 				bg: mode(
 					"linear-gradient(to right top,#2a1036,#361149,#43105d,#4f0f71,#5b0b87)",
@@ -57,8 +40,5 @@ export const Theme = extendTheme({
 				)(props),
 			},
 		}),
-	},
-	fonts: {
-		body: "Roboto, sans-serif",
 	},
 });

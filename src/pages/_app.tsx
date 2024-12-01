@@ -1,6 +1,6 @@
 import Layout from "../layout";
 import { ChakraProvider } from "@chakra-ui/react";
-import { Theme, Fonts } from "../layout/theme";
+import { Theme } from "../layout/theme";
 import React from "react";
 import { trpc } from "../utils/trpc";
 
@@ -13,7 +13,6 @@ BigInt.prototype.toJSON = function () {
 const MyApp = ({ Component, pageProps }: any) => {
 	return (
 		<ChakraProvider theme={Theme}>
-			<Fonts />
 			<Layout>
 				<Component {...pageProps} />
 			</Layout>
