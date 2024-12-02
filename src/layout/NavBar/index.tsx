@@ -17,21 +17,21 @@ const navigationItems: NavigationItems[] = [
 		hasMenu: true,
 		menuItems: [
 			{ text: "Highscores", url: "/community/highscores" },
-			{ text: "Guilds", url: "/community/guilds" },
-			{ text: "Houses", url: "/community/houses" },
+			// { text: "Guilds", url: "/community/guilds" },
+			// { text: "Houses", url: "/community/houses" },
 		],
 		text: "Community",
 	},
 	{
 		hasMenu: true,
 		menuItems: [
-			{ text: "Server Information", url: "/serverinfo" },
+			// { text: "Server Information", url: "/serverinfo" },
 			{ text: "Downloads", url: "/downloads" },
 		],
 		text: "Library",
 	},
-	{ text: "Donate", href: "/donate" },
-	{ text: "Store", href: "/shop" },
+	// { text: "Donate", href: "/donate" },
+	// { text: "Store", href: "/shop" },
 ];
 
 const NavBar = () => {
