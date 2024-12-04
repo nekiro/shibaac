@@ -10,7 +10,7 @@ export default function Index() {
 	// TODO: paginate?
 
 	return (
-		<Panel padding={0} header="News" flexDir="column" gap="10px">
+		<Panel padding={0} flexDir="column" gap="10px">
 			{news.data?.map((post) => (
 				<NewsPanel borderRadius="none" key={`news-${post.id}`} header={post.title} date={post.createdAt}>
 					<div dangerouslySetInnerHTML={{ __html: sanitize(post.content) }} />

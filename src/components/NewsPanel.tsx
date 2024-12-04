@@ -13,7 +13,7 @@ export interface NewsPanelProps extends FlexProps {
 	isLoading?: boolean;
 }
 
-const NewsPanel = ({ header = "Loading...", date, identifier, children, isLoading = false, borderRadius = "md", ...props }: NewsPanelProps) => {
+const NewsPanel = ({ header = "Loading...", date, identifier, children, isLoading = false, borderRadius = "none", ...props }: NewsPanelProps) => {
 	return (
 		<Flex key={identifier} width="100%" flexDirection="column" color="black" bgColor="#fff" borderRadius={borderRadius} {...props}>
 			<Flex bg="#f5f5f5" borderBottomWidth="1px" borderTopWidth="1px" borderColor="#ddd" borderRadius={borderRadius}>

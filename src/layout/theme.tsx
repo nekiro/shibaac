@@ -21,7 +21,9 @@ export const Theme = extendTheme({
 			900: "#100619",
 		},
 	},
-
+	gradients: {
+		"bg-gradient": "linear-gradient(to right top, #2a1036, #361149, #43105d, #4f0f71, #5b0b87)",
+	},
 	styles: {
 		global: (props: any) => ({
 			html: {

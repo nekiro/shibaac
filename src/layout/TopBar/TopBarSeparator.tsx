@@ -1,5 +1,7 @@
-import { Box } from "@chakra-ui/react";
+import { Box, BoxProps } from "@chakra-ui/react";
 
-export const TopBarSeparator = () => {
-	return <Box bgColor="violet.400" w="1px" h="100%" />;
+interface TopBarSeparatorProps extends BoxProps {}
+
+export const TopBarSeparator = ({ ...props }: TopBarSeparatorProps) => {
+	return <Box bgColor="violet.400" w="1px" h="100%" {...props} />;
 };

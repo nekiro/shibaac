@@ -12,41 +12,35 @@ export interface PanelProps extends FlexProps {
 	isLoading?: boolean;
 }
 
-const Panel = ({
-	header = "Loading...",
-	date,
-	identifier,
-	children,
-	isLoading = false,
-	borderRadius = "md",
-	padding = "10px",
-	...props
-}: PanelProps) => {
+const Panel = ({ header, date, identifier, children, isLoading = false, borderRadius = "none", padding = "10px", ...props }: PanelProps) => {
 	return (
 		<Flex
 			key={identifier}
 			width="100%"
 			flexDirection="column"
-			color="black"
+			color="white"
 			border="1px"
 			borderColor="#ddd"
 			bgColor="#fff"
+			textAlign="center"
 			borderRadius={borderRadius}
 			borderBottomRadius={0}
 			{...props}
 		>
-			<Flex bg="#f5f5f5" border="1px" borderColor="#ddd" borderRadius={borderRadius}>
-				<Grid margin="10px" width="100%" templateColumns="1fr auto">
-					<Text>{header}</Text>
-					{date && (
-						<Box display="flex" justifyContent="flex-end">
-							<Text display="flex" alignItems="center">
-								<IoMdTime /> {formatDate(date)}
-							</Text>
-						</Box>
-					)}
-				</Grid>
-			</Flex>
+			{header && (
+				<Flex bg="violet.500" border="1px" borderColor="#ddd" borderRadius={borderRadius}>
+					<Grid margin="10px" width="100%" templateColumns="1fr auto">
+						<Text>{header}</Text>
+						{date && (
+							<Box display="flex" justifyContent="flex-end">
+								<Text display="flex" alignItems="center">
+									<IoMdTime /> {formatDate(date)}
+								</Text>
+							</Box>
+						)}
+					</Grid>
+				</Flex>
+			)}
 			<Box padding={padding}>{isLoading ? <Loader /> : children}</Box>
 		</Flex>
 	);
