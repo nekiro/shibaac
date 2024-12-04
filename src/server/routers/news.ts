@@ -1,20 +1,19 @@
 import { z } from "zod";
 import { procedure, router } from "../trpc";
 import prisma from "../../prisma";
+import { db } from "@db";
+import { eq } from "drizzle-orm";
+import { News } from "@db/schema/news";
 
 export const newsRouter = router({
 	all: procedure.query(async () => {
-		const news = await prisma.aac_news.findMany();
+		const news = await db.select().from(News);
 		return news;
 	}),
 	single: procedure.input(z.object({ id: z.number() })).query(async ({ input }) => {
-		const news = await prisma.aac_news.findUnique({
-			where: {
-				id: input.id,
-			},
-		});
+		const singleNews = await db.select().from(News).where(eq(News.id, input.id));
 
-		return news;
+		return singleNews;
 	}),
 	create: procedure
 		.input(
@@ -27,15 +26,26 @@ export const newsRouter = router({
 			}),
 		)
 		.mutation(async ({ input }) => {
-			const newNews = await prisma.aac_news.create({
-				data: {
+			const newNews = await db
+				.insert(News)
+				.values({
 					title: input.title,
 					content: input.content,
 					playerNick: input.playerNick,
 					imageUrl: input.imageUrl,
 					authorId: input.authorId,
-				},
-			});
+				})
+				.$returningId();
+
+			// const newNews = await prisma.aac_news.create({
+			// 	data: {
+			// 		title: input.title,
+			// 		content: input.content,
+			// 		playerNick: input.playerNick,
+			// 		imageUrl: input.imageUrl,
+			// 		authorId: input.authorId,
+			// 	},
+			// });
 
 			return newNews;
 		}),

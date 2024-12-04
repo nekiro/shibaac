@@ -1,0 +1,1961 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevId": "",
+  "version": "5",
+  "dialect": "mysql",
+  "tables": {
+    "aac_news": {
+      "name": "aac_news",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "autoincrement": false,
+          "name": "title",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "content": {
+          "autoincrement": false,
+          "name": "content",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "authorId": {
+          "autoincrement": false,
+          "name": "authorId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "default": "(CURRENT_TIMESTAMP(3))",
+          "autoincrement": false,
+          "name": "createdAt",
+          "type": "datetime(3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "imageUrl": {
+          "autoincrement": false,
+          "name": "imageUrl",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "playerNick": {
+          "autoincrement": false,
+          "name": "playerNick",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "aac_news_id": {
+          "name": "aac_news_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {
+        "idx_authorId": {
+          "name": "idx_authorId",
+          "columns": [
+            "authorId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "aac_news_authorId_fkey": {
+          "name": "aac_news_authorId_fkey",
+          "tableFrom": "aac_news",
+          "tableTo": "accounts",
+          "columnsFrom": [
+            "authorId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "account_bans": {
+      "name": "account_bans",
+      "columns": {
+        "account_id": {
+          "autoincrement": false,
+          "name": "account_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reason": {
+          "autoincrement": false,
+          "name": "reason",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "banned_at": {
+          "autoincrement": false,
+          "name": "banned_at",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires_at": {
+          "autoincrement": false,
+          "name": "expires_at",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "banned_by": {
+          "autoincrement": false,
+          "name": "banned_by",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "account_bans_account_id": {
+          "name": "account_bans_account_id",
+          "columns": [
+            "account_id"
+          ]
+        }
+      },
+      "indexes": {
+        "banned_by": {
+          "name": "banned_by",
+          "columns": [
+            "banned_by"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "account_bans_ibfk_1": {
+          "name": "account_bans_ibfk_1",
+          "tableFrom": "account_bans",
+          "tableTo": "accounts",
+          "columnsFrom": [
+            "account_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "account_bans_ibfk_2": {
+          "name": "account_bans_ibfk_2",
+          "tableFrom": "account_bans",
+          "tableTo": "players",
+          "columnsFrom": [
+            "banned_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "accounts": {
+      "name": "accounts",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "autoincrement": false,
+          "name": "password",
+          "type": "char(40)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rec_key": {
+          "autoincrement": false,
+          "name": "rec_key",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "secret": {
+          "autoincrement": false,
+          "name": "secret",
+          "type": "char(16)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "type": {
+          "default": 1,
+          "autoincrement": false,
+          "name": "type",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "coins": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "coins",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "premium_ends_at": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "premium_ends_at",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "autoincrement": false,
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "creation": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "creation",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "twoFASecret": {
+          "autoincrement": false,
+          "name": "twoFASecret",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "twoFAEnabled": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "twoFAEnabled",
+          "type": "tinyint(1)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "resetToken": {
+          "autoincrement": false,
+          "name": "resetToken",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "accounts_id": {
+          "name": "accounts_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {
+        "accounts_email_key": {
+          "name": "accounts_email_key",
+          "columns": [
+            "email"
+          ]
+        },
+        "accounts_rec_key_key": {
+          "name": "accounts_rec_key_key",
+          "columns": [
+            "rec_key"
+          ]
+        },
+        "accounts_resetToken_key": {
+          "name": "accounts_resetToken_key",
+          "columns": [
+            "resetToken"
+          ]
+        },
+        "name": {
+          "name": "name",
+          "columns": [
+            "name"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "guild_invites": {
+      "name": "guild_invites",
+      "columns": {
+        "player_id": {
+          "autoincrement": false,
+          "name": "player_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "guild_id": {
+          "autoincrement": false,
+          "name": "guild_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date": {
+          "autoincrement": false,
+          "name": "date",
+          "type": "datetime(3)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "guild_invites_player_id": {
+          "name": "guild_invites_player_id",
+          "columns": [
+            "player_id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "guild_invites_guild_id_fkey": {
+          "name": "guild_invites_guild_id_fkey",
+          "tableFrom": "guild_invites",
+          "tableTo": "guilds",
+          "columnsFrom": [
+            "guild_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "guild_invites_player_id_fkey": {
+          "name": "guild_invites_player_id_fkey",
+          "tableFrom": "guild_invites",
+          "tableTo": "players",
+          "columnsFrom": [
+            "player_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "guild_membership": {
+      "name": "guild_membership",
+      "columns": {
+        "player_id": {
+          "autoincrement": false,
+          "name": "player_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "guild_id": {
+          "autoincrement": false,
+          "name": "guild_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rank_id": {
+          "autoincrement": false,
+          "name": "rank_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nick": {
+          "default": "''",
+          "autoincrement": false,
+          "name": "nick",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "guild_membership_guild_id_fkey": {
+          "name": "guild_membership_guild_id_fkey",
+          "tableFrom": "guild_membership",
+          "tableTo": "guilds",
+          "columnsFrom": [
+            "guild_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "guild_membership_player_id_fkey": {
+          "name": "guild_membership_player_id_fkey",
+          "tableFrom": "guild_membership",
+          "tableTo": "players",
+          "columnsFrom": [
+            "player_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "guild_membership_rank_id_fkey": {
+          "name": "guild_membership_rank_id_fkey",
+          "tableFrom": "guild_membership",
+          "tableTo": "guild_ranks",
+          "columnsFrom": [
+            "rank_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "uniqueConstraints": {
+        "guild_membership_player_id_guild_id_key": {
+          "name": "guild_membership_player_id_guild_id_key",
+          "columns": [
+            "player_id",
+            "guild_id"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "guild_ranks": {
+      "name": "guild_ranks",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "guild_id": {
+          "autoincrement": false,
+          "name": "guild_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "level": {
+          "autoincrement": false,
+          "name": "level",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "guild_ranks_id": {
+          "name": "guild_ranks_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "guild_ranks_guild_id_fkey": {
+          "name": "guild_ranks_guild_id_fkey",
+          "tableFrom": "guild_ranks",
+          "tableTo": "guilds",
+          "columnsFrom": [
+            "guild_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "guild_wars": {
+      "name": "guild_wars",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "guild1": {
+          "autoincrement": false,
+          "name": "guild1",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "guild2": {
+          "autoincrement": false,
+          "name": "guild2",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name1": {
+          "autoincrement": false,
+          "name": "name1",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name2": {
+          "autoincrement": false,
+          "name": "name2",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "status",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "started": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "started",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ended": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "ended",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "guild_wars_id": {
+          "name": "guild_wars_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "guild_wars_guild1_fkey": {
+          "name": "guild_wars_guild1_fkey",
+          "tableFrom": "guild_wars",
+          "tableTo": "guilds",
+          "columnsFrom": [
+            "guild1"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "guild_wars_guild2_fkey": {
+          "name": "guild_wars_guild2_fkey",
+          "tableFrom": "guild_wars",
+          "tableTo": "guilds",
+          "columnsFrom": [
+            "guild2"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "guilds": {
+      "name": "guilds",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "level": {
+          "default": 1,
+          "autoincrement": false,
+          "name": "level",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ownerid": {
+          "autoincrement": false,
+          "name": "ownerid",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "creationdata": {
+          "autoincrement": false,
+          "name": "creationdata",
+          "type": "datetime(3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "motd": {
+          "default": "''",
+          "autoincrement": false,
+          "name": "motd",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "residence": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "residence",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "balance": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "balance",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "points": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "points",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "logoUrl": {
+          "autoincrement": false,
+          "name": "logoUrl",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "compositePrimaryKeys": {
+        "guilds_id": {
+          "name": "guilds_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "guilds_ownerid_fkey": {
+          "name": "guilds_ownerid_fkey",
+          "tableFrom": "guilds",
+          "tableTo": "players",
+          "columnsFrom": [
+            "ownerid"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "uniqueConstraints": {
+        "guilds_name_key": {
+          "name": "guilds_name_key",
+          "columns": [
+            "name"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "guildwar_kills": {
+      "name": "guildwar_kills",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "killer": {
+          "autoincrement": false,
+          "name": "killer",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "target": {
+          "autoincrement": false,
+          "name": "target",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "killerguild": {
+          "autoincrement": false,
+          "name": "killerguild",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "targetguild": {
+          "autoincrement": false,
+          "name": "targetguild",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "warid": {
+          "autoincrement": false,
+          "name": "warid",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "time": {
+          "autoincrement": false,
+          "name": "time",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "guildwar_kills_id": {
+          "name": "guildwar_kills_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "guildwar_kills_warid_fkey": {
+          "name": "guildwar_kills_warid_fkey",
+          "tableFrom": "guildwar_kills",
+          "tableTo": "guild_wars",
+          "columnsFrom": [
+            "warid"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "house_lists": {
+      "name": "house_lists",
+      "columns": {
+        "house_id": {
+          "autoincrement": false,
+          "name": "house_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "listid": {
+          "autoincrement": false,
+          "name": "listid",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "list": {
+          "autoincrement": false,
+          "name": "list",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "house_lists_house_id_listid": {
+          "name": "house_lists_house_id_listid",
+          "columns": [
+            "house_id",
+            "listid"
+          ]
+        }
+      },
+      "indexes": {
+        "house_id": {
+          "name": "house_id",
+          "columns": [
+            "house_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "house_lists_house_id_fkey": {
+          "name": "house_lists_house_id_fkey",
+          "tableFrom": "house_lists",
+          "tableTo": "houses",
+          "columnsFrom": [
+            "house_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "houses": {
+      "name": "houses",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "owner": {
+          "autoincrement": false,
+          "name": "owner",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "paid": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "paid",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "warnings": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "warnings",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rent": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "rent",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "town_id": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "town_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bid": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "bid",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bid_end": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "bid_end",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_bid": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "last_bid",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "highest_bidder": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "highest_bidder",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "size": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "size",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "guildId": {
+          "autoincrement": false,
+          "name": "guildId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "beds": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "beds",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "houses_id": {
+          "name": "houses_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {
+        "owner": {
+          "name": "owner",
+          "columns": [
+            "owner"
+          ],
+          "isUnique": false
+        },
+        "town_id": {
+          "name": "town_id",
+          "columns": [
+            "town_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "player_deaths": {
+      "name": "player_deaths",
+      "columns": {
+        "player_id": {
+          "autoincrement": false,
+          "name": "player_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "time": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "time",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "level": {
+          "default": 1,
+          "autoincrement": false,
+          "name": "level",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "killed_by": {
+          "autoincrement": false,
+          "name": "killed_by",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_player": {
+          "default": 1,
+          "autoincrement": false,
+          "name": "is_player",
+          "type": "tinyint(1)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mostdamage_by": {
+          "autoincrement": false,
+          "name": "mostdamage_by",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mostdamage_is_player": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "mostdamage_is_player",
+          "type": "tinyint(1)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "unjustified": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "unjustified",
+          "type": "tinyint(1)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mostdamage_unjustified": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "mostdamage_unjustified",
+          "type": "tinyint(1)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "player_deaths_player_id": {
+          "name": "player_deaths_player_id",
+          "columns": [
+            "player_id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "player_deaths_player_id_fkey": {
+          "name": "player_deaths_player_id_fkey",
+          "tableFrom": "player_deaths",
+          "tableTo": "players",
+          "columnsFrom": [
+            "player_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "players": {
+      "name": "players",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "group_id": {
+          "default": 1,
+          "autoincrement": false,
+          "name": "group_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "account_id": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "account_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "level": {
+          "default": 1,
+          "autoincrement": false,
+          "name": "level",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "vocation": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "vocation",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "health": {
+          "default": 150,
+          "autoincrement": false,
+          "name": "health",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "healthmax": {
+          "default": 150,
+          "autoincrement": false,
+          "name": "healthmax",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "experience": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "experience",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lookbody": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "lookbody",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lookfeet": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "lookfeet",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lookhead": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "lookhead",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "looklegs": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "looklegs",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "looktype": {
+          "default": 136,
+          "autoincrement": false,
+          "name": "looktype",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lookaddons": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "lookaddons",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lookmount": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "lookmount",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lookmounthead": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "lookmounthead",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lookmountbody": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "lookmountbody",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lookmountlegs": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "lookmountlegs",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lookmountfeet": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "lookmountfeet",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "direction": {
+          "default": 2,
+          "autoincrement": false,
+          "name": "direction",
+          "type": "tinyint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "maglevel": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "maglevel",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mana": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "mana",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "manamax": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "manamax",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "manaspent": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "manaspent",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "soul": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "soul",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "town_id": {
+          "default": 1,
+          "autoincrement": false,
+          "name": "town_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "posx": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "posx",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "posy": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "posy",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "posz": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "posz",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "conditions": {
+          "autoincrement": false,
+          "name": "conditions",
+          "type": "blob",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cap": {
+          "default": 400,
+          "autoincrement": false,
+          "name": "cap",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sex": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "sex",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lastlogin": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "lastlogin",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lastip": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "lastip",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "save": {
+          "default": 1,
+          "autoincrement": false,
+          "name": "save",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "skull": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "skull",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "skulltime": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "skulltime",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lastlogout": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "lastlogout",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "blessings": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "blessings",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "onlinetime": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "onlinetime",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "deletion": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "deletion",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "balance": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "balance",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "offlinetraining_time": {
+          "default": 43200,
+          "autoincrement": false,
+          "name": "offlinetraining_time",
+          "type": "smallint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "offlinetraining_skill": {
+          "default": -1,
+          "autoincrement": false,
+          "name": "offlinetraining_skill",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "stamina": {
+          "default": 2520,
+          "autoincrement": false,
+          "name": "stamina",
+          "type": "smallint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "skill_fist": {
+          "default": 10,
+          "autoincrement": false,
+          "name": "skill_fist",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "skill_fist_tries": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "skill_fist_tries",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "skill_club": {
+          "default": 10,
+          "autoincrement": false,
+          "name": "skill_club",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "skill_club_tries": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "skill_club_tries",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "skill_sword": {
+          "default": 10,
+          "autoincrement": false,
+          "name": "skill_sword",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "skill_sword_tries": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "skill_sword_tries",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "skill_axe": {
+          "default": 10,
+          "autoincrement": false,
+          "name": "skill_axe",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "skill_axe_tries": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "skill_axe_tries",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "skill_dist": {
+          "default": 10,
+          "autoincrement": false,
+          "name": "skill_dist",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "skill_dist_tries": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "skill_dist_tries",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "skill_shielding": {
+          "default": 10,
+          "autoincrement": false,
+          "name": "skill_shielding",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "skill_shielding_tries": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "skill_shielding_tries",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "skill_fishing": {
+          "default": 10,
+          "autoincrement": false,
+          "name": "skill_fishing",
+          "type": "int unsigned",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "skill_fishing_tries": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "skill_fishing_tries",
+          "type": "bigint unsigned",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "players_id": {
+          "name": "players_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {
+        "account_id": {
+          "name": "account_id",
+          "columns": [
+            "account_id"
+          ],
+          "isUnique": false
+        },
+        "vocation": {
+          "name": "vocation",
+          "columns": [
+            "vocation"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "players_ibfk_1": {
+          "name": "players_ibfk_1",
+          "tableFrom": "players",
+          "tableTo": "accounts",
+          "columnsFrom": [
+            "account_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "uniqueConstraints": {
+        "name": {
+          "name": "name",
+          "columns": [
+            "name"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "players_online": {
+      "name": "players_online",
+      "columns": {
+        "player_id": {
+          "autoincrement": false,
+          "name": "player_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "players_online_player_id": {
+          "name": "players_online_player_id",
+          "columns": [
+            "player_id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "players_online_player_id_fkey": {
+          "name": "players_online_player_id_fkey",
+          "tableFrom": "players_online",
+          "tableTo": "players",
+          "columnsFrom": [
+            "player_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "purchases": {
+      "name": "purchases",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "accountId": {
+          "autoincrement": false,
+          "name": "accountId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "default": "(CURRENT_TIMESTAMP(3))",
+          "autoincrement": false,
+          "name": "createdAt",
+          "type": "datetime(3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "amount": {
+          "autoincrement": false,
+          "name": "amount",
+          "type": "double",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "autoincrement": false,
+          "name": "status",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "paymentId": {
+          "autoincrement": false,
+          "name": "paymentId",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "paymentMethod": {
+          "autoincrement": false,
+          "name": "paymentMethod",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "purchases_id": {
+          "name": "purchases_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "purchases_accountId_fkey": {
+          "name": "purchases_accountId_fkey",
+          "tableFrom": "purchases",
+          "tableTo": "accounts",
+          "columnsFrom": [
+            "accountId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "uniqueConstraints": {
+        "purchases_paymentId_key": {
+          "name": "purchases_paymentId_key",
+          "columns": [
+            "paymentId"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "shop_orders": {
+      "name": "shop_orders",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "autoincrement": false,
+          "name": "type",
+          "type": "varchar(191)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "itemid": {
+          "autoincrement": false,
+          "name": "itemid",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "count": {
+          "autoincrement": false,
+          "name": "count",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "coins": {
+          "autoincrement": false,
+          "name": "coins",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "default": "(CURRENT_TIMESTAMP(3))",
+          "autoincrement": false,
+          "name": "createdAt",
+          "type": "datetime(3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "accountId": {
+          "autoincrement": false,
+          "name": "accountId",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "shop_orders_id": {
+          "name": "shop_orders_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "shop_orders_accountId_fkey": {
+          "name": "shop_orders_accountId_fkey",
+          "tableFrom": "shop_orders",
+          "tableTo": "accounts",
+          "columnsFrom": [
+            "accountId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "towns": {
+      "name": "towns",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "posx": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "posx",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "posy": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "posy",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "posz": {
+          "default": 0,
+          "autoincrement": false,
+          "name": "posz",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {
+        "towns_id": {
+          "name": "towns_id",
+          "columns": [
+            "id"
+          ]
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {
+        "name": {
+          "name": "name",
+          "columns": [
+            "name"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    }
+  },
+  "views": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "tables": {
+      "aac_news": {
+        "columns": {
+          "createdAt": {
+            "isDefaultAnExpression": true
+          }
+        }
+      },
+      "purchases": {
+        "columns": {
+          "createdAt": {
+            "isDefaultAnExpression": true
+          }
+        }
+      },
+      "shop_orders": {
+        "columns": {
+          "createdAt": {
+            "isDefaultAnExpression": true
+          }
+        }
+      }
+    },
+    "indexes": {}
+  }
+}
