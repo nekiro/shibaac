@@ -15,14 +15,14 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const fields = [
-	{ type: "password", name: "name", label: "Account Name" },
+	{ type: "input", name: "name", label: "Account Name" },
 	{ type: "password", name: "password", label: "Password" },
-	{
-		type: "text",
-		name: "twoFAToken",
-		placeholder: "If you have 2FA, code: XXX-XXX",
-		label: "2FA Token",
-	},
+	// {
+	// 	type: "text",
+	// 	name: "twoFAToken",
+	// 	placeholder: "If you have 2FA, code: XXX-XXX",
+	// 	label: "2FA Token",
+	// },
 ];
 
 // TODO: add 2FA support

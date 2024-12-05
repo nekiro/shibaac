@@ -1,11 +1,20 @@
-import { extendTheme } from "@chakra-ui/react";
+import { extendTheme, type ThemeConfig } from "@chakra-ui/react";
 import { mode } from "@chakra-ui/theme-tools";
 import "@fontsource/dm-sans";
 
+const config: ThemeConfig = {
+	initialColorMode: "dark",
+	useSystemColorMode: false,
+};
+
 export const Theme = extendTheme({
-	config: {
-		initialColorMode: "dark",
-		useSystemColorMode: false,
+	config,
+	components: {
+		Link: {
+			baseStyle: {
+				color: "white",
+			},
+		},
 	},
 	colors: {
 		violet: {
@@ -19,6 +28,14 @@ export const Theme = extendTheme({
 			700: "#43275a",
 			800: "#291738",
 			900: "#100619",
+		},
+		primary: {
+			dark: "#1A202C",
+			light: "white",
+		},
+		text: {
+			dark: "#000",
+			light: "#fff",
 		},
 	},
 	gradients: {

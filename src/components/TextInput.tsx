@@ -1,17 +1,22 @@
 import React, { forwardRef } from "react";
 import { Input, InputProps } from "@chakra-ui/react";
+import { useColors } from "@hook/useColors";
 
 export interface TextInputProps extends InputProps {}
 
 const TextInput = forwardRef<HTMLInputElement, InputProps>(({ ...props }, ref) => {
+	const { inputBgColor, textColor } = useColors();
+
 	return (
 		<Input
 			ref={ref}
 			variant="filled"
-			_focus={{ borderColor: "violet.400", backgroundColor: "white" }}
-			_hover={{ borderColor: "violet.400" }}
+			_hover={{ borderColor: "violet.400", bgColor: "violet.100" }}
+			_focus={{ borderColor: "violet.400", bgColor: "violet.100" }}
+			_placeholder={{ color: "violet.400" }}
 			borderColor="violet.200"
-			bg="white"
+			bg={inputBgColor}
+			color="black"
 			{...props}
 		/>
 	);

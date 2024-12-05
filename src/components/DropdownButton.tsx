@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { Menu, MenuButton, MenuList, Button, useDisclosure, MenuItem } from "@chakra-ui/react";
 import { IoChevronDown, IoChevronUp } from "react-icons/io5";
 import Link from "next/link";
+import { useColors } from "@hook/useColors";
 
 export interface DropdownButtonProps {
 	hasMenu?: boolean;
@@ -13,6 +14,7 @@ export interface DropdownButtonProps {
 const DropdownButton = ({ hasMenu = false, text, href, list }: DropdownButtonProps) => {
 	const router = useRouter();
 	const { isOpen, onOpen, onClose } = useDisclosure();
+	const { hoverColor, bgColor } = useColors();
 	const isActive = hasMenu ? list?.some((item) => router.asPath.startsWith(item.url)) : router.asPath === href;
 
 	if (hasMenu) {
@@ -37,9 +39,10 @@ const DropdownButton = ({ hasMenu = false, text, href, list }: DropdownButtonPro
 						<Link key={item.text} href={item.url} passHref>
 							<MenuItem
 								borderRadius="sm"
-								_hover={{ bgColor: "violet.50" }}
-								_focus={{ bgColor: "violet.50" }}
-								backgroundColor={item.isActive ? "#c3a6d9" : ""}
+								_hover={{ bgColor: hoverColor }}
+								_focus={{ bgColor: hoverColor }}
+								backgroundColor={item.isActive ? "violet.50" : ""}
+								bgColor={bgColor}
 							>
 								{item.text}
 							</MenuItem>

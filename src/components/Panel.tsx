@@ -1,8 +1,9 @@
 import React, { ReactNode } from "react";
 import Loader from "./Loader";
-import { Flex, Box, Text, Grid, FlexProps } from "@chakra-ui/react";
+import { Flex, Box, Text, Grid, FlexProps, useColorModeValue } from "@chakra-ui/react";
 import { IoMdTime } from "react-icons/io";
 import { formatDate } from "@lib/.";
+import { useColors } from "@hook/useColors";
 
 export interface PanelProps extends FlexProps {
 	header?: string;
@@ -13,24 +14,26 @@ export interface PanelProps extends FlexProps {
 }
 
 const Panel = ({ header, date, identifier, children, isLoading = false, borderRadius = "none", padding = "10px", ...props }: PanelProps) => {
+	const { bgColor, textColor } = useColors();
+
 	return (
 		<Flex
 			key={identifier}
 			width="100%"
 			flexDirection="column"
-			color="white"
+			color={textColor}
 			border="1px"
 			borderColor="#ddd"
-			bgColor="#fff"
+			bgColor={bgColor}
 			textAlign="center"
 			borderRadius={borderRadius}
 			borderBottomRadius={0}
 			{...props}
 		>
 			{header && (
-				<Flex bg="violet.500" border="1px" borderColor="#ddd" borderRadius={borderRadius}>
+				<Flex border="1px" borderColor="#ddd" color="black" borderRadius={borderRadius}>
 					<Grid margin="10px" width="100%" templateColumns="1fr auto">
-						<Text>{header}</Text>
+						<Text color={textColor}>{header}</Text>
 						{date && (
 							<Box display="flex" justifyContent="flex-end">
 								<Text display="flex" alignItems="center">

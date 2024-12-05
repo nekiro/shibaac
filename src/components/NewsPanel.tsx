@@ -4,6 +4,7 @@ import { Flex, Box, Text, Grid, FlexProps } from "@chakra-ui/react";
 import { IoMdTime } from "react-icons/io";
 import { formatDate } from "@lib/.";
 import { HiNewspaper } from "react-icons/hi2";
+import { useColors } from "@hook/useColors";
 
 export interface NewsPanelProps extends FlexProps {
 	header?: string;
@@ -14,13 +15,15 @@ export interface NewsPanelProps extends FlexProps {
 }
 
 const NewsPanel = ({ header = "Loading...", date, identifier, children, isLoading = false, borderRadius = "none", ...props }: NewsPanelProps) => {
+	const { bgColor, textColor } = useColors();
+
 	return (
-		<Flex key={identifier} width="100%" flexDirection="column" color="black" bgColor="#fff" borderRadius={borderRadius} {...props}>
-			<Flex bg="#f5f5f5" borderBottomWidth="1px" borderTopWidth="1px" borderColor="#ddd" borderRadius={borderRadius}>
+		<Flex key={identifier} width="100%" flexDirection="column" color={textColor} bgColor={bgColor} borderRadius={borderRadius} {...props}>
+			<Flex bgColor={bgColor} borderBottomWidth="1px" borderTopWidth="1px" borderColor="#ddd" borderRadius={borderRadius}>
 				<Grid margin="10px" width="100%" templateColumns="1fr auto">
 					<Flex flexDirection="row" alignItems="center" gap="5px">
 						<HiNewspaper />
-						<Text>{header}</Text>
+						<Text color={textColor}>{header}</Text>
 					</Flex>
 					{date && (
 						<Box display="flex" alignItems="center" justifyContent="flex-end">

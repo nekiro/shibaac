@@ -3,15 +3,18 @@ import Head from "./Head";
 import SideBar from "./SideBar";
 import { Flex, VStack, Text } from "@chakra-ui/react";
 import { TopBar } from "./TopBar";
+import { useColors } from "@hook/useColors";
 
 const Layout = ({ children }: PropsWithChildren) => {
+	const { bgColor } = useColors();
+
 	return (
 		<>
-			<Head title="Home" />
+			<Head title="News" />
 			<TopBar />
 			<Flex
 				w={{ lg: "1050px", base: "100%" }}
-				bgColor="white"
+				bgColor={bgColor}
 				mt="2em"
 				marginX={"auto"}
 				padding="1em"

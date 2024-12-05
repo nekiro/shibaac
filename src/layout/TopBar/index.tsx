@@ -1,4 +1,4 @@
-import { Flex, Text, Image, HStack } from "@chakra-ui/react";
+import { Flex, Text, Image, HStack, useColorMode, Button, Spacer } from "@chakra-ui/react";
 import { TopBarItem } from "./TopBarItem";
 import { trpc } from "@util/trpc";
 import Link from "@component/Link";
@@ -8,6 +8,7 @@ import { TbBrandYoutubeFilled } from "react-icons/tb";
 import TextInput from "@component/TextInput";
 import DropdownButton from "@component/DropdownButton";
 import { useRouter } from "next/router";
+import { MdDarkMode, MdOutlineDarkMode } from "react-icons/md";
 
 export interface NavigationItems {
 	text: string;
@@ -43,10 +44,11 @@ export const TopBar = () => {
 	const user = trpc.me.me.useQuery().data;
 	const status = trpc.status.status.useQuery().data;
 	const router = useRouter();
+	const { toggleColorMode, colorMode } = useColorMode();
 
 	return (
 		<Flex
-			justifyContent="space-between"
+			justifyContent="center"
 			bgColor="blackAlpha.600"
 			h="50px"
 			paddingLeft="15px"
@@ -75,19 +77,12 @@ export const TopBar = () => {
 							}
 						}}
 					>
-						<TextInput size="sm" name="search" placeholder="Search character..." />
+						<TextInput size="sm" name="search" placeholder="Search character" />
 					</form>
 				</TopBarItem>
-				<TopBarSeparator height="80%" alignSelf="center" />
-				<Link href="/online">
-					<TopBarItem flexDirection="row">
-						<Text fontSize="sm" ml="5px" color="white">
-							{status?.onlineCount ?? "..."} players online
-						</Text>
-					</TopBarItem>
-				</Link>
+				<Spacer w="2em" />
 			</HStack>
-			<HStack position="absolute" gap={0} left="50%" height="50px" transform="translateX(-50%)">
+			<HStack gap={0} height="50px">
 				{navigationItems.map((item) => (
 					<TopBarItem key={item.text} padding={0}>
 						<DropdownButton text={item.text} hasMenu={item.hasMenu} list={item.menuItems} href={item.href} />
@@ -104,27 +99,53 @@ export const TopBar = () => {
 							]}
 						/>
 					) : (
-						<>
-							<DropdownButton text="Sign Up" href="/account/register" />
-							<DropdownButton text="Sign In" href="/account/login" />
-						</>
+						<DropdownButton
+							text="Account"
+							hasMenu={true}
+							list={[
+								{ text: "Login", url: "/account/login" },
+								{ text: "Register", url: "/account/register" },
+							]}
+						/>
 					)}
 				</TopBarItem>
+				<Spacer w="2em" />
 			</HStack>
+
 			<TopBarItem padding={0}>
 				<HStack alignItems="center" gap="10px">
 					{/* TODO: move to component */}
-					<Link href={process.env.NEXT_PUBLIC_GITHUB_URL ?? ""} isExternal color="white" _hover={{ color: "violet.300" }}>
+					<Button
+						size="25px"
+						title={colorMode === "light" ? "Dark mode" : "Light mode"}
+						variant="ghost"
+						padding={0}
+						color="white"
+						_hover={{ color: "violet.300" }}
+						_active={{}}
+						onClick={toggleColorMode}
+					>
+						{colorMode === "light" ? <MdOutlineDarkMode size="25px" /> : <MdDarkMode size="25px" />}
+					</Button>
+					<Link href={process.env.NEXT_PUBLIC_GITHUB_URL ?? ""} title="Github" isExternal color="white" _hover={{ color: "violet.300" }}>
 						<FaGithub size="25px" />
 					</Link>
-					<Link href={process.env.NEXT_PUBLIC_DISCORD_URL ?? ""} isExternal color="white" _hover={{ color: "#5865F2" }}>
+					<Link href={process.env.NEXT_PUBLIC_DISCORD_URL ?? ""} title="Discord" isExternal color="white" _hover={{ color: "#5865F2" }}>
 						<FaDiscord size="25px" />
 					</Link>
-					<Link href={process.env.NEXT_PUBLIC_YOUTUBE_URL ?? ""} isExternal color="white" _hover={{ color: "red" }}>
+					<Link href={process.env.NEXT_PUBLIC_YOUTUBE_URL ?? ""} title="Youtube" isExternal color="white" _hover={{ color: "red" }}>
 						<TbBrandYoutubeFilled size="25px" />
 					</Link>
 				</HStack>
 			</TopBarItem>
+			<TopBarSeparator ml="10px" height="80%" alignSelf="center" />
+			<Link href="/online">
+				<TopBarItem paddingLeft="10px" flexDirection="row">
+					<Text fontSize="sm" color="white">
+						{status?.onlineCount ?? "..."} players online
+					</Text>
+				</TopBarItem>
+			</Link>
 		</Flex>
 	);
 };
