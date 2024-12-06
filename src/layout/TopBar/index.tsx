@@ -1,4 +1,4 @@
-import { Flex, Text, Image, HStack, useColorMode, Button, Spacer } from "@chakra-ui/react";
+import { Flex, Text, Image, HStack, Spacer } from "@chakra-ui/react";
 import { TopBarItem } from "./TopBarItem";
 import { trpc } from "@util/trpc";
 import Link from "@component/Link";
@@ -8,7 +8,6 @@ import { TbBrandYoutubeFilled } from "react-icons/tb";
 import TextInput from "@component/TextInput";
 import DropdownButton from "@component/DropdownButton";
 import { useRouter } from "next/router";
-import { MdDarkMode, MdOutlineDarkMode } from "react-icons/md";
 import { DarkModeButton } from "@component/DarkModeButton";
 
 export interface NavigationItems {
@@ -24,6 +23,7 @@ export const navigationItems: NavigationItems[] = [
 		hasMenu: true,
 		menuItems: [
 			{ text: "Highscores", url: "/community/highscores" },
+			{ text: "Who is online", url: "/community/who-is-online" },
 			// { text: "Guilds", url: "/community/guilds" },
 			// { text: "Houses", url: "/community/houses" },
 		],
@@ -31,10 +31,7 @@ export const navigationItems: NavigationItems[] = [
 	},
 	{
 		hasMenu: true,
-		menuItems: [
-			// { text: "Server Information", url: "/serverinfo" },
-			{ text: "Downloads", url: "/downloads" },
-		],
+		menuItems: [{ text: "Server Information", url: "/library/server-info" }],
 		text: "Library",
 	},
 	// { text: "Donate", href: "/donate" },
@@ -45,7 +42,6 @@ export const TopBar = () => {
 	const user = trpc.me.me.useQuery().data;
 	const status = trpc.status.status.useQuery().data;
 	const router = useRouter();
-	const { toggleColorMode, colorMode } = useColorMode();
 
 	return (
 		<Flex
@@ -129,7 +125,7 @@ export const TopBar = () => {
 				</HStack>
 			</TopBarItem>
 			<TopBarSeparator ml="10px" height="80%" alignSelf="center" />
-			<Link href="/online">
+			<Link href="/community/who-is-online">
 				<TopBarItem paddingLeft="10px" flexDirection="row">
 					<Text fontSize="sm" color="white">
 						{status?.onlineCount ?? "..."} players online
