@@ -9,6 +9,7 @@ import TextInput from "@component/TextInput";
 import DropdownButton from "@component/DropdownButton";
 import { useRouter } from "next/router";
 import { MdDarkMode, MdOutlineDarkMode } from "react-icons/md";
+import { DarkModeButton } from "@component/DarkModeButton";
 
 export interface NavigationItems {
 	text: string;
@@ -17,7 +18,7 @@ export interface NavigationItems {
 	menuItems?: { text: string; url: string }[];
 }
 
-const navigationItems: NavigationItems[] = [
+export const navigationItems: NavigationItems[] = [
 	{ text: "News", href: "/" },
 	{
 		hasMenu: true,
@@ -114,19 +115,8 @@ export const TopBar = () => {
 
 			<TopBarItem padding={0}>
 				<HStack alignItems="center" gap="10px">
+					<DarkModeButton aria-label="Toggle Dark Mode" />
 					{/* TODO: move to component */}
-					<Button
-						size="25px"
-						title={colorMode === "light" ? "Dark mode" : "Light mode"}
-						variant="ghost"
-						padding={0}
-						color="white"
-						_hover={{ color: "violet.300" }}
-						_active={{}}
-						onClick={toggleColorMode}
-					>
-						{colorMode === "light" ? <MdOutlineDarkMode size="25px" /> : <MdDarkMode size="25px" />}
-					</Button>
 					<Link href={process.env.NEXT_PUBLIC_GITHUB_URL ?? ""} title="Github" isExternal color="white" _hover={{ color: "violet.300" }}>
 						<FaGithub size="25px" />
 					</Link>

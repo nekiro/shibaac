@@ -5,7 +5,7 @@ import { useColors } from "@hook/useColors";
 export interface TextInputProps extends InputProps {}
 
 const TextInput = forwardRef<HTMLInputElement, InputProps>(({ ...props }, ref) => {
-	const { inputBgColor, textColor } = useColors();
+	const { inputBgColor } = useColors();
 
 	return (
 		<Input

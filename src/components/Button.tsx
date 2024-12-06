@@ -8,7 +8,7 @@ export type ButtonType = "button" | "submit" | "reset";
 export type ButtonColorType = "danger" | "primary";
 
 export interface ButtonProps extends ChakraButtonProps {
-	value: string;
+	value?: string;
 	size?: string;
 	type?: ButtonType;
 	href?: string;
@@ -21,24 +21,27 @@ export interface ButtonProps extends ChakraButtonProps {
 const Button = ({
 	value,
 	type = "button",
-	btnColorType = "primary",
+	btnColorType,
 	size = "md",
 	href,
 	isLoading = false,
 	isActive = false,
 	loadingText,
+	children,
+	...props
 }: ButtonProps) => {
 	const btn = (
 		<ChakraButton
 			type={type}
-			colorScheme={btnTypeToColor[btnColorType]}
+			colorScheme={btnColorType ? btnTypeToColor[btnColorType] : undefined}
 			size={size}
 			fontWeight="normal"
 			isLoading={isLoading}
 			isActive={isActive}
 			loadingText={loadingText}
+			{...props}
 		>
-			{value}
+			{value ?? children}
 		</ChakraButton>
 	);
 
