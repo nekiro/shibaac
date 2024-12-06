@@ -13,7 +13,8 @@ const Head = ({ title, description = "Automatic Account Creator" }: HeadProps) =
 			<NextHead>
 				<meta charSet="UTF-8" key="charset" />
 				<meta name="viewport" content="width=device-width,initial-scale=1" key="viewport" />
-				<link rel="icon" href={`/favicon.ico`} key="favicon" />
+				<meta property="og:image" content="/favicon.ico" />
+				<link rel="icon" href="/favicon.ico" key="favicon" />
 			</NextHead>
 			<NextSeo
 				title={`${process.env.NEXT_PUBLIC_SERVER_NAME} - ${title}`}
