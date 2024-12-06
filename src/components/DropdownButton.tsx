@@ -22,7 +22,7 @@ const DropdownButton = ({ hasMenu = false, text, href, list }: DropdownButtonPro
 			<Menu isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
 				<MenuButton
 					color={isActive ? "black" : "white"}
-					bg={isActive ? "#c3a6d9" : ""}
+					bg={isActive ? "violet.300" : ""}
 					as={Button}
 					h="100%"
 					borderRadius={0}
@@ -58,7 +58,7 @@ const DropdownButton = ({ hasMenu = false, text, href, list }: DropdownButtonPro
 			<Button
 				h="100%"
 				color={isActive ? "black" : "white"}
-				bg={isActive ? "#c3a6d9" : ""}
+				bg={isActive ? "violet.300" : ""}
 				borderRadius={0}
 				fontWeight="normal"
 				_hover={{ bgColor: "rgba(255, 255, 255, 0.3)" }}

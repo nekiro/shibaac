@@ -56,7 +56,7 @@ export const TopBar = () => {
 			<HStack>
 				<Link href="/" style={{ height: "100%", textDecoration: "none" }}>
 					<TopBarItem paddingLeft={0} userSelect="none" pointerEvents="none">
-						<Image height="70%" src="/images/header.png" alt="shibaac" />
+						<Image height="35px" boxSize="35px" src="/images/header.png" alt="shibaac" />
 						<Text fontSize="lg" color="white" ml="10px">
 							Shibaac
 						</Text>

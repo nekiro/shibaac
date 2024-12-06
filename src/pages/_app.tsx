@@ -10,7 +10,7 @@ BigInt.prototype.toJSON = function () {
 	return int ?? this.toString();
 };
 
-const MyApp = ({ Component, pageProps }: any) => {
+const App = ({ Component, pageProps }: any) => {
 	return (
 		<ChakraProvider theme={Theme}>
 			<Layout>
@@ -20,4 +20,4 @@ const MyApp = ({ Component, pageProps }: any) => {
 	);
 };
 
-export default trpc.withTRPC(MyApp);
+export default trpc.withTRPC(App);
