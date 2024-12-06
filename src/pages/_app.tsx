@@ -1,6 +1,6 @@
 import Layout from "../layout";
 import { ChakraProvider } from "@chakra-ui/react";
-import { Theme } from "../layout/theme";
+import { Theme } from "@layout/theme";
 import React from "react";
 import { trpc } from "../utils/trpc";
 

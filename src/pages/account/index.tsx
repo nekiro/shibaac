@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Panel from "@component/Panel";
-import Head from "../../layout/Head";
+import Head from "@layout/Head";
 import { fetchApi } from "@lib/request";
 import { User, withSessionSsr } from "@lib/session";
 import Button from "@component/Button";

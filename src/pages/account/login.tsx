@@ -1,6 +1,6 @@
 import React from "react";
 import Panel from "@component/Panel";
-import Head from "../../layout/Head";
+import Head from "@layout/Head";
 import Link from "@component/Link";
 import { useRouter } from "next/router";
 import { withSessionSsr } from "@lib/session";

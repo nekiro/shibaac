@@ -1,8 +1,6 @@
-// pages/_document.tsx
-
 import { Html, Head, Main, NextScript } from "next/document";
 import { ColorModeScript } from "@chakra-ui/react";
-import { Theme } from "../layout/theme";
+import { Theme } from "@layout/theme";
 
 const MyDocument = () => {
 	return (

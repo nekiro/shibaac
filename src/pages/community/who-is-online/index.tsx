@@ -1,6 +1,6 @@
 import Panel from "@component/Panel";
 import StrippedTable from "@component/StrippedTable";
-import Head from "../../../layout/Head";
+import Head from "@layout/Head";
 import Label from "@component/Label";
 import { trpc } from "@util/trpc";
 import { VStack } from "@chakra-ui/react";
@@ -12,8 +12,8 @@ export default function WhoIsOnline() {
 
 	return (
 		<>
-			<Head title="Online" />
-			<Panel header="Online List">
+			<Head title="Who is online" />
+			<Panel header="Who is online">
 				<VStack>
 					<Label colorScheme="violet" fontSize="sm">
 						Overall Maximum: {status.data?.maxOnlineCount ?? 0} players. There are currently {players.data?.length ?? 0} players online on

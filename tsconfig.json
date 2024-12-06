@@ -37,6 +37,9 @@
 			"@hook/*": [
 				"src/hooks/*"
 			],
+			"@layout/*": [
+				"src/layout/*"
+			],
 		},
 	},
 	"include": [

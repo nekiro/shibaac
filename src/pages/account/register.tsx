@@ -1,6 +1,6 @@
 import React from "react";
 import Panel from "@component/Panel";
-import Head from "../../layout/Head";
+import Head from "@layout/Head";
 import { withSessionSsr } from "@lib/session";
 import { trpc } from "@util/trpc";
 import { SubmitHandler, useForm } from "react-hook-form";
