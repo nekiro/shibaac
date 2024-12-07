@@ -21,6 +21,7 @@ import { IoChevronDown, IoChevronUp } from "react-icons/io5";
 import { useRouter } from "next/router";
 import { trpc } from "@util/trpc";
 import { DarkModeButton } from "@component/DarkModeButton";
+import { NavBar } from "@component/NavBar";
 
 export const MobileTopBar = () => {
 	const user = trpc.me.me.useQuery().data;
@@ -33,16 +34,7 @@ export const MobileTopBar = () => {
 	};
 
 	return (
-		<Flex
-			justifyContent="space-between"
-			alignItems="center"
-			bgColor="blackAlpha.600"
-			h="50px"
-			paddingLeft="15px"
-			paddingRight="15px"
-			borderBottomWidth="1px"
-			borderColor="violet.400"
-		>
+		<NavBar justifyContent="space-between">
 			<Link href="/" style={{ height: "100%", textDecoration: "none" }}>
 				<TopBarItem paddingLeft={0} userSelect="none" pointerEvents="none">
 					<Image height="35px" src="/images/header.png" alt="shibaac" />
@@ -153,6 +145,6 @@ export const MobileTopBar = () => {
 					</VStack>
 				</Flex>
 			)}
-		</Flex>
+		</NavBar>
 	);
 };

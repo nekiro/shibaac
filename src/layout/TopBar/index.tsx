@@ -9,6 +9,7 @@ import TextInput from "@component/TextInput";
 import DropdownButton from "@component/DropdownButton";
 import { useRouter } from "next/router";
 import { DarkModeButton } from "@component/DarkModeButton";
+import { NavBar } from "@component/NavBar";
 
 export interface NavigationItems {
 	text: string;
@@ -44,15 +45,7 @@ export const TopBar = () => {
 	const router = useRouter();
 
 	return (
-		<Flex
-			justifyContent="center"
-			bgColor="blackAlpha.600"
-			h="50px"
-			paddingLeft="15px"
-			paddingRight="15px"
-			borderBottomWidth="1px"
-			borderColor="violet.400"
-		>
+		<NavBar>
 			<HStack>
 				<Link href="/" style={{ height: "100%", textDecoration: "none" }}>
 					<TopBarItem paddingLeft={0} userSelect="none" pointerEvents="none">
@@ -132,6 +125,6 @@ export const TopBar = () => {
 					</Text>
 				</TopBarItem>
 			</Link>
-		</Flex>
+		</NavBar>
 	);
 };
