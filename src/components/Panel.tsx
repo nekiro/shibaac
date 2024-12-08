@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import Loader from "./Loader";
-import { Flex, Box, Text, Grid, FlexProps } from "@chakra-ui/react";
+import { Flex, Box, FlexProps, Heading } from "@chakra-ui/react";
 import { useColors } from "@hook/useColors";
 
 export interface PanelProps extends FlexProps {
@@ -19,19 +19,16 @@ const Panel = ({ header, identifier, children, isLoading = false, borderRadius =
 			width="100%"
 			flexDirection="column"
 			color={textColor}
-			border="1px"
-			borderColor="#ddd"
 			bgColor={bgColor}
-			textAlign="center"
 			borderRadius={borderRadius}
 			borderBottomRadius={0}
 			{...props}
 		>
 			{header && (
-				<Flex color="black" borderRadius={borderRadius}>
-					<Grid marginBottom="10px" width="100%" templateColumns="1fr auto">
-						<Text color={textColor}>{header}</Text>
-					</Grid>
+				<Flex justifyContent="center" borderRadius={borderRadius} fontWeight="bold" paddingBottom="1em">
+					<Heading as="h1" size="md" color={textColor}>
+						{header}
+					</Heading>
 				</Flex>
 			)}
 			<Box padding={padding}>{isLoading ? <Loader /> : children}</Box>
