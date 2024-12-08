@@ -39,6 +39,7 @@ const DropdownButton = ({ hasMenu = false, text, href, list }: DropdownButtonPro
 						<Link key={item.text} href={item.url} passHref>
 							<MenuItem
 								borderRadius="sm"
+								rounded="md"
 								_hover={{ bgColor: hoverColor }}
 								_focus={{ bgColor: hoverColor }}
 								backgroundColor={item.isActive ? "violet.50" : ""}

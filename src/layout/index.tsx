@@ -13,7 +13,7 @@ const Layout = ({ children }: PropsWithChildren) => {
 		<>
 			<Head title="News" />
 			{TopBarComponent && <TopBarComponent />}
-			<Flex as="main" w={{ lg: "1050px", base: "100%" }} bgColor={bgColor} mt="2em" marginX={"auto"} padding="1em">
+			<Flex as="main" w={{ lg: "1050px", base: "100%" }} bgColor={bgColor} mt="2em" marginX={"auto"} padding="1em" rounded="md">
 				{children}
 			</Flex>
 			<Text userSelect="none" fontSize="sm" position="fixed" color="white" bottom="5" left="50%" transform="translateX(-50%)">
