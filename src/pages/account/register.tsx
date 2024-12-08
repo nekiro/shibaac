@@ -105,8 +105,8 @@ export default function Register() {
 }
 
 export const getServerSideProps = withSessionSsr(async function ({ req }) {
-	const { user } = req.session;
-	if (user) {
+	const { account } = req.session;
+	if (account) {
 		return {
 			redirect: {
 				destination: "/account",

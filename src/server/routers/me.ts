@@ -5,8 +5,8 @@ export const meRouter = router({
 		const { session } = ctx;
 
 		return {
-			isLoggedIn: !!session.user,
-			account: session.user,
+			isLoggedIn: !!session.account,
+			account: session.account,
 		};
 	}),
 });

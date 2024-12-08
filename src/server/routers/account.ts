@@ -3,23 +3,12 @@ import { procedure, authProcedure, router } from "../trpc";
 import prisma from "../../prisma";
 import { sha1Encrypt } from "@lib/crypt";
 import { TRPCError } from "@trpc/server";
+import { accountWithPlayers } from "@shared/types/PrismaAccount";
 
 //TODO: accept query parameters to pull only required data
 //TODO: guard some these endpoints with authentication
 
 export const accountRouter = router({
-	singleById: procedure.input(z.object({ id: z.number() })).query(async ({ input }) => {
-		const account = await prisma.accounts.findFirst({
-			where: {
-				id: input.id,
-			},
-			include: {
-				players: { select: { id: true, name: true, level: true, vocation: true } },
-			},
-		});
-
-		return account;
-	}),
 	create: procedure
 		.input(
 			z.object({
@@ -59,10 +48,11 @@ export const accountRouter = router({
 			return account;
 		}),
 	login: procedure.input(z.object({ name: z.string(), password: z.string(), twoFAToken: z.string().optional() })).mutation(async ({ input, ctx }) => {
-		const { name, password, twoFAToken } = input;
+		const { name, password } = input;
 		const { session, req } = ctx;
 
 		const account = await prisma.accounts.findFirst({
+			...accountWithPlayers,
 			where: {
 				name,
 				password: await sha1Encrypt(password),
@@ -73,25 +63,35 @@ export const accountRouter = router({
 			throw new Error("Wrong credentials.");
 		}
 
-		// if (account.twoFAEnabled) {
-		// 	const verified = speakeasy.totp.verify({
-		// 		secret: String(account.twoFASecret),
-		// 		encoding: "base32",
-		// 		token: twoFAToken,
-		// 		window: 2,
-		// 	});
-
-		// 	if (!verified) {
-		// 		return { success: false, message: "Wrong 2FA token." };
-		// 	}
-		// }
-
-		session.user = account;
+		session.account = account;
 		await req.session.save();
 
 		return account;
 	}),
-	logout: procedure.mutation(async ({ ctx }) => {
+	singleById: authProcedure.input(z.object({ id: z.number() })).query(async ({ ctx, input }) => {
+		if (ctx.session.account?.id !== input.id) {
+			throw new TRPCError({ code: "FORBIDDEN", message: "Forbidden" });
+		}
+
+		const account = await prisma.accounts.findFirst({
+			select: {
+				id: true,
+				name: true,
+				email: true,
+				type: true,
+				coins: true,
+				premium_ends_at: true,
+				creation: true,
+				players: { select: { id: true, name: true, level: true, vocation: true } },
+			},
+			where: {
+				id: input.id,
+			},
+		});
+
+		return account;
+	}),
+	logout: authProcedure.mutation(async ({ ctx }) => {
 		ctx.session.destroy();
 	}),
 	deleteCharacter: authProcedure.input(z.object({ name: z.string(), password: z.string() })).mutation(async ({ input, ctx }) => {
@@ -100,7 +100,7 @@ export const accountRouter = router({
 
 		const account = await prisma.accounts.findFirst({
 			where: {
-				id: session.user!.id,
+				id: session.account!.id,
 				password: await sha1Encrypt(password),
 			},
 			include: {
@@ -146,7 +146,7 @@ export const accountRouter = router({
 			player = await prisma.players.create({
 				data: {
 					name,
-					account_id: ctx.session.user!.id,
+					account_id: ctx.session.account!.id,
 					vocation,
 					sex,
 				},
@@ -167,7 +167,7 @@ export const accountRouter = router({
 
 			const account = await prisma.accounts.findFirst({
 				where: {
-					id: session.user!.id,
+					id: session.account!.id,
 					password: await sha1Encrypt(password),
 				},
 			});
@@ -198,7 +198,7 @@ export const accountRouter = router({
 
 			const account = await prisma.accounts.findFirst({
 				where: {
-					id: session.user!.id,
+					id: session.account!.id,
 					password: await sha1Encrypt(password),
 				},
 			});

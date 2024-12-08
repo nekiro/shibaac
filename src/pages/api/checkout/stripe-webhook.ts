@@ -10,7 +10,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 const post = withSessionRoute(async (req: NextApiRequest, res: NextApiResponse) => {
 	const sig = req.headers["stripe-signature"]!;
-	const user = req.session.user;
+	const user = req.session.account;
 	if (!user) {
 		return res.status(403).json({ message: "Not authorized." });
 	}

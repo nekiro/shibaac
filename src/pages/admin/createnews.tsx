@@ -104,8 +104,8 @@ export default function CreateNews({ user }: any) {
 }
 
 export const getServerSideProps = withSessionSsr(async function ({ req }) {
-	const { user } = req.session;
-	if (!user) {
+	const { account } = req.session;
+	if (!account) {
 		return {
 			redirect: {
 				destination: "/account/login",
@@ -115,6 +115,6 @@ export const getServerSideProps = withSessionSsr(async function ({ req }) {
 	}
 
 	return {
-		props: { user },
+		props: { account },
 	};
 });

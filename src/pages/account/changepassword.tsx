@@ -92,8 +92,8 @@ export default function ChangePassword() {
 }
 
 export const getServerSideProps = withSessionSsr(function ({ req }) {
-	const { user } = req.session;
-	if (!user) {
+	const { account } = req.session;
+	if (!account) {
 		return {
 			redirect: {
 				destination: `/account/login?redirect=${encodeURIComponent(req.url!)}`,

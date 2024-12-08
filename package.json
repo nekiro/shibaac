@@ -48,6 +48,7 @@
 		"net": "^1.0.2",
 		"next": "^15.0.3",
 		"next-seo": "^6.6.0",
+		"nextjs-toploader": "^3.7.15",
 		"node-cron": "^3.0.3",
 		"nodemailer": "^6.9.16",
 		"promise-socket": "^8.0.0",

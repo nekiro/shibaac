@@ -2,13 +2,11 @@ import { IronSessionOptions } from "iron-session";
 import { withIronSessionApiRoute, withIronSessionSsr } from "iron-session/next";
 import { GetServerSidePropsContext, GetServerSidePropsResult, NextApiHandler } from "next";
 import { dev } from "./config";
-import type { accounts } from "@prisma/client";
-
-export interface User extends accounts {}
+import { AccountWithPlayers } from "@shared/types/PrismaAccount";
 
 declare module "iron-session" {
 	interface IronSessionData {
-		user?: User;
+		account?: AccountWithPlayers;
 	}
 }
 

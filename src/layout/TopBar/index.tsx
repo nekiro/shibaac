@@ -40,7 +40,7 @@ export const navigationItems: NavigationItems[] = [
 ];
 
 export const TopBar = () => {
-	const user = trpc.me.me.useQuery().data;
+	const account = trpc.me.me.useQuery().data;
 	const status = trpc.status.status.useQuery().data;
 	const router = useRouter();
 
@@ -79,9 +79,9 @@ export const TopBar = () => {
 					</TopBarItem>
 				))}
 				<TopBarItem padding={0}>
-					{user ? (
+					{account ? (
 						<DropdownButton
-							text={user.account?.name ?? "unknown"}
+							text={account.account?.name ?? "unknown"}
 							hasMenu={true}
 							list={[
 								{ text: "Account Management", url: "/account" },

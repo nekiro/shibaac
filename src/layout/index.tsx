@@ -4,6 +4,7 @@ import { Flex, Text, useBreakpointValue } from "@chakra-ui/react";
 import { TopBar } from "./TopBar";
 import { useColors } from "@hook/useColors";
 import { MobileTopBar } from "./TopBar/Mobile";
+import NextTopLoader from "nextjs-toploader";
 
 const Layout = ({ children }: PropsWithChildren) => {
 	const { bgColor } = useColors();
@@ -12,6 +13,7 @@ const Layout = ({ children }: PropsWithChildren) => {
 	return (
 		<>
 			<Head title="News" />
+			<NextTopLoader color="#c3a6d9" />
 			{TopBarComponent && <TopBarComponent />}
 			<Flex as="main" w={{ lg: "1050px", base: "100%" }} bgColor={bgColor} mt="2em" marginX={"auto"} padding="1em" rounded="md">
 				{children}

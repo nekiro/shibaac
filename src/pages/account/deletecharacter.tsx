@@ -1,6 +1,6 @@
 import React from "react";
 import Panel from "@component/Panel";
-import { User, withSessionSsr } from "@lib/session";
+import { withSessionSsr } from "@lib/session";
 import { Select, Text, Container, VStack, Wrap } from "@chakra-ui/react";
 import { trpc } from "@util/trpc";
 import { useFormFeedback } from "@hook/useFormFeedback";
@@ -10,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import TextInput from "@component/TextInput";
 import Button from "@component/Button";
 import { FormField } from "@component/FormField";
+import type { AccountWithPlayers } from "@shared/types/PrismaAccount";
 
 const schema = z.object({
 	name: z.string(),
@@ -17,10 +18,10 @@ const schema = z.object({
 });
 
 export interface DeleteCharacterProps {
-	user: User;
+	account: AccountWithPlayers;
 }
 
-export default function DeleteCharacter({ user }: DeleteCharacterProps) {
+export default function DeleteCharacter({ account }: DeleteCharacterProps) {
 	const {
 		register,
 		handleSubmit,
@@ -29,13 +30,9 @@ export default function DeleteCharacter({ user }: DeleteCharacterProps) {
 	} = useForm<z.infer<typeof schema>>({
 		resolver: zodResolver(schema),
 	});
-	const account = trpc.account.singleById.useQuery({ id: user.id });
+
 	const deleteCharacter = trpc.account.deleteCharacter.useMutation();
 	const { showResponse, handleResponse } = useFormFeedback();
-
-	if (account.isLoading) {
-		return <Panel isLoading={true} />;
-	}
 
 	const onSubmit: SubmitHandler<z.infer<typeof schema>> = async ({ name, password }) => {
 		handleResponse(async () => {
@@ -57,7 +54,7 @@ export default function DeleteCharacter({ user }: DeleteCharacterProps) {
 					<VStack spacing={5}>
 						<FormField key={"name"} error={errors.name?.message} name={"name"} label="Character Name">
 							<Select {...register("name")}>
-								{account.data?.players.map((character) => (
+								{account.players.map((character) => (
 									<option key={character.name} value={character.name}>
 										{character.name}
 									</option>
@@ -79,8 +76,8 @@ export default function DeleteCharacter({ user }: DeleteCharacterProps) {
 }
 
 export const getServerSideProps = withSessionSsr(async function ({ req }) {
-	const { user } = req.session;
-	if (!user) {
+	const { account } = req.session;
+	if (!account) {
 		return {
 			redirect: {
 				destination: `/account/login?redirect=${encodeURIComponent(req.url!)}`,
@@ -90,6 +87,6 @@ export const getServerSideProps = withSessionSsr(async function ({ req }) {
 	}
 
 	return {
-		props: { user },
+		props: { account },
 	};
 });
