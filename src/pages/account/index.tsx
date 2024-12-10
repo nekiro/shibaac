@@ -1,30 +1,10 @@
-import React, { useEffect, useState } from "react";
 import Panel from "@component/Panel";
 import Head from "@layout/Head";
-import { fetchApi } from "@lib/request";
 import { withSessionSsr } from "@lib/session";
 import Button from "@component/Button";
 import StripedTable from "@component/StrippedTable";
-import {
-	Alert,
-	AlertIcon,
-	Box,
-	Button as ChakraButton,
-	Center,
-	Image,
-	Modal,
-	ModalBody,
-	ModalCloseButton,
-	ModalContent,
-	ModalFooter,
-	ModalHeader,
-	ModalOverlay,
-	Spinner,
-	Text,
-	Wrap,
-} from "@chakra-ui/react";
+import { Text, Wrap } from "@chakra-ui/react";
 import { timestampToDate, vocationIdToName } from "../../lib";
-import { Toggle } from "../../components/Toggle";
 import { appRouter } from "src/server/routers/_app";
 import { createCallerFactory } from "src/server/trpc";
 import type { AccountWithPlayers } from "@shared/types/PrismaAccount";

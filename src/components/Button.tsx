@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { Button as ChakraButton, ButtonProps as ChakraButtonProps } from "@chakra-ui/react";
+import { useColors } from "@hook/useColors";
 
 const btnTypeToColor = { danger: "red", primary: "violet" };
 
@@ -22,7 +23,7 @@ const Button = ({
 	value,
 	type = "button",
 	btnColorType,
-	size = "md",
+	size = "lg",
 	href,
 	isLoading = false,
 	isActive = false,
@@ -39,6 +40,7 @@ const Button = ({
 			isLoading={isLoading}
 			isActive={isActive}
 			loadingText={loadingText}
+			color="text.light"
 			{...props}
 		>
 			{value ?? children}

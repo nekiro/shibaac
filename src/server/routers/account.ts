@@ -4,6 +4,7 @@ import prisma from "../../prisma";
 import { sha1Encrypt } from "@lib/crypt";
 import { TRPCError } from "@trpc/server";
 import { accountWithPlayers } from "@shared/types/PrismaAccount";
+import { verifyCaptcha } from "@lib/captcha";
 
 //TODO: accept query parameters to pull only required data
 //TODO: guard some these endpoints with authentication
@@ -47,27 +48,35 @@ export const accountRouter = router({
 
 			return account;
 		}),
-	login: procedure.input(z.object({ name: z.string(), password: z.string(), twoFAToken: z.string().optional() })).mutation(async ({ input, ctx }) => {
-		const { name, password } = input;
-		const { session, req } = ctx;
+	login: procedure
+		.input(z.object({ name: z.string(), password: z.string(), captchaToken: z.string(), twoFAToken: z.string().optional() }))
+		.mutation(async ({ input, ctx }) => {
+			const { name, password, captchaToken } = input;
+			const { session, req } = ctx;
 
-		const account = await prisma.accounts.findFirst({
-			...accountWithPlayers,
-			where: {
-				name,
-				password: await sha1Encrypt(password),
-			},
-		});
+			try {
+				await verifyCaptcha(captchaToken);
+			} catch (e) {
+				throw new TRPCError({ code: "BAD_REQUEST", message: "Captcha verification failed." });
+			}
 
-		if (!account) {
-			throw new Error("Wrong credentials.");
-		}
+			const account = await prisma.accounts.findFirst({
+				...accountWithPlayers,
+				where: {
+					name,
+					password: await sha1Encrypt(password),
+				},
+			});
 
-		session.account = account;
-		await req.session.save();
+			if (!account) {
+				throw new TRPCError({ code: "BAD_REQUEST", message: "Wrong credentials." });
+			}
 
-		return account;
-	}),
+			session.account = account;
+			await req.session.save();
+
+			return account;
+		}),
 	singleById: authProcedure.input(z.object({ id: z.number() })).query(async ({ ctx, input }) => {
 		if (ctx.session.account?.id !== input.id) {
 			throw new TRPCError({ code: "FORBIDDEN", message: "Forbidden" });

@@ -17,6 +17,7 @@ const TextInput = forwardRef<HTMLInputElement, InputProps>(({ ...props }, ref) =
 			borderColor="violet.200"
 			bg={inputBgColor}
 			color="black"
+			height="45px"
 			{...props}
 		/>
 	);

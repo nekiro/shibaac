@@ -1,18 +1,19 @@
-import { FormControl, FormLabel, FormErrorMessage } from "@chakra-ui/react";
-import { PropsWithChildren } from "react";
+import { FormControl, FormLabel, FormErrorMessage, FormControlProps } from "@chakra-ui/react";
 
-export interface FormFieldProps extends PropsWithChildren {
+export interface FormFieldProps extends FormControlProps {
 	name: string;
-	label: string;
+	label?: string;
 	error?: string;
 }
 
-export const FormField = ({ name, label, error, children }: FormFieldProps) => {
+export const FormField = ({ name, label, error, children, ...props }: FormFieldProps) => {
 	return (
-		<FormControl key={name} isInvalid={!!error}>
-			<FormLabel fontSize="sm" htmlFor={name}>
-				{label}
-			</FormLabel>
+		<FormControl key={name} isInvalid={!!error} {...props}>
+			{label && (
+				<FormLabel fontSize="sm" htmlFor={name}>
+					{label}
+				</FormLabel>
+			)}
 			{children}
 			{error && <FormErrorMessage fontSize="sm">{error}</FormErrorMessage>}
 		</FormControl>

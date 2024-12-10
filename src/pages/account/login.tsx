@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useRef } from "react";
 import Panel from "@component/Panel";
 import Head from "@layout/Head";
 import Link from "@component/Link";
 import { useRouter } from "next/router";
 import { withSessionSsr } from "@lib/session";
-import { Text, Container, VStack, Wrap } from "@chakra-ui/react";
+import { Text, VStack } from "@chakra-ui/react";
 import { trpc } from "@util/trpc";
 import { useFormFeedback } from "@hook/useFormFeedback";
 import TextInput from "@component/TextInput";
@@ -13,6 +13,8 @@ import { FormField } from "@component/FormField";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Captcha } from "@component/Captcha";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const fields = [
 	{ type: "input", name: "name", label: "Account Name" },
@@ -30,6 +32,7 @@ const fields = [
 const schema = z.object({
 	name: z.string().min(5, { message: "Account name must be at least 5 characters long" }),
 	password: z.string().min(6, { message: "Password must be at least 6 characters long" }),
+	captcha: z.string({ message: "Captcha is required" }),
 });
 
 export default function Login() {
@@ -37,17 +40,20 @@ export default function Login() {
 		register,
 		handleSubmit,
 		reset,
+		setValue,
+		trigger,
 		formState: { errors, isValid, isSubmitting },
 	} = useForm<z.infer<typeof schema>>({
 		resolver: zodResolver(schema),
 	});
+	const captchaRef = useRef<ReCAPTCHA>(null);
 	const router = useRouter();
 	const login = trpc.account.login.useMutation();
 	const { handleResponse, showResponse } = useFormFeedback();
 
-	const onSubmit: SubmitHandler<z.infer<typeof schema>> = async ({ name, password }) => {
+	const onSubmit: SubmitHandler<z.infer<typeof schema>> = async ({ name, password, captcha }) => {
 		handleResponse(async () => {
-			const account = await login.mutateAsync({ name, password });
+			const account = await login.mutateAsync({ name, password, captchaToken: captcha });
 			if (account) {
 				const redirectUrl = (router.query.redirect as string) || "/account";
 				router.push(redirectUrl);
@@ -57,35 +63,54 @@ export default function Login() {
 		});
 
 		reset();
+
+		if (captchaRef.current) {
+			captchaRef.current.reset();
+		}
 	};
 
 	return (
 		<>
-			<Head title="Login" />
-			<Panel header="Login">
-				<Text align="center" margin="10px">
-					Please enter your account name and your password.
-				</Text>
-				<Text align="center" margin="10px">
-					<Link href="/account/register" text="Create an account " />
-					if you do not have one yet.
-				</Text>
-
-				<form onSubmit={handleSubmit(onSubmit)}>
-					<Container alignContent={"center"} padding={2}>
+			<Head title="Log In" />
+			<Panel header="Log In">
+				<VStack>
+					<form onSubmit={handleSubmit(onSubmit)}>
 						<VStack spacing={5}>
 							{fields.map((field) => (
 								<FormField key={field.name} error={(errors as any)[field.name]?.message} name={field.name} label={field.label}>
 									<TextInput type={field.type} {...register(field.name as any)} />
 								</FormField>
 							))}
-							<Wrap spacing={2} padding="10px">
-								<Button isLoading={isSubmitting} isActive={!isValid} loadingText="Submitting" type="submit" value="Submit" btnColorType="primary" />
-								<Button value="Lost Account?" btnColorType="danger" href="/account/lost" />
-							</Wrap>
+
+							<FormField error={errors.captcha?.message} name="Captcha" justifyItems="center">
+								<Captcha
+									{...register("captcha")}
+									onChange={(token) => {
+										setValue("captcha", token ?? "");
+										trigger("captcha");
+									}}
+									ref={captchaRef}
+								/>
+							</FormField>
+
+							<Button
+								isLoading={isSubmitting}
+								isActive={!isValid}
+								width="100%"
+								loadingText="Submitting"
+								type="submit"
+								value="Log In"
+								btnColorType="primary"
+							/>
+
+							<Text align="center">
+								Don&apos;t have an account? <Link href="/account/register">Register</Link>
+							</Text>
+
+							<Link href="/account/lost">Forgot password?</Link>
 						</VStack>
-					</Container>
-				</form>
+					</form>
+				</VStack>
 			</Panel>
 		</>
 	);
