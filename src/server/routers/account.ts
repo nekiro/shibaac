@@ -16,10 +16,20 @@ export const accountRouter = router({
 				name: z.string(),
 				password: z.string(),
 				email: z.string().email(),
+				captchaToken: z.string().optional(),
 			}),
 		)
 		.mutation(async ({ input }) => {
-			const { name, password, email } = input;
+			const { name, password, email, captchaToken } = input;
+
+			if (captchaToken) {
+				try {
+					await verifyCaptcha(captchaToken);
+				} catch (e) {
+					throw new TRPCError({ code: "BAD_REQUEST", message: "Captcha verification failed." });
+				}
+			}
+
 			let account = await prisma.accounts.findFirst({
 				where: {
 					name,
@@ -49,15 +59,17 @@ export const accountRouter = router({
 			return account;
 		}),
 	login: procedure
-		.input(z.object({ name: z.string(), password: z.string(), captchaToken: z.string(), twoFAToken: z.string().optional() }))
+		.input(z.object({ name: z.string(), password: z.string(), captchaToken: z.string().optional(), twoFAToken: z.string().optional() }))
 		.mutation(async ({ input, ctx }) => {
 			const { name, password, captchaToken } = input;
 			const { session, req } = ctx;
 
-			try {
-				await verifyCaptcha(captchaToken);
-			} catch (e) {
-				throw new TRPCError({ code: "BAD_REQUEST", message: "Captcha verification failed." });
+			if (captchaToken) {
+				try {
+					await verifyCaptcha(captchaToken);
+				} catch (e) {
+					throw new TRPCError({ code: "BAD_REQUEST", message: "Captcha verification failed." });
+				}
 			}
 
 			const account = await prisma.accounts.findFirst({
@@ -69,7 +81,7 @@ export const accountRouter = router({
 			});
 
 			if (!account) {
-				throw new TRPCError({ code: "BAD_REQUEST", message: "Wrong credentials." });
+				throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid password." });
 			}
 
 			session.account = account;

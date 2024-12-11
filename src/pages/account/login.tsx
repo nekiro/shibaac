@@ -15,24 +15,21 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Captcha } from "@component/Captcha";
 import ReCAPTCHA from "react-google-recaptcha";
+import { Content } from "@component/Content";
 
 const fields = [
 	{ type: "input", name: "name", label: "Account Name" },
 	{ type: "password", name: "password", label: "Password" },
-	// {
-	// 	type: "text",
-	// 	name: "twoFAToken",
-	// 	placeholder: "If you have 2FA, code: XXX-XXX",
-	// 	label: "2FA Token",
-	// },
 ];
 
 // TODO: add 2FA support
 
+const isCaptchaRequired = Boolean(process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY);
+
 const schema = z.object({
 	name: z.string().min(5, { message: "Account name must be at least 5 characters long" }),
 	password: z.string().min(6, { message: "Password must be at least 6 characters long" }),
-	captcha: z.string({ message: "Captcha is required" }),
+	captcha: isCaptchaRequired ? z.string({ message: "Captcha is required" }) : z.string().optional(),
 });
 
 export default function Login() {
@@ -72,27 +69,28 @@ export default function Login() {
 	return (
 		<>
 			<Head title="Log In" />
-			<Panel header="Log In">
-				<VStack>
+			<Content>
+				<Content.Header>Log In</Content.Header>
+				<Content.Body>
 					<form onSubmit={handleSubmit(onSubmit)}>
-						<VStack spacing={5}>
+						<VStack spacing={10} w="25rem" maxW="25rem">
 							{fields.map((field) => (
 								<FormField key={field.name} error={(errors as any)[field.name]?.message} name={field.name} label={field.label}>
 									<TextInput type={field.type} {...register(field.name as any)} />
 								</FormField>
 							))}
-
-							<FormField error={errors.captcha?.message} name="Captcha" justifyItems="center">
-								<Captcha
-									{...register("captcha")}
-									onChange={(token) => {
-										setValue("captcha", token ?? "");
-										trigger("captcha");
-									}}
-									ref={captchaRef}
-								/>
-							</FormField>
-
+							{process.env.NEXT_PUBLIC_CAPTCHA_SITE_KEY && (
+								<FormField error={errors.captcha?.message} name="Captcha" justifyItems="center">
+									<Captcha
+										{...register("captcha")}
+										onChange={(token) => {
+											setValue("captcha", token ?? "");
+											trigger("captcha");
+										}}
+										ref={captchaRef}
+									/>
+								</FormField>
+							)}
 							<Button
 								isLoading={isSubmitting}
 								isActive={!isValid}
@@ -102,16 +100,22 @@ export default function Login() {
 								value="Log In"
 								btnColorType="primary"
 							/>
+							<VStack>
+								<Text align="center">
+									Don&apos;t have an account?{" "}
+									<Link textDecoration="underline" href="/account/register">
+										Register
+									</Link>
+								</Text>
 
-							<Text align="center">
-								Don&apos;t have an account? <Link href="/account/register">Register</Link>
-							</Text>
-
-							<Link href="/account/lost">Forgot password?</Link>
+								<Link textDecoration="underline" href="/account/lost">
+									Forgot password?
+								</Link>
+							</VStack>
 						</VStack>
 					</form>
-				</VStack>
-			</Panel>
+				</Content.Body>
+			</Content>
 		</>
 	);
 }

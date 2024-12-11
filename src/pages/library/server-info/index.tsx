@@ -1,11 +1,14 @@
-import Panel from "@component/Panel";
 import Head from "../../../layout/Head";
+import { Content } from "@component/Content";
 
 export default function ServerIfno() {
 	return (
 		<>
 			<Head title="Server Info" />
-			<Panel header="Server Info">TODO</Panel>
+			<Content>
+				<Content.Header>Server Info</Content.Header>
+				<Content.Body>TODO</Content.Body>
+			</Content>
 		</>
 	);
 }
