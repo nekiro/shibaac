@@ -12,7 +12,6 @@ export const Content = ({ children, ...props }: ContentProps) => {
 		<Flex
 			as="main"
 			marginTop="5rem"
-			width="fit-content"
 			maxWidth={{ lg: "1050px", base: "100%" }}
 			paddingX="5rem"
 			paddingY="2rem"
@@ -20,6 +19,7 @@ export const Content = ({ children, ...props }: ContentProps) => {
 			bgColor={bgColor}
 			direction="column"
 			marginX="auto"
+			w="100%"
 			borderWidth="1px"
 			borderColor="violet.500"
 			{...props}

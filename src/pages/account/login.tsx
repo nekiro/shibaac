@@ -73,7 +73,7 @@ export default function Login() {
 				<Content.Header>Log In</Content.Header>
 				<Content.Body>
 					<form onSubmit={handleSubmit(onSubmit)}>
-						<VStack spacing={10} w="25rem" maxW="25rem">
+						<VStack spacing={10}>
 							{fields.map((field) => (
 								<FormField key={field.name} error={(errors as any)[field.name]?.message} name={field.name} label={field.label}>
 									<TextInput type={field.type} {...register(field.name as any)} />
