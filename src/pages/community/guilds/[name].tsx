@@ -1,13 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Panel from "../../../components/Panel";
-import { fetchApi } from "../../../lib/request";
-import FormWrapper from "../../../components/FormWrapper";
+import { fetchApi } from "@lib/request";
 import { useRouter } from "next/router";
-import StrippedTable from "../../../components/StrippedTable";
-import Link from "next/link";
-import { vocationIdToName, RankGuild } from "../../../lib";
 import { withSessionSsr } from "../../../lib/session";
-import { CgUserRemove } from "react-icons/cg";
 import Image from "next/image";
 
 import { Box, Button as ChakraButton, Tab, TabList, TabPanel, TabPanels, Tabs, useToast, VStack } from "@chakra-ui/react";

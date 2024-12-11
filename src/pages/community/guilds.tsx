@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import Panel from "../../components/Panel";
 import Head from "../../layout/Head";
 import StrippedTable from "../../components/StrippedTable";
-import FormWrapper, { FormField } from "../../components/FormWrapper";
 import { withSessionSsr } from "../../lib/session";
 import { fetchApi } from "../../lib/request";
 import Link from "next/link";
@@ -113,28 +112,28 @@ export default function Guilds({ user }: any) {
 		setIsModalOpen(false);
 	};
 
-	const fields: FormField[] = [
-		{
-			type: "select",
-			name: "leader",
-			label: { text: "Character Name" },
-			// options: info
-			// 	? [
-			// 			{ label: "<Selecione>", value: "", text: "<Selecione>" },
-			// 			...info.players.map((player) => ({
-			// 				label: player.name,
-			// 				value: player.id,
-			// 				text: player.name,
-			// 			})),
-			// 		]
-			// 	: [{ label: "<Selecione>", value: "", text: "<Selecione>" }],
-		},
-		{
-			type: "text",
-			name: "guild_name",
-			label: { text: "Guild Name" },
-		},
-	];
+	// const fields: FormField[] = [
+	// 	{
+	// 		type: "select",
+	// 		name: "leader",
+	// 		label: { text: "Character Name" },
+	// 		// options: info
+	// 		// 	? [
+	// 		// 			{ label: "<Selecione>", value: "", text: "<Selecione>" },
+	// 		// 			...info.players.map((player) => ({
+	// 		// 				label: player.name,
+	// 		// 				value: player.id,
+	// 		// 				text: player.name,
+	// 		// 			})),
+	// 		// 		]
+	// 		// 	: [{ label: "<Selecione>", value: "", text: "<Selecione>" }],
+	// 	},
+	// 	{
+	// 		type: "text",
+	// 		name: "guild_name",
+	// 		label: { text: "Guild Name" },
+	// 	},
+	// ];
 
 	const buttons: FormButton[] = [{ type: "submit", btnType: "primary", value: "Submit" }];
 
@@ -205,7 +204,7 @@ export default function Guilds({ user }: any) {
 						<ModalHeader>Create guild</ModalHeader>
 						<ModalCloseButton />
 						<ModalBody>
-							<FormWrapper validationSchema={""} onSubmit={onSubmit} fields={fields} buttons={buttons} response={response} />
+							{/* <FormWrapper validationSchema={""} onSubmit={onSubmit} fields={fields} buttons={buttons} response={response} /> */}
 						</ModalBody>
 					</ModalContent>
 				</Modal>

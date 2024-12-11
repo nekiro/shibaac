@@ -6,6 +6,10 @@ export enum Vocation {
 	Knight = 4,
 }
 
+export const getVocationNames = () => {
+	return Object.keys(Vocation).filter(([key]) => Number.isNaN(Number(key)));
+};
+
 export type VocationType = keyof typeof Vocation;
 
 export const getVocationByName = (name: keyof typeof Vocation): Vocation => {

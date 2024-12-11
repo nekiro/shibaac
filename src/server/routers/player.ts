@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { procedure, router } from "../trpc";
 import prisma from "../../prisma";
+import { TRPCError } from "@trpc/server";
 
 export const playerRouter = router({
 	singleByName: procedure.input(z.object({ name: z.string() })).query(async ({ input }) => {
@@ -27,7 +28,19 @@ export const playerRouter = router({
 			},
 		});
 
-		return player;
+		if (!player) {
+			throw new TRPCError({ code: "NOT_FOUND", message: "Character not found" });
+		}
+
+		const town = await prisma.towns.findFirst({
+			where: { id: player.town_id },
+			select: { name: true },
+		});
+
+		return {
+			player,
+			town,
+		};
 	}),
 	online: procedure.query(async () => {
 		const players = await prisma.players_online.findMany({

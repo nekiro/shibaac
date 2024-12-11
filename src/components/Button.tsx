@@ -31,6 +31,8 @@ const Button = ({
 	children,
 	...props
 }: ButtonProps) => {
+	const { btnTextColor } = useColors();
+
 	const btn = (
 		<ChakraButton
 			type={type}
@@ -40,7 +42,7 @@ const Button = ({
 			isLoading={isLoading}
 			isActive={isActive}
 			loadingText={loadingText}
-			color="text.light"
+			color={btnTextColor}
 			{...props}
 		>
 			{value ?? children}

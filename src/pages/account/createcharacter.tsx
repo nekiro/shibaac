@@ -1,18 +1,17 @@
-import React from "react";
-import Panel from "../../components/Panel";
-import { withSessionSsr } from "../../lib/session";
-import { Select, Text, Container, VStack, Wrap } from "@chakra-ui/react";
+import { withSessionSsr } from "@lib/session";
+import { Select, Text, VStack } from "@chakra-ui/react";
 import TextInput from "@component/TextInput";
 import Button from "@component/Button";
 import { FormField } from "@component/FormField";
 import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SubmitHandler } from "react-hook-form";
-import { Vocation } from "@shared/enums/Vocation";
+import { getVocationNames, getVocationByName } from "@shared/enums/Vocation";
 import { trpc } from "@util/trpc";
 import { useFormFeedback } from "@hook/useFormFeedback";
-import { Sex } from "@shared/enums/Sex";
+import { getSexNames, getSexByName } from "@shared/enums/Sex";
+import { Content } from "@component/Content";
+import { useRouter } from "next/router";
 
 const bannedSequences = ["tutor", "cancer", "suck", "sux", "fuck"];
 const bannedWords = ["gm", "cm", "god"];
@@ -49,8 +48,8 @@ const schema = z.object({
 			},
 			{ message: "Contains illegal words" },
 		),
-	vocation: z.nativeEnum(Vocation),
-	sex: z.nativeEnum(Sex),
+	vocation: z.enum(getVocationNames() as any).transform((val) => getVocationByName(val)),
+	sex: z.enum(getSexNames() as any).transform((val) => getSexByName(val)),
 });
 
 export default function CreateCharacter() {
@@ -64,32 +63,35 @@ export default function CreateCharacter() {
 	});
 	const createCharacter = trpc.account.createCharacter.useMutation();
 	const { handleResponse, showResponse } = useFormFeedback();
+	const router = useRouter();
 
 	const onSubmit: SubmitHandler<z.infer<typeof schema>> = async ({ name, vocation, sex }) => {
 		handleResponse(async () => {
 			await createCharacter.mutateAsync({ name, vocation, sex });
 			showResponse("Character created.", "success");
+			router.push("/account");
 		});
 
 		reset();
 	};
 
 	return (
-		<Panel header="Create Character">
-			<Text align="center" margin="10px">
-				Please choose a name, vocation and sex for your character. <br />
-				In any case the name must not violate the naming conventions stated in the Rules or your character might get deleted or name locked.
-			</Text>
-			<form onSubmit={handleSubmit(onSubmit)}>
-				<Container alignContent={"center"} padding={2}>
-					<VStack spacing={5}>
+		<Content>
+			<Content.Header>Create Character</Content.Header>
+			<Content.Body>
+				<Text align="center">
+					Please choose a name, vocation and sex for your character. <br />
+					In any case the name must not violate the naming conventions stated in the Rules or your character might get deleted or name locked.
+				</Text>
+				<form onSubmit={handleSubmit(onSubmit)}>
+					<VStack spacing={10}>
 						<FormField key={"name"} error={errors.name?.message} name={"name"} label={"Name"}>
 							<TextInput type="name" {...register("name")} />
 						</FormField>
 						<FormField key={"vocation"} error={errors.vocation?.message} name={"vocation"} label="Vocation">
 							<Select {...register("vocation")}>
-								{Object.entries(Vocation).map(([key, value]) => (
-									<option key={key} value={value}>
+								{getVocationNames().map((key) => (
+									<option key={key} value={key}>
 										{key}
 									</option>
 								))}
@@ -97,21 +99,27 @@ export default function CreateCharacter() {
 						</FormField>
 						<FormField key={"sex"} error={errors.sex?.message} name={"sex"} label="Sex">
 							<Select {...register("sex")}>
-								{Object.entries(Sex).map(([key, value]) => (
-									<option key={key} value={value}>
+								{getSexNames().map((key) => (
+									<option key={key} value={key}>
 										{key}
 									</option>
 								))}
 							</Select>
 						</FormField>
-						<Wrap spacing={2} padding="10px">
-							<Button isLoading={isSubmitting} isActive={!isValid} loadingText="Submitting" type="submit" value="Submit" btnColorType="primary" />
-							<Button value="Back" btnColorType="danger" href="/account" />
-						</Wrap>
+						<Button
+							width="100%"
+							isLoading={isSubmitting}
+							isActive={!isValid}
+							loadingText="Submitting"
+							type="submit"
+							value="Submit"
+							btnColorType="primary"
+						/>
+						<Button width="100%" value="Back" btnColorType="danger" href="/account" />
 					</VStack>
-				</Container>
-			</form>
-		</Panel>
+				</form>
+			</Content.Body>
+		</Content>
 	);
 }
 
