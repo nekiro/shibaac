@@ -4,7 +4,7 @@ import { timestampToDate, vocationIdToName, groupToName, secondsToTime } from "s
 import { useRouter } from "next/router";
 import StrippedTable from "src/components/StrippedTable";
 import Label from "src/components/Label";
-import { trpc } from "../../utils/trpc";
+import { trpc } from "../../../utils/trpc";
 import { Content } from "@component/Content";
 import Loader from "@component/Loader";
 

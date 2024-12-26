@@ -9,6 +9,7 @@ export const NavBar = ({ children, ...props }: NavBarProps) => {
 			justifyContent="center"
 			h="50px"
 			position="sticky"
+			zIndex="sticky"
 			top="0"
 			w="100%"
 			paddingLeft="15px"

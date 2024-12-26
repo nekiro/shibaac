@@ -1,15 +1,15 @@
-import { Flex, Text, Image, HStack, Spacer } from "@chakra-ui/react";
+import { Text, Image, HStack, Spacer } from "@chakra-ui/react";
 import { TopBarItem } from "./TopBarItem";
 import { trpc } from "@util/trpc";
 import Link from "@component/Link";
 import { TopBarSeparator } from "./TopBarSeparator";
 import { FaDiscord, FaGithub } from "react-icons/fa";
 import { TbBrandYoutubeFilled } from "react-icons/tb";
-import TextInput from "@component/TextInput";
 import DropdownButton from "@component/DropdownButton";
 import { useRouter } from "next/router";
 import { DarkModeButton } from "@component/DarkModeButton";
 import { NavBar } from "@component/NavBar";
+import { IoIosSearch } from "react-icons/io";
 
 export interface NavigationItems {
 	text: string;
@@ -17,13 +17,13 @@ export interface NavigationItems {
 	hasMenu?: boolean;
 	menuItems?: { text: string; url: string }[];
 }
-
 export const navigationItems: NavigationItems[] = [
-	{ text: "News", href: "/" },
+	{ text: "Home", href: "/" },
 	{
 		hasMenu: true,
 		menuItems: [
 			{ text: "Highscores", url: "/community/highscores" },
+			{ text: "Search Character", url: "/community/character" },
 			{ text: "Who is online", url: "/community/who-is-online" },
 			// { text: "Guilds", url: "/community/guilds" },
 			// { text: "Houses", url: "/community/houses" },
@@ -35,6 +35,7 @@ export const navigationItems: NavigationItems[] = [
 		menuItems: [{ text: "Server Information", url: "/library/server-info" }],
 		text: "Library",
 	},
+
 	// { text: "Donate", href: "/donate" },
 	// { text: "Store", href: "/shop" },
 ];
@@ -42,10 +43,9 @@ export const navigationItems: NavigationItems[] = [
 export const TopBar = () => {
 	const account = trpc.me.me.useQuery().data;
 	const status = trpc.status.status.useQuery().data;
-	const router = useRouter();
 
 	return (
-		<NavBar>
+		<NavBar justifyContent="flex-start" paddingX="14em">
 			<HStack>
 				<Link href="/" style={{ height: "100%", textDecoration: "none" }}>
 					<TopBarItem paddingLeft={0} userSelect="none" pointerEvents="none">
@@ -55,23 +55,12 @@ export const TopBar = () => {
 						</Text>
 					</TopBarItem>
 				</Link>
-				<TopBarItem>
-					<form
-						onSubmit={(event) => {
-							event.preventDefault();
-							const form = event.currentTarget;
-							const searchValue = (form.elements.namedItem("search") as any)?.value;
-							if (searchValue) {
-								router.push(`/character/${searchValue}`);
-								form.reset();
-							}
-						}}
-					>
-						<TextInput size="sm" name="search" placeholder="Search character" />
-					</form>
-				</TopBarItem>
-				<Spacer w="2em" />
+				<DarkModeButton aria-label="Toggle Dark Mode" />
+				<Link href="/character" title="Search Character" color="white" _hover={{ color: "violet.300" }}>
+					<IoIosSearch size="25px" />
+				</Link>
 			</HStack>
+			<Spacer />
 			<HStack gap={0} height="50px">
 				{navigationItems.map((item) => (
 					<TopBarItem key={item.text} padding={0}>
@@ -101,10 +90,9 @@ export const TopBar = () => {
 				</TopBarItem>
 				<Spacer w="2em" />
 			</HStack>
-
+			<Spacer />
 			<TopBarItem padding={0}>
 				<HStack alignItems="center" gap="10px">
-					<DarkModeButton aria-label="Toggle Dark Mode" />
 					{/* TODO: move to component */}
 					<Link href={process.env.NEXT_PUBLIC_GITHUB_URL ?? ""} title="Github" isExternal color="white" _hover={{ color: "violet.300" }}>
 						<FaGithub size="25px" />

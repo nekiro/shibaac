@@ -10,7 +10,7 @@ const Layout = ({ children }: PropsWithChildren) => {
 
 	return (
 		<>
-			<Head title="News" />
+			<Head title="Home" />
 			<NextTopLoader color="#c3a6d9" />
 			{TopBarComponent && <TopBarComponent />}
 			{children}
