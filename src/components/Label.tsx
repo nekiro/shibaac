@@ -7,14 +7,9 @@ export interface LabelProps extends TagProps {
 	margin?: string;
 }
 
-const Label = ({
-	colorScheme = "violet",
-	fontSize = "md",
-	margin = "4px",
-	children,
-}: LabelProps) => {
+const Label = ({ colorScheme = "violet", fontSize = "md", margin = "4px", children, ...props }: LabelProps) => {
 	return (
-		<Tag variant="solid" colorScheme={colorScheme}>
+		<Tag variant="solid" colorScheme={colorScheme} {...props}>
 			<Box fontSize={fontSize} margin={margin}>
 				{children}
 			</Box>

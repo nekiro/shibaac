@@ -1,8 +1,7 @@
-import sanitize from "sanitize-html";
-import NewsPanel from "../components/NewsPanel";
-import React from "react";
+import { NewsCard } from "../components/NewsCard";
 import { trpc } from "@util/trpc";
 import { Content } from "@component/Content";
+import { Heading } from "@chakra-ui/react";
 
 export default function Index() {
 	const news = trpc.news.all.useQuery();
@@ -11,11 +10,18 @@ export default function Index() {
 
 	return (
 		<Content>
-			<Content.Body>
+			<Content.Body maxW="unset" gap={5}>
+				<Heading size="lg">News</Heading>
 				{news.data?.map((post) => (
-					<NewsPanel borderRadius="none" key={`news-${post.id}`} header={post.title} date={post.createdAt}>
-						<div dangerouslySetInnerHTML={{ __html: sanitize(post.content) }} />
-					</NewsPanel>
+					<NewsCard
+						key={`news-${post.id}`}
+						id={String(post.id)}
+						image={post.imageUrl}
+						header={post.title}
+						author={post.playerNick}
+						date={post.createdAt}
+						html={post.content}
+					/>
 				))}
 			</Content.Body>
 		</Content>

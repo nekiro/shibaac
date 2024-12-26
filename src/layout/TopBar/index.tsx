@@ -1,4 +1,4 @@
-import { Text, Image, HStack, Spacer } from "@chakra-ui/react";
+import { Text, HStack, Spacer } from "@chakra-ui/react";
 import { TopBarItem } from "./TopBarItem";
 import { trpc } from "@util/trpc";
 import Link from "@component/Link";
@@ -6,10 +6,10 @@ import { TopBarSeparator } from "./TopBarSeparator";
 import { FaDiscord, FaGithub } from "react-icons/fa";
 import { TbBrandYoutubeFilled } from "react-icons/tb";
 import DropdownButton from "@component/DropdownButton";
-import { useRouter } from "next/router";
 import { DarkModeButton } from "@component/DarkModeButton";
 import { NavBar } from "@component/NavBar";
 import { IoIosSearch } from "react-icons/io";
+import { Logo } from "@component/Logo";
 
 export interface NavigationItems {
 	text: string;
@@ -47,14 +47,7 @@ export const TopBar = () => {
 	return (
 		<NavBar justifyContent="flex-start" paddingX="14em">
 			<HStack>
-				<Link href="/" style={{ height: "100%", textDecoration: "none" }}>
-					<TopBarItem paddingLeft={0} userSelect="none" pointerEvents="none">
-						<Image height="35px" boxSize="35px" src="/images/header.png" alt="shibaac" />
-						<Text fontSize="lg" color="white" ml="10px">
-							Shibaac
-						</Text>
-					</TopBarItem>
-				</Link>
+				<Logo />
 				<DarkModeButton aria-label="Toggle Dark Mode" />
 				<Link href="/character" title="Search Character" color="white" _hover={{ color: "violet.300" }}>
 					<IoIosSearch size="25px" />

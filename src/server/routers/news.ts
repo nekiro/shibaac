@@ -4,7 +4,16 @@ import prisma from "../../prisma";
 
 export const newsRouter = router({
 	all: procedure.query(async () => {
-		const news = await prisma.aac_news.findMany();
+		const news = await prisma.aac_news.findMany({
+			select: {
+				id: true,
+				title: true,
+				content: true,
+				playerNick: true,
+				imageUrl: true,
+				createdAt: true,
+			},
+		});
 		return news;
 	}),
 	single: procedure.input(z.object({ id: z.number() })).query(async ({ input }) => {
