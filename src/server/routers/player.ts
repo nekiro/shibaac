@@ -44,7 +44,7 @@ export const playerRouter = router({
 	}),
 	online: procedure.query(async () => {
 		const players = await prisma.players_online.findMany({
-			select: { players: true },
+			include: { players: { select: { name: true, vocation: true, level: true } } },
 		});
 
 		return players.map((player) => player.players);
